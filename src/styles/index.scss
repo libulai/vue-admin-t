@@ -3,6 +3,7 @@
 @import './transition.scss';
 @import './element-ui.scss';
 @import './sidebar.scss';
+@import './common.scss';
 
 body {
   height: 100%;
@@ -29,6 +30,8 @@ html {
 *:before,
 *:after {
   box-sizing: inherit;
+  margin: 0;
+  padding: 0;
 }
 
 a:focus,
@@ -58,6 +61,11 @@ div:focus {
     height: 0;
   }
 }
+
+ol, ul {
+  list-style: none;
+}
+
 
 // main-container global css
 .app-container {

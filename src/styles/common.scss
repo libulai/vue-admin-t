@@ -1,0 +1,11 @@
+.content-wrap {
+    background: #fff;
+    border-radius: 6px;
+    padding: 20px;
+    .content-title {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding-bottom: 15px;
+    }
+}

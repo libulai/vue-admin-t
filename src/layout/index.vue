@@ -108,7 +108,7 @@ export default {
 
 .bg-top {
   background: #0b3190;
-  height: 300px;
+  height: 260px;
   width: 100%;
   position: absolute;
   top: 85px;

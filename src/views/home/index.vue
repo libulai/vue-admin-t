@@ -2,7 +2,7 @@
   <div class="app-container">
     <div class="content-wrap">
       <div class="content-title">
-        <h3>-服务数据</h3>
+        <h3>- 服务数据</h3>
         <el-dropdown placement="bottom-start">
           <el-button type="primary">
             昨日
@@ -36,6 +36,21 @@
           <div class="num">1833</div>
         </li>
       </ul>
+    </div>
+
+    <div class="content-bottom">
+      <div class="content-wrap" style="margin-right: 20px">
+        <div class="content-title">
+          <h3>- 超期未完成</h3>
+          <div></div>
+        </div>
+      </div>
+      <div class="content-wrap">
+        <div class="content-title">
+          <h3>- 昨日新增通路</h3>
+          <div></div>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -104,6 +119,15 @@
           margin-top: 22px;
         }
       }
+    }
+  }
+
+  .content-bottom {
+    margin-top: 20px;
+    display: flex;
+    justify-content: space-between;
+    &>div {
+      flex: 1;
     }
   }
 </style>

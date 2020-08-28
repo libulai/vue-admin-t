@@ -1,0 +1,64 @@
+<template>
+  <div class="app-container">
+    <div class="content-wrap">
+      <div style="position: relative;">
+        <el-tabs v-model="activeName" @tab-click="handleClick">
+          <el-tab-pane label="预约信息" name="first">
+            <keep-alive>
+              <appointment />
+            </keep-alive>
+          </el-tab-pane>
+          <el-tab-pane label="工单状态" name="second">
+            <order-state />
+          </el-tab-pane>
+          <el-tab-pane label="施工详情单" name="third">
+            <construction-detail />
+          </el-tab-pane>
+          <el-tab-pane label="验收详情单" name="fourth">
+
+          </el-tab-pane>
+        </el-tabs>
+
+        <el-button class="back defalut-btn" size="medium" @click="back">返回</el-button>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script>
+  import appointment from './appointment.vue'
+  import orderState from './orderState.vue'
+  import constructionDetail from './constructionDetail.vue'
+
+  export default {
+    components: {
+      appointment,
+      orderState,
+      constructionDetail
+    },
+    data() {
+      return {
+        activeName: 'first'
+      };
+    },
+    created() {
+
+    },
+    methods: {
+      handleClick(tab, event) {
+        console.log(tab, event)
+      },
+      back() {
+        this.$router.push({ path: '/workOrder/review' })
+      }
+    },
+  };
+</script>
+
+<style lang="scss" scoped>
+  .back {
+    position: absolute;
+    right: 0;
+    top: -6px;
+  }
+</style>

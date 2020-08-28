@@ -12,8 +12,6 @@
             <el-dropdown-item>黄金糕</el-dropdown-item>
             <el-dropdown-item>狮子头</el-dropdown-item>
             <el-dropdown-item>螺蛳粉</el-dropdown-item>
-            <el-dropdown-item>双皮奶</el-dropdown-item>
-            <el-dropdown-item>蚵仔煎</el-dropdown-item>
           </el-dropdown-menu>
         </el-dropdown>
       </div>
@@ -39,16 +37,86 @@
     </div>
 
     <div class="content-bottom">
-      <div class="content-wrap" style="margin-right: 20px">
+      <div
+        class="content-wrap"
+        style="margin-right: 20px"
+      >
         <div class="content-title">
           <h3>- 超期未完成</h3>
-          <div></div>
+        </div>
+        <div class="table">
+          <div class="tr tr-t">
+            <div>姓名</div>
+            <div>单数</div>
+          </div>
+          <div class="tr tr-d">
+            <div>张三</div>
+            <div class="detail">12</div>
+          </div>
+          <div class="tr tr-d">
+            <div>张三</div>
+            <div class="detail">12</div>
+          </div>
+
+          <!-- <div class="tr tr-d">
+            <div>张三</div>
+            <div class="detail">12</div>
+          </div>
+          <div class="tr tr-d">
+            <div>张三</div>
+            <div class="detail">12</div>
+          </div>
+          <div class="tr tr-d">
+            <div>张三</div>
+            <div class="detail">12</div>
+          </div>
+          <div class="tr tr-d">
+            <div>张三</div>
+            <div class="detail">12</div>
+          </div>
+          <div class="tr tr-d">
+            <div>张三</div>
+            <div class="detail">12</div>
+          </div>
+          <div class="tr tr-d">
+            <div>张三</div>
+            <div class="detail">12</div>
+          </div>
+          <div class="tr tr-d">
+            <div>张三</div>
+            <div class="detail">12</div>
+          </div>
+          <div class="tr tr-d">
+            <div>张三</div>
+            <div class="detail">12</div>
+          </div>
+          <div class="tr tr-d">
+            <div>张三</div>
+            <div class="detail">12</div>
+          </div>
+          <div class="tr tr-d">
+            <div>张三</div>
+            <div class="detail">12</div>
+          </div> -->
+
         </div>
       </div>
       <div class="content-wrap">
         <div class="content-title">
           <h3>- 昨日新增通路</h3>
-          <div></div>
+        </div>
+        <div class="table overflow">
+          <div class="tr tr-t">
+            <div>类型</div>
+            <div>通路信息</div>
+            <div>录入人</div>
+          </div>
+          <div class="tr tr-d">
+            <div>张三</div>
+            <div>12</div>
+            <div>李四</div>
+          </div>
+
         </div>
       </div>
     </div>
@@ -56,78 +124,103 @@
 </template>
 
 <script>
-  import { mapGetters } from 'vuex'
+import { mapGetters } from "vuex";
 
-  export default {
-    name: 'Home',
-    computed: {
-      ...mapGetters([
-        'name'
-      ])
-    }
-  }
+export default {
+  name: "Home",
+  computed: {
+    ...mapGetters(["name"]),
+  },
+};
 </script>
 
 <style lang="scss" scoped>
-  .content-wrap {
-    .content-title {
-      h3 {
-        font-weight: 500;
-        color: #0b3190;
-        font-size: 16px;
-      }
-      ::v-deep .el-button {
-        padding: 7px 14px;
-        width: 130px;
-        &>span {
-          width: 100%;
-          display: flex;
-          justify-content: space-between;
-        }
-      }
-      .el-button--primary {
-        background: rgb(229, 236, 255) !important;
-        border: none;
-        color: #666;
-      }
-      .el-button--primary:focus,
-      .el-button--primary:hover {
-        color: #666;
+.content-wrap {
+  .content-title {
+    ::v-deep .el-button {
+      padding: 7px 14px;
+      width: 130px;
+      & > span {
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
       }
     }
-
-    ul {
-      display: flex;
-      li {
-        flex: 1;
-        height: 140px;
-        background: red;
-        margin-right: 15px;
-        border-radius: 6px;
-        padding: 28px 20px;
-        color: #eaeaea;
-        .title {
-          padding-left: 13px;
-          border-left: 2px solid;
-          height: 22px;
-          line-height: 22px;
-          letter-spacing: 2px;
-        }
-        .num {
-          font-size: 30px;
-          font-weight: 600;
-          margin-top: 22px;
-        }
-      }
+    .el-button--primary {
+      background: rgb(229, 236, 255) !important;
+      border: none;
+      color: #666;
+    }
+    .el-button--primary:focus,
+    .el-button--primary:hover {
+      color: #666;
     }
   }
 
-  .content-bottom {
-    margin-top: 20px;
+  ul {
+    display: flex;
+    li {
+      flex: 1;
+      height: 140px;
+      background: red;
+      margin-right: 15px;
+      border-radius: 6px;
+      padding: 28px 20px;
+      color: #eaeaea;
+      .title {
+        padding-left: 13px;
+        border-left: 2px solid;
+        height: 22px;
+        line-height: 22px;
+        letter-spacing: 2px;
+      }
+      .num {
+        font-size: 30px;
+        font-weight: 600;
+        margin-top: 22px;
+      }
+    }
+  }
+}
+
+.content-bottom {
+  margin-top: 20px;
+  display: flex;
+  justify-content: space-between;
+  & > div {
+    flex: 1;
+  }
+}
+
+.table {
+  .tr {
     display: flex;
     justify-content: space-between;
-    &>div {
-      flex: 1;
+    line-height: 40px;
+    height: 40px;
+    & > div {
+      width: 180px;
+      text-align: center;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      overflow: hidden;
+      word-break: break-all;
     }
   }
+  .tr-t {
+    background: rgb(236, 241, 255);
+    /* font-weight: 600; */
+    color: #111;
+  }
+  .tr-d {
+    height: 50px;
+    line-height: 50px;
+    border-bottom: 1px solid #f1f1f1;
+    color: #888;
+  }
+  .detail {
+    color: rgb(73, 119, 252);
+    cursor: pointer;
+  }
+}
 </style>

@@ -47,3 +47,28 @@
 .el-range-separator {
   box-sizing: content-box;
 }
+
+
+.sidebar-container .is-active > .el-submenu__title{
+  background: rgb(234, 241, 255)!important;
+  i{
+    color: #0b3190!important;
+  }
+}
+
+.el-submenu__title{
+  margin-right: 12px;
+  border-top-right-radius: 25px;
+  border-bottom-right-radius: 25px;
+  &:hover{
+    background-color: rgb(234, 241, 255)!important;
+    color: #0b3190!important;
+    i{
+      color: #0b3190!important;
+    }
+  }
+  i{
+    font-size: 16px;
+    font-weight: 600;
+  }
+}

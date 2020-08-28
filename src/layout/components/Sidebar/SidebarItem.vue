@@ -7,7 +7,7 @@
       >
         <el-menu-item
           :index="resolvePath(onlyOneChild.path)"
-          :class="{'submenu-title-noDropdown':!isNest}"
+          :class="{'submenu-title-noDropdown':!isNest, 'first-memu':onlyOneChild}"
         >
           <item
             :icon="onlyOneChild.meta.icon||(item.meta&&item.meta.icon)"
@@ -114,9 +114,12 @@ export default {
 
 <style lang="scss" scoped>
 #app .sidebar-container .submenu-title-noDropdown:hover,
-#app .sidebar-container .el-submenu__title:hover,
 #app .sidebar-container .nest-menu .el-submenu > .el-submenu__title,
 #app .sidebar-container .el-submenu .el-menu-item {
   background: #fff !important;
+}
+
+.first-memu{
+  color: red;
 }
 </style>

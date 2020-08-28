@@ -7,5 +7,51 @@
         justify-content: space-between;
         align-items: center;
         padding-bottom: 15px;
+        h3 {
+            font-weight: 500;
+            color: #0b3190;
+            font-size: 16px;
+        }
     }
+}
+
+.overflow{
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    word-break: break-all;
+}
+
+.com-btn{
+    width: 146px;
+}
+
+tr th{
+    background: rgb(249, 249, 249)!important;
+}
+
+.el-table-column--selection  .cell{
+    padding-left: 15px!important;
+}
+
+table {
+    .detail{
+        color: #0b3190;
+        text-decoration: underline;
+    }
+    .handle{
+        cursor: pointer;
+    }
+}
+
+.pagination{
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 20px;
+}
+
+.defalut-btn{
+    width: 96px;
+    border-color: #546eb1!important;
+    color: #546eb1!important;
 }

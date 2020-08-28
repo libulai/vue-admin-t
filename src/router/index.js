@@ -56,26 +56,60 @@ export const constantRoutes = [
   },
 
   {
-    path: '/example',
+    path: '/workOrder',
     component: Layout,
-    redirect: '/example/table',
-    name: 'Example',
+    redirect: '/workOrder/appointment',
+    name: 'WorkOrder',
     meta: { title: '工单管理', icon: 'el-icon-s-help' },
     children: [
       {
-        path: 'table',
-        name: 'Table',
+        path: 'appointment',
+        name: 'Appointment',
         component: () => import('@/views/table/index'),
         meta: { title: '预约登记', icon: '' }
       },
       {
-        path: 'tree',
-        name: 'Tree',
-        component: () => import('@/views/tree/index'),
+        path: 'dispatch',
+        name: 'Dispatch',
+        component: () => import('@/views/workOrder/dispatch'),
         meta: { title: '分派工单', icon: '' }
-      }
+      },
+      {
+        path: 'review',
+        name: 'Review',
+        component: () => import('@/views/workOrder/review'),
+        meta: { title: '复核工单', icon: '' },
+        children: [{
+          path: 'reviewDetail',
+          name: 'ReviewDetail',
+          hidden: true,
+          component: () => import('@/views/workOrder/reviewDetail/reviewDetail'),
+          meta: { title: '工单信息', icon: '', activeMenu: '/workOrder/review' }
+        },]
+      },
+      // {
+      //   path: 'reviewDetail',
+      //     name: 'ReviewDetail',
+      //     hidden: true,
+      //     component: () => import('@/views/workOrder/reviewDetail'),
+      //     meta: { title: '工单信息', icon: '', activeMenu: '/workOrder/review' }
+      // }
     ]
   },
+
+  // {
+  //   path: '/form',
+  //   component: Layout,
+  //   children: [
+  //     {
+  //       path: 'index',
+  //       name: 'Form',
+  //       component: () => import('@/views/form/index'),
+  //       meta: { title: 'Form', icon: 'form' }
+  //     }
+  //   ]
+  // },
+
 
 
   // 404 page must be placed at the end !!!

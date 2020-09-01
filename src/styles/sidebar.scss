@@ -31,6 +31,7 @@
 
     .el-scrollbar__bar.is-vertical {
       right: 0px;
+      // background: #c5c4c4;
     }
 
     .el-scrollbar {
@@ -39,7 +40,7 @@
 
     &.has-logo {
       .el-scrollbar {
-        height: calc(100% - 50px);
+        height: calc(100% - 80px);
       }
     }
 

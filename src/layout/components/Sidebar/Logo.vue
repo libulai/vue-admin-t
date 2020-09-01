@@ -6,14 +6,16 @@
         <h1 v-else class="sidebar-title">{{ title }} </h1>
       </router-link>
       <router-link v-else key="expand" class="sidebar-logo-link" to="/">
-        <img v-if="logo" :src="logo" class="sidebar-logo">
-        <h1 class="sidebar-title">{{ title }} </h1>
+        <!-- <img v-if="logo" :src="logo" class="sidebar-logo">
+        <h1 class="sidebar-title">{{ title }} </h1> -->
+        <img :src="logo" alt="">
       </router-link>
     </transition>
   </div>
 </template>
 
 <script>
+import logo from '@/assets/pic/logo.png'
 export default {
   name: 'SidebarLogo',
   props: {
@@ -25,7 +27,7 @@ export default {
   data() {
     return {
       title: 'Vue Admin Template',
-      logo: 'https://wpimg.wallstcn.com/69a1c46c-eb1c-4b46-8bd4-e9e686ef5251.png'
+      logo: logo
     }
   }
 }
@@ -44,15 +46,21 @@ export default {
 .sidebar-logo-container {
   position: relative;
   width: 100%;
-  height: 50px;
+  height: 80px;
   line-height: 50px;
-  // background: #2b2f3a;
+  /* background: #2b2f3a; */
   text-align: center;
   overflow: hidden;
 
   & .sidebar-logo-link {
     height: 100%;
     width: 100%;
+    display: flex!important;
+    justify-content: center;
+    align-items: center;
+    img{
+      width: 80%;
+    }
 
     & .sidebar-logo {
       width: 32px;
@@ -64,7 +72,7 @@ export default {
     & .sidebar-title {
       display: inline-block;
       margin: 0;
-      // color: #fff;
+      /* color: #fff; */
       font-weight: 600;
       line-height: 50px;
       font-size: 14px;

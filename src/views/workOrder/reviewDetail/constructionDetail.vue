@@ -119,6 +119,36 @@
       </div>
     </div>
 
+    <!-- 现场施工照片 -->
+    <div class="basic-info">
+      <h4>现场施工照片</h4>
+      <div>
+        <div class="list-pic">
+          <div>
+            <el-image style="width: 100px; height: 100px" :src="bg1" :preview-src-list="list1">
+            </el-image>
+            <div class=""></div>
+            <p>卫生间</p>
+          </div>
+          <div>
+            <el-image style="width: 100px; height: 100px" :src="bg1" :preview-src-list="list1">
+            </el-image>
+            <p>厨房</p>
+          </div> 
+          <div>
+            <el-image style="width: 100px; height: 100px" :src="bg1" :preview-src-list="list1">
+            </el-image>
+            <p>流转单</p>
+          </div>
+          <div>
+            <el-image style="width: 100px; height: 100px" :src="bg1" :preview-src-list="list1">
+            </el-image>
+            <p>客户签名</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- 施工确认信息 -->
     <div class="basic-info">
       <h4>施工确认信息</h4>
@@ -162,7 +192,8 @@
   export default {
     data() {
       return {
-
+        bg1: require('@/assets/pic/demo.png'),
+        list1: [require('@/assets/pic/demo.png')]
       };
     },
     created() {
@@ -192,6 +223,24 @@
       .light {
         color: #999;
         margin-top: 7px;
+      }
+    }
+    .list-pic {
+      display: flex;
+      .el-image {
+        width: 200px !important;
+        height: 140px !important;
+      }
+      &>div {
+        margin-right: 10px;
+        display: flex;
+        justify-content: center;
+        flex-direction: column;
+        align-items: center;
+        font-size: 14px;
+        p {
+          margin-top: 5px;
+        }
       }
     }
     .rooms {

@@ -4,9 +4,7 @@
       <div style="position: relative;">
         <el-tabs v-model="activeName" @tab-click="handleClick">
           <el-tab-pane label="预约信息" name="first">
-            <keep-alive>
-              <appointment />
-            </keep-alive>
+            <appointment />
           </el-tab-pane>
           <el-tab-pane label="工单状态" name="second">
             <order-state />
@@ -15,11 +13,11 @@
             <construction-detail />
           </el-tab-pane>
           <el-tab-pane label="验收详情单" name="fourth">
-
+            <confirm />
           </el-tab-pane>
         </el-tabs>
 
-        <el-button class="back defalut-btn" size="medium" @click="back">返回</el-button>
+        <el-button class="back defalut-btn" size="medium" @click="back" icon="el-icon-back">返回</el-button>
       </div>
     </div>
   </div>
@@ -29,11 +27,13 @@
   import appointment from './appointment.vue'
   import orderState from './orderState.vue'
   import constructionDetail from './constructionDetail.vue'
+  import confirm from './confirm.vue'
 
   export default {
     components: {
       appointment,
       orderState,
+      confirm,
       constructionDetail
     },
     data() {

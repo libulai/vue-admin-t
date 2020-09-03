@@ -112,6 +112,7 @@
   import { getList } from "@/api/table";
 
   export default {
+    name: 'QualityOrder',
     data() {
       return {
         options: [

@@ -102,6 +102,7 @@
   import { getList } from "@/api/table";
 
   export default {
+    name: 'User',
     data() {
       return {
         options: [

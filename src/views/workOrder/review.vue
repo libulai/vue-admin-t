@@ -120,6 +120,7 @@
   import { getList } from "@/api/table";
 
   export default {
+    name: 'Review',
     data() {
       return {
         options: [

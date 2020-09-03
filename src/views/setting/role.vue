@@ -87,6 +87,7 @@
   import { getList } from "@/api/table";
 
   export default {
+    name: 'Role',
     data() {
       return {
         options: [

@@ -85,6 +85,7 @@
   import { getList } from "@/api/table";
 
   export default {
+    name: 'Area',
     data() {
       return {
         options: [

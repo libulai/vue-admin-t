@@ -96,6 +96,7 @@
   import { getList } from "@/api/table";
 
   export default {
+    name: 'DispatchA',
     data() {
       return {
         options: [

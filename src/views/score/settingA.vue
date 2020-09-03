@@ -19,6 +19,7 @@
   import A1 from './A1.vue'
 
   export default {
+    name: 'SettingA',
     components: {
       A1
     },

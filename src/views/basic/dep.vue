@@ -1,6 +1,6 @@
 <template>
   <div class="app-container">
-    <div class="content-wrap" style="margin-top:20px">
+    <div class="content-wrap">
       <div class="content-title">
         <div>
           <el-button class="com-btn" type="primary" @click="dispatch(false)">添加区域</el-button>
@@ -49,7 +49,7 @@
       </div>
     </div>
 
-    <el-dialog :title="title" :visible.sync="dialog" class="dialog">
+    <el-dialog :title="title" :visible.sync="dialog" class="dialog" :close-on-click-modal="false">
 
       <el-form :model="form" :rules="rules" ref="form" label-width="100px" class="dialog-form">
         <el-form-item label="区域名称">

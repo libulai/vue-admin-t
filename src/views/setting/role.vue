@@ -54,7 +54,7 @@
       </div>
     </div>
 
-    <el-dialog :title="title" :visible.sync="dialog" class="dialog" width="1000px">
+    <el-dialog :title="title" :visible.sync="dialog" class="dialog" :close-on-click-modal="false" width="1000px">
 
       <el-form :model="form" :rules="rules" ref="form" label-width="100px" class="dialog-form">
         <el-form-item label="角色名称" prop="account">

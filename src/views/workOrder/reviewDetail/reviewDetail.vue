@@ -1,5 +1,5 @@
 <template>
-  <div class="app-container">
+  <div class="app-container" style="padding:0">
     <div class="content-wrap">
       <div style="position: relative;">
         <el-tabs v-model="activeName" @tab-click="handleClick">

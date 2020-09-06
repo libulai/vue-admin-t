@@ -31,6 +31,11 @@
 
       </el-form>
     </div>
+
+    <div class="footer">
+      <div style="margin-bottom: 10px;">Copyright © KALE</div>
+      <div>KALE Brand Management System Guideline</div>
+    </div>
   </div>
 </template>
 
@@ -228,6 +233,17 @@
       color: $dark_gray;
       cursor: pointer;
       user-select: none;
+    }
+  }
+
+  .footer{
+    position: absolute;
+    bottom: 20px;
+    color: #fff;
+    font-size: 12px;
+    div{
+      display:flex;
+      justify-content: center;
     }
   }
 </style>

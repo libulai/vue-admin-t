@@ -176,8 +176,10 @@
       personInfo(command) {
         this[command] = true;
       },
-      loginOut() {
+      async loginOut() {
         this.dialog3 = false;
+        await this.$store.dispatch('user/logout')
+        this.$router.push(`/login?redirect=${this.$route.fullPath}`)
       },
       modifyPassword() {
         this.dialog2 = false;

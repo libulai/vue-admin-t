@@ -211,7 +211,7 @@ export default {
       cursor: pointer;
       height: 26px;
       line-height: 26px;
-      border: 1px solid #d8dce5;
+      /* border: 1px solid #d8dce5; */
       color: #495060;
       background: #fff;
       padding: 0 8px;
@@ -219,10 +219,10 @@ export default {
       margin-left: 5px;
       margin-top: 4px;
       &:first-of-type {
-        margin-left: 15px;
+        margin-left: 20px;
       }
       &:last-of-type {
-        margin-right: 15px;
+        margin-right: 20px;
       }
       &.active {
         background-color: #42b983;

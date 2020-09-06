@@ -149,6 +149,18 @@ export const constantRoutes = [
         name: 'Dep',
         component: () => import('@/views/basic/dep'),
         meta: { title: '部门管理', icon: '' }
+      },
+      {
+        path: 'employees',
+        name: 'Employees',
+        component: () => import('@/views/basic/employees'),
+        meta: { title: '员工管理', icon: '' }
+      },
+      {
+        path: 'customer',
+        name: 'Customer',
+        component: () => import('@/views/basic/customer'),
+        meta: { title: '客户管理', icon: '' }
       }
     ]
   },

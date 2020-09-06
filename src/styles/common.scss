@@ -60,6 +60,39 @@ table {
     width: 116px;
 }
 
-.dialog .el-select{
-    width: 100%;
+.dialog{
+    .wrap{
+        background: rgb(249, 249, 249);
+    }
+    .text{
+        margin-left: 5px;
+    }
+    .el-select, .dialog .el-date-editor{
+        width: 100%!important;
+    }
+} 
+
+.big-form{
+    .el-dialog__body{
+        padding: 10px 20px;
+    }
+    .el-form{
+        padding: 0!important;
+    }
+    h3{
+        padding: 25px;
+        color:#333;
+    }
+    .el-form-item__content, .el-input__inner{
+        width: 230px;
+    }
+    .cust-item{
+        width: 730px!important;
+        .el-form-item__content{
+            width: 600px;
+        }
+        .el-input__inner{
+            width: 100%;
+        }
+    }
 }

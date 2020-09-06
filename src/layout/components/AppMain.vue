@@ -28,6 +28,7 @@
     /*50 = navbar  */
     /* min-height: calc(100vh - 50px); */
     width: 100%;
+    margin-top:16px;
     position: relative;
     overflow: hidden;
     /* height: calc(100% - 155px);

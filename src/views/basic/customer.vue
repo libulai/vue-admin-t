@@ -233,6 +233,7 @@
       fetchData() {
         this.listLoading = true;
         getList().then((response) => {
+          console.log(response.data.items)
           this.list = response.data.items;
           this.listLoading = false;
         });

@@ -39,7 +39,7 @@ module.exports = {
     before: require('./mock/mock-server.js'),
     proxy: {
       "/weixingservice": {
-        target: "http://oaxc.weixing.cn:9080", // 目标代理接口地址
+        target: "http://47.99.60.102:9080", // 目标代理接口地址
         secure: false,
         changeOrigin: true, // 开启代理，在本地创建一个虚拟服务端
         // ws: true, // 是否启用websockets

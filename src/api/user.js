@@ -1,11 +1,17 @@
 import request from '@/utils/request'
 
-export function login(data) {
+export function login({username, password}) {
+  // export function login(data) {
   return request({
-    url: '/vue-admin-template/user/login',
-    method: 'post',
-    data
+    url: `/weixingservice/login?usercode=${username}&passwd=${password}`,
+    method: 'get'
   })
+
+  // return request({
+  //   url: '/vue-admin-template/user/login',
+  //   method: 'post',
+  //   data
+  // })
 }
 
 export function getInfo(token) {

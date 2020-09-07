@@ -41,6 +41,7 @@
 
 <script>
   import { validUsername } from '@/utils/validate'
+  import { Message } from 'element-ui'
 
   export default {
     name: 'Login',
@@ -61,11 +62,11 @@
       }
       return {
         loginForm: {
-          username: 'admin',
-          password: '111111'
+          username: 'kaletest',
+          password: 'aaaaaa'
         },
         loginRules: {
-          username: [{ required: true, trigger: 'blur', validator: validateUsername }],
+          username: [{ required: true, trigger: 'blur' }],
           password: [{ required: true, trigger: 'blur', validator: validatePassword }]
         },
         loading: false,
@@ -98,9 +99,13 @@
         this.$refs.loginForm.validate(valid => {
           if (valid) {
             this.loading = true
-            this.$store.dispatch('user/login', this.loginForm).then(() => {
-              this.$router.push({ path: this.redirect || '/' })
+            this.$store.dispatch('user/login', this.loginForm).then((data) => {
               this.loading = false
+              if (data.success == 'false') {
+                return Message.error(data.data)
+              }
+      
+              this.$router.push({ path: this.redirect || '/' })
             }).catch(() => {
               this.loading = false
             })

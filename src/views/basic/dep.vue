@@ -8,13 +8,7 @@
       </div>
 
       <div>
-        <el-table
-          v-loading="listLoading"
-          :data="list"
-          element-loading-text="Loading"
-          fit
-          highlight-current-row
-        >
+        <el-table v-loading="listLoading" :data="list" element-loading-text="Loading" fit highlight-current-row>
           <el-table-column align="center" label="部门名称">
             <template slot-scope="scope">{{ scope.row.deptname }}</template>
           </el-table-column>
@@ -27,54 +21,33 @@
             </template>
           </el-table-column>
           <el-table-column align="center" label="操作">
-            <template>
-              <span class="detail handle" @click="dispatch(true)">编辑</span>
+            <template slot-scope="scope">
+              <span class="detail handle" @click="dispatch(true, scope.row)">编辑</span>
             </template>
           </el-table-column>
         </el-table>
 
         <div class="pagination">
-          <el-pagination
-            background
-            @size-change="handleSizeChange"
-            @current-change="handleCurrentChange"
-            :current-page.sync="currentPage"
-            :page-size="pageSize"
-            layout="prev, pager, next, jumper"
-            :total="pageTotal"
-          ></el-pagination>
+          <el-pagination background @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page.sync="pageIndex"
+            :page-size="pageSize" layout="prev, pager, next, jumper" :total="pageTotal"></el-pagination>
         </div>
       </div>
     </div>
 
-    <el-dialog :title="title" :visible.sync="dialog" class="dialog" :close-on-click-modal="false">
+    <el-dialog :title="title" :visible.sync="dialog" class="dialog" :close-on-click-modal="false" @close="clearForm">
       <el-form :model="form" :rules="rules" ref="form" label-width="100px" class="dialog-form">
-        <el-form-item label="区域名称">
-          <el-input v-model="form.order" placeholder="请输入真实姓名"></el-input>
+        <el-form-item label="公司">
+          <span class="text">上海分公司</span>
         </el-form-item>
-        <el-form-item label="施工主管">
-          <el-select v-model="form.account" placeholder="请选择">
-            <el-option
-              v-for="item in options"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
-            ></el-option>
-          </el-select>
+        <el-form-item label="部门编号" prop="deptcode">
+          <el-input v-model.number="form.deptcode" placeholder="请输入"></el-input>
         </el-form-item>
-        <el-form-item label="验收主管">
-          <el-select v-model="form.account" placeholder="请选择">
-            <el-option
-              v-for="item in options"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
-            ></el-option>
-          </el-select>
+        <el-form-item label="部门名称" prop="deptname">
+          <el-input v-model="form.deptname" placeholder="请输入"></el-input>
         </el-form-item>
         <el-form-item label="启用状态">
-          <el-radio v-model="form.radio" label="1">启用</el-radio>
-          <el-radio v-model="form.radio" label="2">停用</el-radio>
+          <el-radio v-model="form.forbidden" :label="0">启用</el-radio>
+          <el-radio v-model="form.forbidden" :label="1">停用</el-radio>
         </el-form-item>
       </el-form>
 
@@ -87,99 +60,133 @@
 </template>
 
 <script>
-import { getList } from "@/api/table";
+  import { getList } from "@/api/table";
 
-export default {
-  name: "Dep",
-  data() {
-    return {
-      pageSize: 0,
-      pageTotal: 0,
-      options: [
-        {
-          value: "选项1",
-          label: "黄金糕",
-        },
-        {
-          value: "选项2",
-          label: "双皮奶",
-        },
-      ],
-      form: {
-        order: "",
-        plot: "",
-        account: "",
-        password: "",
-        radio: 1,
-      },
-      list: null,
-      listLoading: true,
-      currentPage: 10,
-      dialog: false,
-      title: "",
-      rules: {
-        account: [
-          { required: true, message: "请输入当前密码", trigger: "blur" },
-        ],
-        password: [
-          { required: true, message: "请输入新密码", trigger: "blur" },
+  export default {
+    name: "Dep",
+    data() {
+      return {
+        pageSize: 15,
+        pageTotal: 0,
+        pageIndex: 1,
+        isModify: false,
+        options: [
           {
-            min: 6,
-            max: 16,
-            message: "长度在 6 到 16 个字符",
-            trigger: "blur",
+            value: "选项1",
+            label: "黄金糕",
+          },
+          {
+            value: "选项2",
+            label: "双皮奶",
           },
         ],
+        form: {
+          deptcode: "",
+          deptname: "",
+          forbidden: 0,
+          deptid: ""
+        },
+        list: null,
+        listLoading: true,
+        currentPage: 10,
+        dialog: false,
+        title: "",
+        rules: {
+          deptcode: [
+            { required: true, message: "请输入部门编号", trigger: "blur" },
+            { type: 'number', message: '请输入数字' }
+          ],
+          deptname: [
+            { required: true, message: "请输入部门名称", trigger: "blur" },
+          ],
+        },
+      };
+    },
+    watch: {
+      pageIndex(index) {
+        this.fetchData(index);
       },
-    };
-  },
-  created() {
-    this.fetchData();
-  },
-  methods: {
-    async fetchData() {
-      this.listLoading = true;
-      let rs = await this.$http({
-        url: `/admin/departmentlist?forbidden=-1`,
-        method: "get",
-      });
-      console.log(rs);
-      this.list = rs.data;
-      this.pageTotal = rs.results;
-      this.listLoading = false;
     },
-    handleSizeChange(val) {
-      console.log(`每页 ${val} 条`);
+    created() {
+      this.fetchData();
     },
-    handleCurrentChange(val) {
-      console.log(`当前页: ${val}`);
+    methods: {
+      async fetchData() {
+        this.listLoading = true;
+        let rs = await this.$http({
+          url: `/admin/departmentlist`,
+          method: "post",
+          data: {
+            forbidden: -1,
+            pageIndex: this.pageIndex,
+          },
+        });
+        console.log(rs);
+        this.list = rs.data;
+        this.pageTotal = rs.total || 7;
+        this.listLoading = false;
+      },
+      handleSizeChange(val) {
+        console.log(`每页 ${val} 条`);
+      },
+      handleCurrentChange(val) {
+        this.pageIndex = val;
+        console.log(`当前页: ${val}`);
+      },
+      async submit() {
+        this.dialog = false;
+   
+        let rs = await this.$http({
+          url: `/admin/${this.isModify ? 'dodeptmod' : 'dodeptnew'}`,
+          method: "post",
+          data: this.form
+        });
+
+        this.$refs.form.resetFields();
+      },
+      cancel() {
+        this.dialog = false;
+        this.$refs.form.resetFields();
+      },
+      clearForm() {
+        this.$refs.form.resetFields();
+      },
+      dispatch(isModify, data) {
+        this.isModify = isModify;
+        this.dialog = true;
+        this.title = isModify ? "编辑部门" : "添加部门";
+
+        if (this.isModify) {
+          this.getDepInfos(data)
+          this.form.deptid = data.deptid
+        }
+      },
+      async getDepInfos(data) {
+        let rs = await this.$http({
+          url: `/admin/deptdetail`,
+          method: "post",
+          data: {
+            deptid: data.deptid,
+            // comid: data.comid
+          },
+        });
+
+
+      }
     },
-    submit() {
-      this.dialog = false;
-      this.$refs.form.resetFields();
-    },
-    cancel() {
-      this.dialog = false;
-      this.$refs.form.resetFields();
-    },
-    dispatch(isModify) {
-      this.dialog = true;
-      this.title = isModify ? "编辑区域" : "添加区域";
-    },
-  },
-};
+  };
 </script>
 
 <style lang="scss" scoped>
-.content-box {
-  & > div {
-    display: flex;
-    .el-input,
-    .el-select,
-    .el-date-editor {
-      width: 20%;
-      margin-right: 30px;
+  .content-box {
+    &>div {
+      display: flex;
+      .el-input,
+      .el-select,
+      .el-date-editor {
+        width: 20%;
+        margin-right: 30px;
+      }
     }
   }
-}
 </style>

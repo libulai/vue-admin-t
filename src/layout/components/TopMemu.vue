@@ -192,8 +192,22 @@
       reset() {
         this.dialog1 = false;
         this.$refs.ruleForm1.resetFields()
+      },
+      async initCompany() {
+        let rs = await this.$http({
+          url: `/admin/companyuserlist`,
+          method: "post",
+          data: {
+            
+          },
+        });
       }
     },
+    async created() {
+      // 公司列表
+      this.initCompany()
+
+    }
   };
 </script>
 

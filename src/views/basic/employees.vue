@@ -75,8 +75,8 @@
             background
             @size-change="handleSizeChange"
             @current-change="handleCurrentChange"
-            :current-page.sync="currentPage"
-            :page-size="pageSize"
+            :current-page.sync="pageIndex"
+            :page-size="pageSize" 
             layout="prev, pager, next, jumper"
             :total="pageTotal"
           ></el-pagination>
@@ -180,7 +180,7 @@ export default {
   name: "Employees",
   data() {
     return {
-      pageSize: 10,
+      pageSize: 15,
       pageTotal: 0,
       pageIndex: 1,
       options: [
@@ -208,7 +208,6 @@ export default {
       },
       list: null,
       listLoading: true,
-      currentPage: 10,
       dialog: false,
       dialog2: false,
       title: "",
@@ -230,8 +229,8 @@ export default {
     };
   },
   watch: {
-    pageIndex(index) {
-      this.fetchData(index);
+    pageIndex() {
+      this.fetchData();
     },
   },
   created() {

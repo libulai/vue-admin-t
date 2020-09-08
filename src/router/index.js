@@ -161,6 +161,12 @@ export const constantRoutes = [
         name: 'Customer',
         component: () => import('@/views/basic/customer'),
         meta: { title: '客户管理', icon: '' }
+      },
+      {
+        path: 'attribute',
+        name: 'Attribute',
+        component: () => import('@/views/basic/attribute'),
+        meta: { title: '公司属性设置', icon: '' }
       }
     ]
   },

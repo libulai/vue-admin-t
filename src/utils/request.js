@@ -56,6 +56,14 @@ service.interceptors.response.use(
         location.reload()
       })
     }
+
+    if (res.success === 'false') {
+      Message({
+        message: res.data,
+        type: 'error',
+        duration: 5 * 1000
+      })
+    }
     // if the custom code is not 20000, it is judged as an error.
     // if (res.code !== 20000) {
     //   Message({

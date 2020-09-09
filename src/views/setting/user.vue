@@ -27,67 +27,66 @@
 
           <el-table-column align="center" label="登录账号">
             <template slot-scope="scope">
-              {{ scope.$index }}
+              {{ scope.row.usercode }}
             </template>
           </el-table-column>
           <el-table-column label="用户姓名" align="center">
             <template slot-scope="scope">
-              {{ scope.row.pageviews }}
+              {{ scope.row.username }}
             </template>
           </el-table-column>
-          <el-table-column class-name="status-col" label="绑定员工" width="380">
+          <el-table-column class-name="status-col" label="绑定员工">
             <template slot-scope="scope">
-              {{ scope.row.title }}
+              {{ scope.row.employee.empname }}
             </template>
           </el-table-column>
           <el-table-column align="center" prop="created_at" label="启用状态">
             <template slot-scope="scope">
-              <span>{{ scope.row.author }}</span>
+              <span>{{ forbidden(scope.row.forbidden) }}</span>
             </template>
           </el-table-column>
           <el-table-column align="center" prop="created_at" label="操作">
-            <template>
-              <span class="detail handle" @click="dispatch(true)">编辑</span>
+            <template slot-scope="scope">
+              <span class="detail handle" @click="dispatch(true, scope.row)">编辑</span>
             </template>
           </el-table-column>
         </el-table>
 
         <div class="pagination">
-          <el-pagination background @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page.sync="currentPage"
-            :page-size="100" layout="prev, pager, next, jumper" :total="1000">
-          </el-pagination>
+          <el-pagination background @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page.sync="pageIndex"
+            :page-size="pageSize" layout="prev, pager, next, jumper" :total="pageTotal"></el-pagination>
         </div>
       </div>
     </div>
 
-    <el-dialog :title="title" :visible.sync="dialog" class="dialog" :close-on-click-modal="false" width="1000px">
+    <el-dialog :title="title" :visible.sync="dialog" class="dialog" :close-on-click-modal="false" width="1000px" @closed="clearForm">
 
       <el-form :model="form" :rules="rules" ref="form" label-width="100px" class="dialog-form">
         <el-form-item label="登陆账号" prop="account">
-          <el-input v-model="form.account" placeholder="请输入用户登录账号"></el-input>
+          <el-input v-model="form.usercode" placeholder="请输入用户登录账号"></el-input>
         </el-form-item>
         <el-form-item label="登陆密码" prop="password">
           <el-input v-model="form.password" placeholder="请输入用户登录密码"></el-input>
         </el-form-item>
         <el-form-item label="用户姓名">
-          <el-input v-model="form.order" placeholder="请输入真实姓名"></el-input>
+          <el-input v-model="form.username" placeholder="请输入真实姓名"></el-input>
         </el-form-item>
         <el-form-item label="绑定员工">
-          <el-select v-model="form.account" placeholder="选择员工">
+          <el-select v-model="form.username" placeholder="选择员工">
             <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value">
             </el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="启用状态">
-          <el-radio v-model="form.radio" label="1">备选项</el-radio>
-          <el-radio v-model="form.radio" label="2">备选项</el-radio>
+          <el-radio v-model="form.forbidden" :label="0">启用</el-radio>
+          <el-radio v-model="form.forbidden" :label="1">关闭</el-radio>
         </el-form-item>
-        <el-form-item label="所属公司">
+        <!-- <el-form-item label="所属公司">
           <el-transfer v-model="value" :data="data"></el-transfer>
         </el-form-item>
         <el-form-item label="角色">
           <el-transfer v-model="value" :data="data"></el-transfer>
-        </el-form-item>
+        </el-form-item> -->
       </el-form>
 
       <div slot="footer" class="dialog-footer">
@@ -99,12 +98,14 @@
 </template>
 
 <script>
-  import { getList } from "@/api/table";
-
   export default {
     name: 'User',
     data() {
       return {
+        pageSize: 15,
+        pageTotal: 0,
+        pageIndex: 1,
+        isModify: false,
         options: [
           {
             value: "选项1",
@@ -116,11 +117,11 @@
           },
         ],
         form: {
-          order: "",
-          plot: "",
-          account: "",
+          usercode: "",
+          username: "",
+          forbidden: 0,
           password: "",
-          radio: 1
+          userid: ''
         },
         list: null,
         listLoading: true,
@@ -141,31 +142,82 @@
     created() {
       this.fetchData();
     },
+    computed: {
+      forbidden() {
+        return function (val) {
+          return val == 0 ? '启用' : '关闭'
+        }
+      }
+    },
+    watch: {
+      pageIndex(index) {
+        if (index) this.fetchData(index);
+      },
+    },
     methods: {
-      fetchData() {
+      async fetchData() {
         this.listLoading = true;
-        getList().then((response) => {
-          this.list = response.data.items;
-          this.listLoading = false;
+        let rs = await this.$http({
+          url: `/admin/userlist`,
+          method: "post",
+          data: {
+            usercode: '',
+            username: '',
+            pageIndex: this.pageIndex,
+          },
         });
+       
+        this.list = rs.data;
+        this.pageTotal = rs.total || 40;
+        this.listLoading = false;
       },
       handleSizeChange(val) {
         console.log(`每页 ${val} 条`);
       },
       handleCurrentChange(val) {
+        this.pageIndex = val;
         console.log(`当前页: ${val}`);
       },
-      submit() {
+      async submit() {
         this.dialog = false;
+
+        let rs = await this.$http({
+          url: `/admin/${this.isModify ? 'dousermod' : 'dousernew'}`,
+          method: "post",
+          data: this.form
+        });
+
         this.$refs.form.resetFields()
+        this.fetchData()
+      },
+      clearForm() {
+        this.$refs.form.resetFields();
       },
       cancel() {
         this.dialog = false;
         this.$refs.form.resetFields()
       },
-      dispatch(isModify) {
+      dispatch(isModify, data) {
         this.dialog = true;
         this.title = isModify ? "编辑用户" : "添加用户"
+        this.isModify = isModify;
+
+        if (this.isModify) {
+          this.getDepInfos(data)
+          this.form.userid = data.userid
+        }
+      },
+      async getDepInfos(data) {
+        let rs = await this.$http({
+          url: `/admin/userdetail?userid=${data.userid}`,
+          method: "get"
+        });
+
+        for (let i in this.form) {
+          this.form[i] = rs.data[0][i]
+        }
+
+        Object.assign(this.form, rs.data[0])
       }
     },
   };

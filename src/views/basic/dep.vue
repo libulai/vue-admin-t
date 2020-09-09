@@ -34,7 +34,7 @@
       </div>
     </div>
 
-    <el-dialog :title="title" :visible.sync="dialog" class="dialog" :close-on-click-modal="false" @close="clearForm">
+    <el-dialog :title="title" :visible.sync="dialog" class="dialog" :close-on-click-modal="false" @closed="clearForm">
       <el-form :model="form" :rules="rules" ref="form" label-width="100px" class="dialog-form">
         <el-form-item label="公司">
           <span class="text">上海分公司</span>
@@ -60,7 +60,6 @@
 </template>
 
 <script>
-  import { getList } from "@/api/table";
 
   export default {
     name: "Dep",
@@ -103,9 +102,11 @@
       };
     },
     watch: {
-      pageIndex(index) {
-        this.fetchData(index);
-      },
+      pageIndex: {
+        handler: function (index) {
+          if (index) this.fetchData(index);
+        }
+      }
     },
     created() {
       this.fetchData();
@@ -121,9 +122,9 @@
             pageIndex: this.pageIndex,
           },
         });
-        console.log(rs);
+       
         this.list = rs.data;
-        this.pageTotal = rs.total || 7;
+        this.pageTotal = rs.total || 40;
         this.listLoading = false;
       },
       handleSizeChange(val) {
@@ -135,7 +136,6 @@
       },
       async submit() {
         this.dialog = false;
-   
         let rs = await this.$http({
           url: `/admin/${this.isModify ? 'dodeptmod' : 'dodeptnew'}`,
           method: "post",
@@ -143,6 +143,7 @@
         });
 
         this.$refs.form.resetFields();
+        this.fetchData()
       },
       cancel() {
         this.dialog = false;
@@ -163,15 +164,15 @@
       },
       async getDepInfos(data) {
         let rs = await this.$http({
-          url: `/admin/deptdetail`,
-          method: "post",
-          data: {
-            deptid: data.deptid,
-            // comid: data.comid
-          },
+          url: `/admin/deptdetail?deptid=${data.deptid}`,
+          method: "get"
         });
 
-
+        for (let i in this.form) {
+          this.form[i] = rs.data[0][i]
+        }
+     
+        this.form.deptcode = Number(this.form.deptcode)
       }
     },
   };

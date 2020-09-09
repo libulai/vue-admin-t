@@ -15,14 +15,22 @@ import {
 const getDefaultState = () => {
   return {
     token: getToken(),
-    name: '',
-    avatar: '',
+    // name: '',
+    // avatar: '',
+    user: {
+      comid: 0,
+      comname: "",
+      roleid: 0,
+      rolename: "",
+      userid: 0,
+      username: ""
+    },
     company: {
       compid: '',
       compName: ''
     },
     role: {
-      
+      roleid: ''
     }
   }
 }
@@ -46,6 +54,21 @@ const mutations = {
     state.company = {
       compid: data.comid,
       compName: data.comname
+    }
+  },
+  SET_Role: (state, data) => {
+    state.role = {
+      roleid: data.roleid
+    }
+  },
+  SET_User: (state, data) => {
+    state.user = {
+      comid: data.comid,
+      comname: data.comname,
+      roleid: data.roleid,
+      rolename: data.rolename,
+      userid: data.userid,
+      username: data.username
     }
   }
 }
@@ -79,6 +102,18 @@ const actions = {
     commit
   }, data) {
     commit('SET_Company', data)
+  },
+
+  changeRole({
+    commit
+  }, data) {
+    commit('SET_Role', data)
+  },
+
+  changeUserinfo({
+    commit
+  }, data) {
+    commit('SET_User', data)
   },
 
   // get user info

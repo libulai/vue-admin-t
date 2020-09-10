@@ -6,9 +6,9 @@
       </div>
       <div class="content-box">
         <div>
-          <el-input v-model="form.order" placeholder="请输入工号"></el-input>
-          <el-input v-model="form.order" placeholder="请输入姓名"></el-input>
-          <el-button type="warning" class="com-btn">查询</el-button>
+          <el-input v-model="form.empname" placeholder="请输入工号"></el-input>
+          <el-input v-model="form.empname" placeholder="请输入姓名"></el-input>
+          <el-button type="warning" class="com-btn" @click="fetchData">查询</el-button>
         </div>
       </div>
     </div>
@@ -21,70 +21,55 @@
       </div>
 
       <div>
-        <el-table
-          v-loading="listLoading"
-          :data="list"
-          element-loading-text="Loading"
-          fit
-          highlight-current-row
-        >
-          <el-table-column type="selection" width="55"></el-table-column>
-
+        <el-table v-loading="listLoading" :data="list" element-loading-text="Loading" fit highlight-current-row>
           <el-table-column align="center" label="工号">
-            <template slot-scope="scope">{{ scope.$index }}</template>
+            <template slot-scope="scope">{{ scope.row.empcode }}</template>
           </el-table-column>
           <el-table-column label="姓名" align="center">
             <template slot-scope="scope">{{ scope.row.empname }}</template>
           </el-table-column>
           <el-table-column align="center" prop="created_at" label="部门">
             <template slot-scope="scope">
-              <span>{{ scope.row.author }}</span>
+              <span>{{ scope.row.dept.deptname }}</span>
             </template>
           </el-table-column>
           <el-table-column align="center" prop="created_at" label="属性">
             <template slot-scope="scope">
-              <span>{{ scope.row.author }}</span>
+              <span>{{ scope.row.empattr }}</span>
             </template>
           </el-table-column>
           <el-table-column align="center" prop="created_at" label="手机">
             <template slot-scope="scope">
-              <span>{{ scope.row.author }}</span>
+              <span>{{ scope.row.mobilephone || '/' }}</span>
             </template>
           </el-table-column>
           <el-table-column align="center" prop="created_at" label="邮箱">
             <template slot-scope="scope">
-              <span>{{ scope.row.author }}</span>
+              <span>{{ scope.row.email || '/'}}</span>
             </template>
           </el-table-column>
           <el-table-column align="center" prop="created_at" label="编号">
             <template slot-scope="scope">
-              <span>{{ scope.row.author }}</span>
+              <span>{{ scope.row.jlybh || '/'}}</span>
             </template>
           </el-table-column>
           <el-table-column align="center" prop="created_at" label="操作" width="200">
-            <template>
+            <template slot-scope="scope">
               <span class="detail handle" @click="dispatch(true)" style="margin-right: 20px">编辑</span>
-              <!-- <span class="detail handle" @click="handle(true)">启用</span> -->
-              <span class="detail handle" @click="handle(false)">停用</span>
+              <span class="detail handle" @click="handle(true,scope.row)" v-if="scope.row.forbidden==1">启用</span>
+              <span class="detail handle" @click="handle(false)" v-if="scope.row.forbidden==0">停用</span>
             </template>
           </el-table-column>
         </el-table>
 
         <div class="pagination">
-          <el-pagination
-            background
-            @size-change="handleSizeChange"
-            @current-change="handleCurrentChange"
-            :current-page.sync="pageIndex"
-            :page-size="pageSize" 
-            layout="prev, pager, next, jumper"
-            :total="pageTotal"
-          ></el-pagination>
+          <el-pagination background @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page.sync="pageIndex"
+            :page-size="pageSize" layout="prev, pager, next, jumper" :total="pageTotal"></el-pagination>
         </div>
       </div>
     </div>
 
-    <el-dialog :title="title" :visible.sync="dialog" class="dialog" :close-on-click-modal="false">
+    <el-dialog :title="title" :visible.sync="dialog" class="dialog" :close-on-click-modal="false" @closed="clearForm">
       <el-form :model="form" :rules="rules" ref="form" label-width="100px" class="dialog-form">
         <el-form-item label="公司">
           <span class="text">上海分公司</span>
@@ -97,32 +82,17 @@
         </el-form-item>
         <el-form-item label="属性">
           <el-select v-model="form.account" placeholder="请选择">
-            <el-option
-              v-for="item in options"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
-            ></el-option>
+            <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="员工级别">
           <el-select v-model="form.account" placeholder="请选择">
-            <el-option
-              v-for="item in options"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
-            ></el-option>
+            <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="学历">
           <el-select v-model="form.account" placeholder="请选择">
-            <el-option
-              v-for="item in options"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
-            ></el-option>
+            <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="在职时间">
@@ -149,19 +119,19 @@
       </div>
     </el-dialog>
 
-    <el-dialog :title="title2" :visible.sync="dialog2" class="dialog" :close-on-click-modal="false">
+    <el-dialog :title="title2" :visible.sync="dialog2" class="dialog" :close-on-click-modal="false" @closed="clearForm">
       <el-form :model="form2" :rules="rules" ref="form2" label-width="100px" class="dialog-form">
         <el-form-item label="公司">
           <span class="text">上海分公司</span>
         </el-form-item>
-        <el-form-item label="姓名">
+        <!-- <el-form-item label="姓名">
           <span class="text">zoo</span>
-        </el-form-item>
+        </el-form-item> -->
         <el-form-item label="离岗时间">
-          <el-date-picker v-model="form2.plot" type="date" placeholder="选择日期"></el-date-picker>
+          <el-date-picker v-model="form2.leavedate" type="date" placeholder="选择日期"></el-date-picker>
         </el-form-item>
         <el-form-item label="离岗原因">
-          <el-input v-model="form2.password" placeholder="请填写原因"></el-input>
+          <el-input v-model="form2.leavereason" placeholder="请填写原因"></el-input>
         </el-form-item>
       </el-form>
 
@@ -170,135 +140,162 @@
         <el-button type="primary" @click="submit2">保存</el-button>
       </div>
     </el-dialog>
+
+    <el-dialog title="提示" :visible.sync="dialog3" width="30%">
+      <span>确定启用吗？</span>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialog3 = false">取 消</el-button>
+        <el-button type="primary" @click="start">确 定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
 <script>
-import { getList } from "@/api/table";
-
-export default {
-  name: "Employees",
-  data() {
-    return {
-      pageSize: 15,
-      pageTotal: 0,
-      pageIndex: 1,
-      options: [
-        {
-          value: "选项1",
-          label: "黄金糕",
-        },
-        {
-          value: "选项2",
-          label: "双皮奶",
-        },
-      ],
-      form: {
-        order: "",
-        plot: "",
-        account: "",
-        password: "",
-        radio: 1,
-      },
-      form2: {
-        order: "",
-        plot: "",
-        account: "",
-        password: "",
-      },
-      list: null,
-      listLoading: true,
-      dialog: false,
-      dialog2: false,
-      title: "",
-      title2: "停用",
-      rules: {
-        account: [
-          { required: true, message: "请输入当前密码", trigger: "blur" },
-        ],
-        password: [
-          { required: true, message: "请输入新密码", trigger: "blur" },
+  export default {
+    name: "Employees",
+    data() {
+      return {
+        pageSize: 15,
+        pageTotal: 0,
+        pageIndex: 1,
+        options: [
           {
-            min: 6,
-            max: 16,
-            message: "长度在 6 到 16 个字符",
-            trigger: "blur",
+            value: "选项1",
+            label: "黄金糕",
+          },
+          {
+            value: "选项2",
+            label: "双皮奶",
           },
         ],
+        selected: '',
+        form: {
+          empcode: "",
+          empid: "",
+          empname: "",
+          deptid: "",
+          empattr: '',
+          emplevel: '',
+          education: '',
+          hiredate: '',
+          mobilephone: '',
+          email: '',
+          destempid: '',
+          register: '',
+          jlybh: '',
+        },
+        form2: {
+          empid: "",
+          leavereason: "",
+          leavedate: "",
+        },
+        list: null,
+        listLoading: true,
+        dialog: false,
+        dialog2: false,
+        dialog3: false,
+        title: "",
+        title2: "停用",
+        rules: {
+          account: [
+            { required: true, message: "请输入当前密码", trigger: "blur" },
+          ],
+          password: [
+            { required: true, message: "请输入新密码", trigger: "blur" },
+            {
+              min: 6,
+              max: 16,
+              message: "长度在 6 到 16 个字符",
+              trigger: "blur",
+            },
+          ],
+        },
+      };
+    },
+    watch: {
+      pageIndex(index) {
+        if (index) this.fetchData(index);
       },
-    };
-  },
-  watch: {
-    pageIndex() {
+    },
+    created() {
       this.fetchData();
     },
-  },
-  created() {
-    this.fetchData();
-  },
-  methods: {
-    async fetchData() {
-      this.listLoading = true;
-      let rs = await this.$http({
-        url: `/admin/emplist`,
-        method: "post",
-        data: {
-          forbidden: 0,
-          pageIndex: this.pageIndex,
-        },
-      });
-      console.log(rs);
-      this.list = rs.data;
-      this.pageTotal = rs.total;
-      this.listLoading = false;
-    },
-    handleSizeChange(val) {
-      console.log(`每页 ${val} 条`);
-    },
-    handleCurrentChange(val) {
-      this.pageIndex = val;
-      console.log(`当前页: ${val}`);
-    },
-    submit() {
-      this.dialog = false;
-      this.$refs.form.resetFields();
-    },
-    submit2() {
-      this.dialog2 = false;
-      this.$refs.form2.resetFields();
-    },
-    cancel() {
-      this.dialog = false;
-      this.$refs.form.resetFields();
-    },
-    cancel2() {
-      this.dialog2 = false;
-      this.$refs.form2.resetFields();
-    },
-    dispatch(isModify) {
-      this.dialog = true;
-      this.title = isModify ? "编辑员工" : "新增员工";
-    },
-    handle(flag) {
-      if (flag) {
-      } else {
-        this.dialog2 = true;
+    methods: {
+      async fetchData() {
+        this.listLoading = true;
+        let rs = await this.$http({
+          url: `/admin/emplist?empname=${this.form.empname}&deptid=${this.form.deptid}&forbidden=-1&page.pageIndex=${this.pageIndex}`,
+          method: "get"
+        });
+
+        this.list = rs.data;
+        this.pageTotal = rs.total;
+        this.listLoading = false;
+      },
+      handleSizeChange(val) {
+        console.log(`每页 ${val} 条`);
+      },
+      handleCurrentChange(val) {
+        this.pageIndex = val;
+        console.log(`当前页: ${val}`);
+      },
+      submit() {
+        this.dialog = false;
+        this.$refs.form.resetFields();
+      },
+      async submit2() {
+        this.dialog2 = false;
+        let rs = await this.$http({
+          url: `/admin/doempforbidden`,
+          method: "post",
+          data: this.form2
+        });
+
+        if (rs.success == 'true') this.$message({
+          message: '保存成功',
+          type: 'success'
+        })
+
+        this.$refs.form.resetFields();
+        this.fetchData()
+      },
+      cancel() {
+        this.dialog = false;
+        this.$refs.form.resetFields();
+      },
+      cancel2() {
+        this.dialog2 = false;
+        this.$refs.form2.resetFields();
+      },
+      dispatch(isModify) {
+        this.dialog = true;
+        this.title = isModify ? "编辑员工" : "新增员工";
+      },
+      handle(flag) {
+        if (flag) {
+          this.dialog3 = true
+        } else {
+          this.dialog2 = true;
+        }
+      },
+      async start() {
+
       }
     },
-  },
-};
+  };
 </script>
 
 <style lang="scss" scoped>
-.content-box {
-  & > div {
-    display: flex;
-    .el-input,
-    .el-select,
-    .el-date-editor {
-      width: 20%;
-      margin-right: 30px;
+  .content-box {
+    &>div {
+      display: flex;
+      .el-input,
+      .el-select,
+      .el-date-editor {
+        width: 20%;
+        margin-right: 30px;
+      }
     }
   }
-}
 </style>

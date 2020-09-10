@@ -75,16 +75,6 @@ export default {
       pageTotal: 0,
       pageIndex: 1,
       isModify: false,
-      options: [
-        {
-          value: "选项1",
-          label: "黄金糕",
-        },
-        {
-          value: "选项2",
-          label: "双皮奶",
-        },
-      ],
       form: {
         deptcode: "",
         deptname: "",

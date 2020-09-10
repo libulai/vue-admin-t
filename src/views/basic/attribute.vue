@@ -93,7 +93,7 @@
     data() {
       let comid = this.$store.state.user.company.compid;
       return {
-        form: { "comid":comid, "wechatremend": "预约成功！！", "comid": 5, "score": 1000, "cscore": 1000, "wechatflag": 0, "mallflag": 0, "gdsh": 0, "applink": 0, "birthdaymessage": 0, "sgdx": 0, "sgdxc": 0, "wgfsx": 0, "scorelimit": 1, "telephone": "0576-85317062", "ratio": 0, "scoresms": 0, "hour": 12, "afjslx": 0, "cfjslx": 0 },
+        form: { "comid": comid, "wechatremend": "预约成功！！", "comid": 5, "score": 1000, "cscore": 1000, "wechatflag": 0, "mallflag": 0, "gdsh": 0, "applink": 0, "birthdaymessage": 0, "sgdx": 0, "sgdxc": 0, "wgfsx": 0, "scorelimit": 1, "telephone": "0576-85317062", "ratio": 0, "scoresms": 0, "hour": 12, "afjslx": 0, "cfjslx": 0 },
         rules: {
           deptcode: [
             { required: true, message: "请输入部门编号", trigger: "blur" },
@@ -124,7 +124,10 @@
           data: this.form
         });
 
-
+        if (rs.success == 'true') this.$message({
+          message: '保存成功',
+          type: 'success'
+        })
       }
     },
   };

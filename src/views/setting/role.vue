@@ -6,8 +6,8 @@
       </div>
       <div class="content-box">
         <div>
-          <el-input v-model="form.order" placeholder="请输入角色名称"></el-input>
-          <el-button type="warning" class="com-btn">查询</el-button>
+          <el-input v-model="form.rolename" placeholder="请输入角色名称"></el-input>
+          <el-button type="warning" class="com-btn" @click="fetchData">查询</el-button>
         </div>
       </div>
     </div>
@@ -21,40 +21,36 @@
 
       <div>
         <el-table v-loading="listLoading" :data="list" element-loading-text="Loading" fit highlight-current-row>
-          <el-table-column type="selection" width="55">
-          </el-table-column>
-
           <el-table-column align="center" label="角色名称">
             <template slot-scope="scope">
-              {{ scope.$index }}
+              {{ scope.row.rolename }}
             </template>
           </el-table-column>
           <el-table-column label="级别" align="center">
             <template slot-scope="scope">
-              {{ scope.row.pageviews }}
+              {{ scope.row.rolelevel }}
             </template>
           </el-table-column>
           <el-table-column align="center" prop="created_at" label="是否对外">
             <template slot-scope="scope">
-              <span>{{ scope.row.author }}</span>
+              <span>{{ scope.row.rolestatus==0?'是':'否' }}</span>
             </template>
           </el-table-column>
           <el-table-column align="center" prop="created_at" label="操作">
             <template>
-              <span class="detail handle" @click="dispatch(true)">编辑</span>
+              <span class="detail handle" @click="dispatch(true, scope.row)">编辑</span>
             </template>
           </el-table-column>
         </el-table>
 
         <div class="pagination">
-          <el-pagination background @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page.sync="currentPage"
-            :page-size="100" layout="prev, pager, next, jumper" :total="1000">
-          </el-pagination>
+          <el-pagination background @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page.sync="pageIndex"
+            :page-size="pageSize" layout="prev, pager, next, jumper" :total="pageTotal"></el-pagination>
         </div>
       </div>
     </div>
 
-    <el-dialog :title="title" :visible.sync="dialog" class="dialog" :close-on-click-modal="false" width="1000px">
+    <el-dialog :title="title" :visible.sync="dialog" class="dialog" :close-on-click-modal="false" width="1000px" @closed="clearForm">
 
       <el-form :model="form" :rules="rules" ref="form" label-width="100px" class="dialog-form">
         <el-form-item label="角色名称" prop="account">
@@ -84,32 +80,24 @@
 </template>
 
 <script>
-  import { getList } from "@/api/table";
-
   export default {
     name: 'Role',
     data() {
       return {
-        options: [
-          {
-            value: "选项1",
-            label: "黄金糕",
-          },
-          {
-            value: "选项2",
-            label: "双皮奶",
-          },
-        ],
+        pageSize: 15,
+        pageTotal: 0,
+        pageIndex: 1,
+        isModify: false,
+        comp: [],
+        role: [],
         form: {
-          order: "",
-          plot: "",
-          account: "",
-          password: "",
-          radio: 1
+          roleid: "",
+          rolename: "",
+          rolelevel: "",
+          password: ""
         },
         list: null,
         listLoading: true,
-        currentPage: 10,
         dialog: false,
         title: '',
         rules: {
@@ -126,31 +114,124 @@
     created() {
       this.fetchData();
     },
+    watch: {
+      pageIndex(index) {
+        if (index) this.fetchData(index);
+      },
+    },
     methods: {
-      fetchData() {
+      async fetchData() {
         this.listLoading = true;
-        getList().then((response) => {
-          this.list = response.data.items;
-          this.listLoading = false;
+        let rs = await this.$http({
+          url: `/admin/rolelist?rolename=${this.form.rolename}&page.pageIndex=${this.pageIndex}`,
+          method: "get"
         });
+
+        this.list = rs.data;
+        this.pageTotal = rs.total;
+        this.listLoading = false;
       },
       handleSizeChange(val) {
         console.log(`每页 ${val} 条`);
       },
       handleCurrentChange(val) {
+        this.pageIndex = val;
         console.log(`当前页: ${val}`);
       },
-      submit() {
+      async submit() {
         this.dialog = false;
+
+        this.form.comids = this.form.comids.join(',')
+        this.form.roleids = this.form.roleids.join(',')
+
+        let rs = await this.$http({
+          url: `/admin/${this.isModify ? 'dousermod' : 'dousernew'}`,
+          method: "post",
+          data: this.form
+        });
+
+        if (rs.success == 'true') this.$message({
+          message: '保存成功',
+          type: 'success'
+        })
+
         this.$refs.form.resetFields()
+        this.fetchData()
+      },
+      clearForm() {
+        this.$refs.form.resetFields();
       },
       cancel() {
         this.dialog = false;
         this.$refs.form.resetFields()
       },
-      dispatch(isModify) {
+      dispatch(isModify, data) {
         this.dialog = true;
         this.title = isModify ? "编辑角色" : "添加角色"
+        this.isModify = isModify;
+
+        if (this.isModify) {
+          this.getDepInfos(data)
+          this.form.userid = data.userid
+        }
+
+        this.initComp()
+        this.initRole()
+      },
+      async getDepInfos(data) {
+        let rs = await this.$http({
+          url: `/admin/userdetail?userid=${data.userid}`,
+          method: "get"
+        });
+
+        for (let i in this.form) {
+          this.form[i] = rs.data[0][i]
+        }
+
+        Object.assign(this.form, rs.data[0])
+      },
+      async initComp(data) {
+        let rs = await this.$http({
+          url: `/admin/companyuserlist`,
+          method: "get",
+          params: {
+            userid: "",
+          },
+        });
+
+        const generateData = _ => {
+          let data = [];
+          let d = rs.data
+          for (let i = 0; i < d.length; i++) {
+            data.push({
+              key: d[i].comid,
+              label: d[i].comname
+            });
+          }
+          return data;
+        };
+
+        this.comp = generateData()
+      },
+      async initRole(data) {
+        let rs = await this.$http({
+          url: `/admin/roleuserlist`,
+          method: "get"
+        });
+
+        const generateData = _ => {
+          let data = [];
+          let d = rs.data
+          for (let i = 0; i < d.length; i++) {
+            data.push({
+              key: d[i].roleid,
+              label: d[i].rolename
+            });
+          }
+          return data;
+        };
+
+        this.role = generateData()
       }
     },
   };

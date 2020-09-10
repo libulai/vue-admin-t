@@ -6,9 +6,9 @@
       </div>
       <div class="content-box">
         <div>
-          <el-input v-model="form.order" placeholder="请输入姓名"></el-input>
-          <el-input v-model="form.order" placeholder="请输入登录账号"></el-input>
-          <el-button type="warning" class="com-btn">查询</el-button>
+          <el-input v-model="form.username" placeholder="请输入姓名"></el-input>
+          <el-input v-model="form.usercode" placeholder="请输入登录账号"></el-input>
+          <el-button type="warning" class="com-btn" @click="fetchData">查询</el-button>
         </div>
       </div>
     </div>
@@ -22,8 +22,8 @@
 
       <div>
         <el-table v-loading="listLoading" :data="list" element-loading-text="Loading" fit highlight-current-row>
-          <el-table-column type="selection" width="55">
-          </el-table-column>
+          <!-- <el-table-column type="selection" width="55">
+          </el-table-column> -->
 
           <el-table-column align="center" label="登录账号">
             <template slot-scope="scope">
@@ -158,17 +158,19 @@
       async fetchData() {
         this.listLoading = true;
         let rs = await this.$http({
-          url: `/admin/userlist`,
-          method: "post",
-          data: {
-            usercode: '',
-            username: '',
-            pageIndex: this.pageIndex,
-          },
+          url: `/admin/userlist?usercode=${this.form.usercode}&username=${this.form.username}&page.pageIndex=${this.pageIndex}`,
+          method: "get",
+          // params: {
+          //   usercode: this.form.usercode,
+          //   username: this.form.username,
+          //   page[]:{
+          //     pageIndex: this.pageIndex
+          //   }
+          // },
         });
        
         this.list = rs.data;
-        this.pageTotal = rs.total || 40;
+        this.pageTotal = rs.total;
         this.listLoading = false;
       },
       handleSizeChange(val) {

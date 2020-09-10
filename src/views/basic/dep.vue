@@ -27,10 +27,10 @@
           </el-table-column>
         </el-table>
 
-        <div class="pagination">
+        <!-- <div class="pagination">
           <el-pagination background @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page.sync="pageIndex"
             :page-size="pageSize" layout="prev, pager, next, jumper" :total="pageTotal"></el-pagination>
-        </div>
+        </div> -->
       </div>
     </div>
 
@@ -40,7 +40,7 @@
           <span class="text">上海分公司</span>
         </el-form-item>
         <el-form-item label="部门编号" prop="deptcode">
-          <el-input v-model.number="form.deptcode" placeholder="请输入"></el-input>
+          <el-input v-model="form.deptcode" placeholder="请输入"></el-input>
         </el-form-item>
         <el-form-item label="部门名称" prop="deptname">
           <el-input v-model="form.deptname" placeholder="请输入"></el-input>
@@ -60,134 +60,143 @@
 </template>
 
 <script>
+import Qs from 'qs'
+import axios from 'axios'
+import {
+  getToken
+} from '@/utils/auth'
 
-  export default {
-    name: "Dep",
-    data() {
-      return {
-        pageSize: 15,
-        pageTotal: 0,
-        pageIndex: 1,
-        isModify: false,
-        options: [
-          {
-            value: "选项1",
-            label: "黄金糕",
-          },
-          {
-            value: "选项2",
-            label: "双皮奶",
-          },
+axios.defaults.headers.common['token'] = getToken();
+export default {
+  name: "Dep",
+  data() {
+    return {
+      pageSize: 15,
+      pageTotal: 0,
+      pageIndex: 1,
+      isModify: false,
+      options: [
+        {
+          value: "选项1",
+          label: "黄金糕",
+        },
+        {
+          value: "选项2",
+          label: "双皮奶",
+        },
+      ],
+      form: {
+        deptcode: "",
+        deptname: "",
+        forbidden: 0,
+        deptid: ""
+      },
+      list: null,
+      listLoading: true,
+      currentPage: 10,
+      dialog: false,
+      title: "",
+      rules: {
+        deptcode: [
+          { required: true, message: "请输入部门编号", trigger: "blur" },
         ],
-        form: {
-          deptcode: "",
-          deptname: "",
-          forbidden: 0,
-          deptid: ""
+        deptname: [
+          { required: true, message: "请输入部门名称", trigger: "blur" },
+        ],
+      },
+    };
+  },
+  watch: {
+    pageIndex: {
+      handler: function (index) {
+        if (index) this.fetchData(index);
+      }
+    }
+  },
+  created() {
+    this.fetchData();
+  },
+  methods: {
+    async fetchData() {
+      this.listLoading = true;
+      let rs = await this.$http({
+        url: `/admin/departmentlist`,
+        method: 'get',
+        params: {
+          forbidden: -1
         },
-        list: null,
-        listLoading: true,
-        currentPage: 10,
-        dialog: false,
-        title: "",
-        rules: {
-          deptcode: [
-            { required: true, message: "请输入部门编号", trigger: "blur" },
-            { type: 'number', message: '请输入数字' }
-          ],
-          deptname: [
-            { required: true, message: "请输入部门名称", trigger: "blur" },
-          ],
-        },
-      };
+      });
+
+      this.list = rs.data;
+      this.pageTotal = rs.total || 40;
+      this.listLoading = false;
     },
-    watch: {
-      pageIndex: {
-        handler: function (index) {
-          if (index) this.fetchData(index);
-        }
+    handleSizeChange(val) {
+      console.log(`每页 ${val} 条`);
+    },
+    handleCurrentChange(val) {
+      this.pageIndex = val;
+      console.log(`当前页: ${val}`);
+    },
+    async submit() {
+      this.dialog = false;
+      let rs = await this.$http({
+        url: `/admin/${this.isModify ? 'dodeptmod' : 'dodeptnew'}`,
+        method: "post",
+        data: this.form
+      });
+
+      if (rs.success=='true') this.$message({
+        message: '保存成功',
+        type: 'success'
+      })
+
+      this.$refs.form.resetFields();
+      this.fetchData()
+    },
+    cancel() {
+      this.dialog = false;
+      this.$refs.form.resetFields();
+    },
+    clearForm() {
+      this.$refs.form.resetFields();
+    },
+    dispatch(isModify, data) {
+      this.isModify = isModify;
+      this.dialog = true;
+      this.title = isModify ? "编辑部门" : "添加部门";
+
+      if (this.isModify) {
+        this.getDepInfos(data)
+        this.form.deptid = data.deptid
       }
     },
-    created() {
-      this.fetchData();
-    },
-    methods: {
-      async fetchData() {
-        this.listLoading = true;
-        let rs = await this.$http({
-          url: `/admin/departmentlist`,
-          method: "post",
-          data: {
-            forbidden: -1,
-            pageIndex: this.pageIndex,
-          },
-        });
-       
-        this.list = rs.data;
-        this.pageTotal = rs.total || 40;
-        this.listLoading = false;
-      },
-      handleSizeChange(val) {
-        console.log(`每页 ${val} 条`);
-      },
-      handleCurrentChange(val) {
-        this.pageIndex = val;
-        console.log(`当前页: ${val}`);
-      },
-      async submit() {
-        this.dialog = false;
-        let rs = await this.$http({
-          url: `/admin/${this.isModify ? 'dodeptmod' : 'dodeptnew'}`,
-          method: "post",
-          data: this.form
-        });
+    async getDepInfos(data) {
+      let rs = await this.$http({
+        url: `/admin/deptdetail?deptid=${data.deptid}`,
+        method: "get"
+      });
 
-        this.$refs.form.resetFields();
-        this.fetchData()
-      },
-      cancel() {
-        this.dialog = false;
-        this.$refs.form.resetFields();
-      },
-      clearForm() {
-        this.$refs.form.resetFields();
-      },
-      dispatch(isModify, data) {
-        this.isModify = isModify;
-        this.dialog = true;
-        this.title = isModify ? "编辑部门" : "添加部门";
-
-        if (this.isModify) {
-          this.getDepInfos(data)
-          this.form.deptid = data.deptid
-        }
-      },
-      async getDepInfos(data) {
-        let rs = await this.$http({
-          url: `/admin/deptdetail?deptid=${data.deptid}`,
-          method: "get"
-        });
-
-        for (let i in this.form) {
-          this.form[i] = rs.data[0][i]
-        }
-     
-        this.form.deptcode = Number(this.form.deptcode)
+      for (let i in this.form) {
+        this.form[i] = rs.data[0][i]
       }
-    },
-  };
+
+      // this.form.deptcode = Number(this.form.deptcode)
+    }
+  },
+};
 </script>
 
 <style lang="scss" scoped>
-  .content-box {
-    &>div {
-      display: flex;
-      .el-input,
-      .el-select,
-      .el-date-editor {
-        width: 20%;
-        margin-right: 30px;
-      }
+.content-box {
+  & > div {
+    display: flex;
+    .el-input,
+    .el-select,
+    .el-date-editor {
+      width: 20%;
+      margin-right: 30px;
     }
   }
+}
 </style>

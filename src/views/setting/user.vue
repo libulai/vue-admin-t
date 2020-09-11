@@ -59,7 +59,6 @@
     </div>
 
     <el-dialog :title="title" :visible.sync="dialog" class="dialog" :close-on-click-modal="false" width="1000px" @closed="clearForm">
-
       <el-form :model="form" :rules="rules" ref="form" label-width="100px" class="dialog-form">
         <el-form-item label="登陆账号" prop="usercode">
           <el-input v-model="form.usercode" placeholder="请输入用户登录账号"></el-input>
@@ -67,7 +66,7 @@
         <el-form-item label="登陆密码" prop="passwd">
           <el-input v-model="form.passwd" placeholder="请输入用户登录密码"></el-input>
         </el-form-item>
-        <el-form-item label="用户姓名">
+        <el-form-item label="用户姓名" prop="username">
           <el-input v-model="form.username" placeholder="请输入真实姓名"></el-input>
         </el-form-item>
         <!-- <el-form-item label="绑定员工">
@@ -76,14 +75,14 @@
             </el-option>
           </el-select>
         </el-form-item> -->
-        <el-form-item label="启用状态">
+        <el-form-item label="启用状态" prop="forbidden">
           <el-radio v-model="form.forbidden" :label="0">启用</el-radio>
           <el-radio v-model="form.forbidden" :label="1">关闭</el-radio>
         </el-form-item>
-        <el-form-item label="所属公司">
+        <el-form-item label="所属公司" prop="comids">
           <el-transfer v-model="form.comids" :data="comp"></el-transfer>
         </el-form-item>
-        <el-form-item label="角色">
+        <el-form-item label="角色" prop="roleids">
           <el-transfer v-model="form.roleids" :data="role"></el-transfer>
         </el-form-item>
       </el-form>

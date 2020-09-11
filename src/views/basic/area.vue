@@ -31,37 +31,32 @@
             </template>
           </el-table-column>
           <el-table-column align="center" label="操作">
-            <template>
-              <span class="detail handle" @click="dispatch(true)">编辑</span>
+            <template slot-scope="scope">
+              <span class="detail handle" @click="dispatch(true, scope.row)">编辑</span>
             </template>
           </el-table-column>
         </el-table>
-
-        <!-- <div class="pagination">
-          <el-pagination background @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page.sync="currentPage"
-            :page-size="100" layout="prev, pager, next, jumper" :total="1000"></el-pagination>
-        </div> -->
       </div>
     </div>
 
     <el-dialog :title="title" :visible.sync="dialog" class="dialog" :close-on-click-modal="false" @closed="clearForm">
       <el-form :model="form" :rules="rules" ref="form" label-width="100px" class="dialog-form">
-        <el-form-item label="区域名称">
+        <el-form-item label="区域名称" prop="areaname">
           <el-input v-model="form.areaname" placeholder="请输入真实姓名"></el-input>
         </el-form-item>
-        <el-form-item label="施工主管">
-          <el-select v-model="form.account" placeholder="请选择">
-            <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value"></el-option>
+        <el-form-item label="施工主管" prop="arrangeuserid1">
+          <el-select v-model="form.arrangeuserid1" placeholder="请选择">
+            <el-option v-for="item in arrangeuserid1" :key="item.userid" :label="item.username" :value="item.userid"></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="验收主管">
-          <el-select v-model="form.account" placeholder="请选择">
-            <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value"></el-option>
+        <el-form-item label="验收主管" prop="arrangeuserid2">
+          <el-select v-model="form.arrangeuserid2" placeholder="请选择">
+            <el-option v-for="item in arrangeuserid2" :key="item.userid" :label="item.username" :value="item.userid"></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="启用状态">
-          <el-radio v-model="form.radio" label="1">启用</el-radio>
-          <el-radio v-model="form.radio" label="2">停用</el-radio>
+        <el-form-item label="启用状态" prop="forbidden">
+          <el-radio v-model="form.forbidden" :label="0">启用</el-radio>
+          <el-radio v-model="form.forbidden" :label="1">停用</el-radio>
         </el-form-item>
       </el-form>
 
@@ -79,21 +74,13 @@
     data() {
       return {
         isModify: false,
-        options: [
-          {
-            value: "选项1",
-            label: "黄金糕",
-          },
-          {
-            value: "选项2",
-            label: "双皮奶",
-          },
-        ],
+        arrangeuserid1:[],
+        arrangeuserid2:[],
         form: {
           areaname: "",
           arrangeuserid1: "",
           arrangeuserid2: "",
-          averagemeters: "",
+          averagemeters: 0,
           forbidden: 0,
           areaid: 0
         },
@@ -127,28 +114,63 @@
           url: `/admin/arealist?forbidden=0`,
           method: "get",
         });
-        console.log(rs);
+
         this.list = rs.data;
         this.listLoading = false;
       },
-      handleSizeChange(val) {
-        console.log(`每页 ${val} 条`);
-      },
-      handleCurrentChange(val) {
-        console.log(`当前页: ${val}`);
-      },
-      submit() {
+      async submit() {
         this.dialog = false;
+        let rs = await this.$http({
+          url: `/admin/${this.isModify ? 'dodeptmod' : 'dodeptnew'}`,
+          method: "post",
+          data: this.form
+        });
+
+        if (rs.success == 'true') this.$message({
+          message: '保存成功',
+          type: 'success'
+        })
+
+        this.$refs.form.resetFields();
+        this.fetchData()
+      },
+      clearForm() {
         this.$refs.form.resetFields();
       },
       cancel() {
         this.dialog = false;
         this.$refs.form.resetFields();
       },
-      dispatch(isModify) {
+      dispatch(isModify, data) {
+        this.isModify = isModify;
         this.dialog = true;
         this.title = isModify ? "编辑区域" : "添加区域";
+
+        this.getAdmin();
+
+        if (this.isModify) {
+          this.getDepInfos(data)
+          this.form.deptid = data.deptid
+        }
       },
+      async getDepInfos(data) {
+        let rs = await this.$http({
+          url: `/admin/deptdetail?deptid=${data.deptid}`,
+          method: "get"
+        });
+
+        for (let i in this.form) {
+          this.form[i] = rs.data[0][i]
+        }
+      },
+      async getAdmin() {
+        let rs = await this.$http({
+          url: `/admin/arrangers`,
+          method: "get"
+        });
+
+        this.arrangeuserid1 = this.arrangeuserid2 = rs.data
+      }
     },
   };
 </script>

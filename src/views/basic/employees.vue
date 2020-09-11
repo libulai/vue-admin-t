@@ -74,11 +74,11 @@
         <el-form-item label="公司">
           <span class="text">上海分公司</span>
         </el-form-item>
-        <el-form-item label="工号" prop="account">
-          <el-input v-model="form.account" placeholder="请输入工号"></el-input>
+        <el-form-item label="工号">
+          <el-input v-model="form.empcode" placeholder="请输入工号"></el-input>
         </el-form-item>
-        <el-form-item label="姓名" prop="password">
-          <el-input v-model="form.password" placeholder="请输入姓名"></el-input>
+        <el-form-item label="姓名">
+          <el-input v-model="form.empname" placeholder="请输入姓名"></el-input>
         </el-form-item>
         <el-form-item label="属性">
           <el-select v-model="form.account" placeholder="请选择">

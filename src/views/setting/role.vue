@@ -51,7 +51,6 @@
     </div>
 
     <el-dialog :title="title" :visible.sync="dialog" class="dialog" :close-on-click-modal="false" width="1000px" @closed="clearForm">
-
       <el-form :model="form" :rules="rules" ref="form" label-width="100px" class="dialog-form">
         <el-form-item label="角色名称" prop="account">
           <el-input v-model="form.account" placeholder="请输入用户登录账号"></el-input>
@@ -59,14 +58,14 @@
         <el-form-item label="级别" prop="password">
           <el-input v-model="form.password" placeholder="请输入用户登录密码"></el-input>
         </el-form-item>
-        <el-form-item label="是否对外">
+        <el-form-item label="是否对外" prop="radio">
           <el-radio v-model="form.radio" label="1">备选项</el-radio>
           <el-radio v-model="form.radio" label="2">备选项</el-radio>
         </el-form-item>
-        <el-form-item label="菜单权限">
+        <el-form-item label="菜单权限" prop="password">
           <el-transfer v-model="value" :data="data"></el-transfer>
         </el-form-item>
-        <el-form-item label="按钮权限">
+        <el-form-item label="按钮权限" prop="password">
           <el-transfer v-model="value" :data="data"></el-transfer>
         </el-form-item>
       </el-form>
@@ -132,11 +131,9 @@
         this.listLoading = false;
       },
       handleSizeChange(val) {
-        console.log(`每页 ${val} 条`);
       },
       handleCurrentChange(val) {
         this.pageIndex = val;
-        console.log(`当前页: ${val}`);
       },
       async submit() {
         this.dialog = false;

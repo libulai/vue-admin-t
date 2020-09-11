@@ -45,7 +45,7 @@
         <el-form-item label="部门名称" prop="deptname">
           <el-input v-model="form.deptname" placeholder="请输入"></el-input>
         </el-form-item>
-        <el-form-item label="启用状态">
+        <el-form-item label="启用状态" prop="forbidden">
           <el-radio v-model="form.forbidden" :label="0">启用</el-radio>
           <el-radio v-model="form.forbidden" :label="1">停用</el-radio>
         </el-form-item>
@@ -60,13 +60,6 @@
 </template>
 
 <script>
-import Qs from 'qs'
-import axios from 'axios'
-import {
-  getToken
-} from '@/utils/auth'
-
-axios.defaults.headers.common['token'] = getToken();
 export default {
   name: "Dep",
   data() {
@@ -122,11 +115,9 @@ export default {
       this.listLoading = false;
     },
     handleSizeChange(val) {
-      console.log(`每页 ${val} 条`);
     },
     handleCurrentChange(val) {
       this.pageIndex = val;
-      console.log(`当前页: ${val}`);
     },
     async submit() {
       this.dialog = false;

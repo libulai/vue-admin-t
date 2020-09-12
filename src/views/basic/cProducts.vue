@@ -3,21 +3,31 @@
     <div class="content-wrap">
       <div class="content-title">
         <div>
-          <el-button class="com-btn" type="primary" @click="dispatch(false)">添加部门</el-button>
+          <el-button class="com-btn" type="primary" @click="dispatch(false)">添加物料</el-button>
         </div>
       </div>
 
       <div>
         <el-table v-loading="listLoading" :data="list" element-loading-text="Loading" fit highlight-current-row>
-          <el-table-column align="center" label="部门名称">
+          <el-table-column align="center" label="名称">
             <template slot-scope="scope">{{ scope.row.deptname }}</template>
           </el-table-column>
-          <el-table-column label="部门编号" align="center">
+          <el-table-column label="规格" align="center">
             <template slot-scope="scope">{{ scope.row.deptcode }}</template>
+          </el-table-column>
+          <el-table-column align="center" label="备注">
+            <template slot-scope="scope">
+              <span>{{ scope.row.forbidden }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column align="center" label="序号">
+            <template slot-scope="scope">
+              <span>{{ scope.row.forbidden }}</span>
+            </template>
           </el-table-column>
           <el-table-column align="center" label="状态">
             <template slot-scope="scope">
-              <span>{{ scope.row.forbidden == 1? '禁用':'可用' }}</span>
+              <span>{{ scope.row.forbidden }}</span>
             </template>
           </el-table-column>
           <el-table-column align="center" label="操作">
@@ -27,22 +37,29 @@
           </el-table-column>
         </el-table>
 
-        <!-- <div class="pagination">
-          <el-pagination background @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page.sync="pageIndex"
-            :page-size="pageSize" layout="prev, pager, next, jumper" :total="pageTotal"></el-pagination>
-        </div> -->
+        <div class="pagination">
+          <el-pagination background @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page.sync="pageIndex" :page-size="pageSize" layout="prev, pager, next, jumper" :total="pageTotal"></el-pagination>
+        </div>
       </div>
     </div>
 
     <el-dialog :title="title" :visible.sync="dialog" class="dialog" :close-on-click-modal="false" @closed="clearForm">
       <el-form :model="form" :rules="rules" ref="form" label-width="100px" class="dialog-form">
-        <el-form-item label="公司">
-          <span class="text">上海分公司</span>
+        <el-form-item label="选择产品" prop="education">
+          <el-select v-model="form.education" placeholder="请选择">
+            <el-option v-for="item in products" :key="item.id" :label="item.val" :value="item.id"></el-option>
+          </el-select>
         </el-form-item>
-        <el-form-item label="部门编号" prop="deptcode">
+        <el-form-item label="名称">
+          <el-input v-model="form.deptcode" disabled placeholder="自动解析"></el-input>
+        </el-form-item>
+        <el-form-item label="规格">
+          <el-input v-model="form.deptcode" disabled placeholder="自动解析"></el-input>
+        </el-form-item>
+        <el-form-item label="序号" prop="deptcode">
           <el-input v-model="form.deptcode" placeholder="请输入"></el-input>
         </el-form-item>
-        <el-form-item label="部门名称" prop="deptname">
+        <el-form-item label="备注" prop="deptname">
           <el-input v-model="form.deptname" placeholder="请输入"></el-input>
         </el-form-item>
         <el-form-item label="启用状态" prop="forbidden">
@@ -67,6 +84,7 @@ export default {
       pageSize: 15,
       pageTotal: 0,
       pageIndex: 1,
+      products:[],
       isModify: false,
       form: {
         deptcode: "",
@@ -76,7 +94,6 @@ export default {
       },
       list: null,
       listLoading: true,
-      currentPage: 10,
       dialog: false,
       title: "",
       rules: {
@@ -103,11 +120,8 @@ export default {
     async fetchData() {
       this.listLoading = true;
       let rs = await this.$http({
-        url: `/admin/departmentlist`,
-        method: 'get',
-        params: {
-          forbidden: -1
-        },
+        url: `/admin/productkldictionarylist`,
+        method: 'get'
       });
 
       this.list = rs.data;
@@ -127,7 +141,7 @@ export default {
         data: this.form
       });
 
-      if (rs.success=='true') this.$message({
+      if (rs.success == 'true') this.$message({
         message: '保存成功',
         type: 'success'
       })
@@ -151,6 +165,16 @@ export default {
         this.getDepInfos(data)
         this.form.deptid = data.deptid
       }
+
+      this.initProducts()
+    },
+    async initProducts(){
+      let rs = await this.$http({
+        url: `/admin/productkllist`,
+        method: 'get'
+      });
+
+      this.products = rs.data
     },
     async getDepInfos(data) {
       let rs = await this.$http({
@@ -161,8 +185,6 @@ export default {
       for (let i in this.form) {
         this.form[i] = rs.data[0][i]
       }
-
-      // this.form.deptcode = Number(this.form.deptcode)
     }
   },
 };

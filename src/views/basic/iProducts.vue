@@ -3,22 +3,17 @@
     <div class="content-wrap">
       <div class="content-title">
         <div>
-          <el-button class="com-btn" type="primary" @click="dispatch(false)">添加部门</el-button>
+          <el-button class="com-btn" type="primary" @click="dispatch(false)">添加物料</el-button>
         </div>
       </div>
 
       <div>
         <el-table v-loading="listLoading" :data="list" element-loading-text="Loading" fit highlight-current-row>
-          <el-table-column align="center" label="部门名称">
-            <template slot-scope="scope">{{ scope.row.deptname }}</template>
+          <el-table-column align="center" label="名称">
+            <template slot-scope="scope">{{ scope.row.productname }}</template>
           </el-table-column>
-          <el-table-column label="部门编号" align="center">
-            <template slot-scope="scope">{{ scope.row.deptcode }}</template>
-          </el-table-column>
-          <el-table-column align="center" label="状态">
-            <template slot-scope="scope">
-              <span>{{ scope.row.forbidden == 1? '禁用':'可用' }}</span>
-            </template>
+          <el-table-column label="规格" align="center">
+            <template slot-scope="scope">{{ scope.row.specs }}</template>
           </el-table-column>
           <el-table-column align="center" label="操作">
             <template slot-scope="scope">
@@ -27,27 +22,20 @@
           </el-table-column>
         </el-table>
 
-        <!-- <div class="pagination">
+        <div class="pagination">
           <el-pagination background @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page.sync="pageIndex"
             :page-size="pageSize" layout="prev, pager, next, jumper" :total="pageTotal"></el-pagination>
-        </div> -->
+        </div>
       </div>
     </div>
 
     <el-dialog :title="title" :visible.sync="dialog" class="dialog" :close-on-click-modal="false" @closed="clearForm">
       <el-form :model="form" :rules="rules" ref="form" label-width="100px" class="dialog-form">
-        <el-form-item label="公司">
-          <span class="text">上海分公司</span>
+        <el-form-item label="产品名称" prop="productname">
+          <el-input v-model="form.productname" placeholder="请输入产品名称"></el-input>
         </el-form-item>
-        <el-form-item label="部门编号" prop="deptcode">
-          <el-input v-model="form.deptcode" placeholder="请输入"></el-input>
-        </el-form-item>
-        <el-form-item label="部门名称" prop="deptname">
-          <el-input v-model="form.deptname" placeholder="请输入"></el-input>
-        </el-form-item>
-        <el-form-item label="启用状态" prop="forbidden">
-          <el-radio v-model="form.forbidden" :label="0">启用</el-radio>
-          <el-radio v-model="form.forbidden" :label="1">停用</el-radio>
+        <el-form-item label="规格" prop="specs">
+          <el-input v-model="form.specs" placeholder="请输入规格"></el-input>
         </el-form-item>
       </el-form>
 
@@ -69,14 +57,11 @@ export default {
       pageIndex: 1,
       isModify: false,
       form: {
-        deptcode: "",
-        deptname: "",
-        forbidden: 0,
-        deptid: ""
+        productname: "",
+        specs: ""
       },
       list: null,
       listLoading: true,
-      currentPage: 10,
       dialog: false,
       title: "",
       rules: {
@@ -103,11 +88,8 @@ export default {
     async fetchData() {
       this.listLoading = true;
       let rs = await this.$http({
-        url: `/admin/departmentlist`,
-        method: 'get',
-        params: {
-          forbidden: -1
-        },
+        url: `/admin/productkllist`,
+        method: 'get'
       });
 
       this.list = rs.data;
@@ -122,7 +104,7 @@ export default {
     async submit() {
       this.dialog = false;
       let rs = await this.$http({
-        url: `/admin/${this.isModify ? 'dodeptmod' : 'dodeptnew'}`,
+        url: `/admin/${this.isModify ? 'doproductklmod' : 'doproductklnew'}`,
         method: "post",
         data: this.form
       });
@@ -145,16 +127,16 @@ export default {
     dispatch(isModify, data) {
       this.isModify = isModify;
       this.dialog = true;
-      this.title = isModify ? "编辑部门" : "添加部门";
+      this.title = isModify ? "编辑物料" : "添加物料";
 
       if (this.isModify) {
         this.getDepInfos(data)
-        this.form.deptid = data.deptid
+        this.form.id = data.id
       }
     },
     async getDepInfos(data) {
       let rs = await this.$http({
-        url: `/admin/deptdetail?deptid=${data.deptid}`,
+        url: `/admin/productkldetail?id=${data.id}`,
         method: "get"
       });
 

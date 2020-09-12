@@ -80,7 +80,7 @@
           areaname: "",
           arrangeuserid1: "",
           arrangeuserid2: "",
-          averagemeters: 0,
+          // averagemeters: 0,
           forbidden: 0,
           areaid: 0
         },
@@ -111,7 +111,7 @@
       async fetchData() {
         this.listLoading = true;
         let rs = await this.$http({
-          url: `/admin/arealist?forbidden=0`,
+          url: `/admin/arealist?forbidden=-1`,
           method: "get",
         });
 
@@ -121,7 +121,7 @@
       async submit() {
         this.dialog = false;
         let rs = await this.$http({
-          url: `/admin/${this.isModify ? 'dodeptmod' : 'dodeptnew'}`,
+          url: `/admin/doareasave`,
           method: "post",
           data: this.form
         });
@@ -150,12 +150,12 @@
 
         if (this.isModify) {
           this.getDepInfos(data)
-          this.form.deptid = data.deptid
+          this.form.areaid = data.areaid
         }
       },
       async getDepInfos(data) {
         let rs = await this.$http({
-          url: `/admin/deptdetail?deptid=${data.deptid}`,
+          url: `/admin/areadetail?areaid=${data.areaid}`,
           method: "get"
         });
 

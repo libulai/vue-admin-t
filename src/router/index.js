@@ -163,6 +163,24 @@ export const constantRoutes = [
         meta: { title: '客户管理', icon: '' }
       },
       {
+        path: 'plot',
+        name: 'Plot',
+        component: () => import('@/views/basic/plot'),
+        meta: { title: '小区管理', icon: '' }
+      }, 
+      {
+        path: 'iProducts',
+        name: 'IProducts',
+        component: () => import('@/views/basic/iProducts'),
+        meta: { title: '产业物料管理', icon: '' }
+      },
+      {
+        path: 'cProducts',
+        name: 'CProducts',
+        component: () => import('@/views/basic/cProducts'),
+        meta: { title: '公司物料管理', icon: '' }
+      },
+      {
         path: 'attribute',
         name: 'Attribute',
         component: () => import('@/views/basic/attribute'),

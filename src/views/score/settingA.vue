@@ -29,9 +29,19 @@
       };
     },
     created() {
-
+      this.fetchData();
     },
     methods: {
+      async fetchData() {
+        this.listLoading = true;
+        let rs = await this.$http({
+          url: `/admin/housetypescorekllist`,
+          method: 'get'
+        });
+
+        this.list = rs.data;
+        this.listLoading = false;
+      },
       handleClick(tab, event) {
         console.log(tab, event)
       }

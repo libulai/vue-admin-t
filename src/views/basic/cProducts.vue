@@ -10,24 +10,24 @@
       <div>
         <el-table v-loading="listLoading" :data="list" element-loading-text="Loading" fit highlight-current-row>
           <el-table-column align="center" label="名称">
-            <template slot-scope="scope">{{ scope.row.deptname }}</template>
+            <template slot-scope="scope">{{ scope.row.productname }}</template>
           </el-table-column>
           <el-table-column label="规格" align="center">
-            <template slot-scope="scope">{{ scope.row.deptcode }}</template>
+            <template slot-scope="scope">{{ scope.row.specs }}</template>
           </el-table-column>
           <el-table-column align="center" label="备注">
             <template slot-scope="scope">
-              <span>{{ scope.row.forbidden }}</span>
+              <span>{{ scope.row.productdesc }}</span>
             </template>
           </el-table-column>
           <el-table-column align="center" label="序号">
             <template slot-scope="scope">
-              <span>{{ scope.row.forbidden }}</span>
+              <span>{{ scope.row.productnum }}</span>
             </template>
           </el-table-column>
           <el-table-column align="center" label="状态">
             <template slot-scope="scope">
-              <span>{{ scope.row.forbidden }}</span>
+              <span>{{ scope.row.forbidden==0?'可用':'停用' }}</span>
             </template>
           </el-table-column>
           <el-table-column align="center" label="操作">
@@ -38,29 +38,30 @@
         </el-table>
 
         <div class="pagination">
-          <el-pagination background @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page.sync="pageIndex" :page-size="pageSize" layout="prev, pager, next, jumper" :total="pageTotal"></el-pagination>
+          <el-pagination background @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page.sync="pageIndex"
+            :page-size="pageSize" layout="prev, pager, next, jumper" :total="pageTotal"></el-pagination>
         </div>
       </div>
     </div>
 
     <el-dialog :title="title" :visible.sync="dialog" class="dialog" :close-on-click-modal="false" @closed="clearForm">
       <el-form :model="form" :rules="rules" ref="form" label-width="100px" class="dialog-form">
-        <el-form-item label="选择产品" prop="education">
-          <el-select v-model="form.education" placeholder="请选择">
-            <el-option v-for="item in products" :key="item.id" :label="item.val" :value="item.id"></el-option>
-          </el-select>
-        </el-form-item>
         <el-form-item label="名称">
-          <el-input v-model="form.deptcode" disabled placeholder="自动解析"></el-input>
+          <!-- <el-select v-model="form.productid" placeholder="请选择（可搜索）" filterable>
+            <el-option v-for="item in products" :key="item.id" :label="item.productname" :value="item.id" @click.native="changeVal(item)"></el-option>
+          </el-select> -->
+          <el-input placeholder="选择产品" v-model="productInfo.productname" class="input-with-select" disabled>
+            <el-button slot="append" @click="dialog2Open">请选择</el-button>
+          </el-input>
         </el-form-item>
         <el-form-item label="规格">
-          <el-input v-model="form.deptcode" disabled placeholder="自动解析"></el-input>
+          <el-input v-model="productInfo.specs" disabled placeholder="自动解析"></el-input>
         </el-form-item>
-        <el-form-item label="序号" prop="deptcode">
-          <el-input v-model="form.deptcode" placeholder="请输入"></el-input>
+        <el-form-item label="序号" prop="productnum">
+          <el-input v-model="form.productnum" placeholder="请输入"></el-input>
         </el-form-item>
-        <el-form-item label="备注" prop="deptname">
-          <el-input v-model="form.deptname" placeholder="请输入"></el-input>
+        <el-form-item label="备注" prop="productdesc">
+          <el-input v-model="form.productdesc" placeholder="请输入"></el-input>
         </el-form-item>
         <el-form-item label="启用状态" prop="forbidden">
           <el-radio v-model="form.forbidden" :label="0">启用</el-radio>
@@ -73,133 +74,186 @@
         <el-button type="primary" @click="submit">保存</el-button>
       </div>
     </el-dialog>
+
+    <el-dialog title="选择产品" :visible.sync="dialog2" width="400px">
+      <div class="select-dialog">
+        <el-table v-loading="listLoading2" :data="list2" element-loading-text="Loading" fit highlight-current-row border @current-change="selectItem">
+          <el-table-column align="center" label="名称">
+            <template slot-scope="scope">{{ scope.row.productname }}</template>
+          </el-table-column>
+        </el-table>
+        <div class="pagination">
+          <el-pagination background @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page.sync="pageIndex2"
+            :page-size="pageSize" layout="prev, pager, next" :total="pageTotal2"></el-pagination>
+        </div>
+      </div>
+      <!-- <span slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
+      </span> -->
+    </el-dialog>
   </div>
 </template>
 
 <script>
-export default {
-  name: "Dep",
-  data() {
-    return {
-      pageSize: 15,
-      pageTotal: 0,
-      pageIndex: 1,
-      products:[],
-      isModify: false,
-      form: {
-        deptcode: "",
-        deptname: "",
-        forbidden: 0,
-        deptid: ""
+  export default {
+    name: "Dep",
+    data() {
+      return {
+        pageSize: 15,
+        pageTotal: 0,
+        pageIndex: 1,
+        pageIndex2: 1,
+        pageTotal2: 0,
+        products: [],
+        dialog2: false,
+        productInfo: {},
+        isModify: false,
+        form: {
+          productnum: "",
+          productdesc: "",
+          forbidden: 0,
+          productid: ""
+        },
+        list: null,
+        list2: null,
+        listLoading: true,
+        listLoading2: true,
+        dialog: false,
+        title: "",
+        rules: {
+          deptcode: [
+            { required: true, message: "请输入部门编号", trigger: "blur" },
+          ],
+          deptname: [
+            { required: true, message: "请输入部门名称", trigger: "blur" },
+          ],
+        },
+      };
+    },
+    watch: {
+      pageIndex: {
+        handler: function (index) {
+          if (index) this.fetchData(index);
+        }
+      }
+    },
+    created() {
+      this.fetchData();
+    },
+    methods: {
+      async fetchData() {
+        this.listLoading = true;
+        let rs = await this.$http({
+          url: `/admin/productkldictionarylist?forbidden=-1&page.pageIndex=${this.pageIndex}`,
+          method: 'get'
+        });
+
+        this.list = rs.data;
+        this.pageTotal = rs.total;
+        this.listLoading = false;
       },
-      list: null,
-      listLoading: true,
-      dialog: false,
-      title: "",
-      rules: {
-        deptcode: [
-          { required: true, message: "请输入部门编号", trigger: "blur" },
-        ],
-        deptname: [
-          { required: true, message: "请输入部门名称", trigger: "blur" },
-        ],
+      handleSizeChange(val) {
       },
-    };
-  },
-  watch: {
-    pageIndex: {
-      handler: function (index) {
-        if (index) this.fetchData(index);
+      handleCurrentChange(val) {
+        this.pageIndex = val;
+      },
+      changeVal(data) {
+        this.productInfo = data
+      },
+      async dialog2Open() {
+        this.dialog2 = true
+        this.listLoading2 = true;
+        let rs = await this.$http({
+          url: `/admin/productkllist`,
+          method: 'get'
+        });
+
+        this.list2 = rs.data;
+        this.pageTotal2 = rs.total;
+        this.listLoading2 = false;
+      },
+      selectItem(val) {
+        if (!val) return
+        this.dialog2 = false
+        this.form.productid = val.id
+        this.productInfo.productname = val.productname
+        this.productInfo.specs = val.specs
+      },
+      async submit() {
+        this.dialog = false;
+        let rs = await this.$http({
+          url: `/admin/${this.isModify ? 'doproductkldictionarymod' : 'doproductkldictionarynew'}`,
+          method: "post",
+          data: this.form
+        });
+
+        if (rs.success == 'true') this.$message({
+          message: '保存成功',
+          type: 'success'
+        })
+
+        this.$refs.form.resetFields();
+        this.productInfo = {}
+        this.fetchData()
+      },
+      cancel() {
+        this.dialog = false;
+        this.$refs.form.resetFields();
+        this.productInfo = {}
+      },
+      clearForm() {
+        this.$refs.form.resetFields();
+        this.productInfo = {}
+      },
+      dispatch(isModify, data) {
+        this.isModify = isModify;
+        this.dialog = true;
+        this.title = isModify ? "编辑物料" : "添加物料";
+
+        if (this.isModify) {
+          this.getDepInfos(data)
+          this.form.id = data.id
+        }
+
+        this.initProducts()
+      },
+      async initProducts() {
+        let rs = await this.$http({
+          url: `/admin/productkllist`,
+          method: 'get'
+        });
+
+        this.products = rs.data
+      },
+      async getDepInfos(data) {
+        let rs = await this.$http({
+          url: `/admin/productkldictionarydetail?id=${data.id}`,
+          method: "get"
+        });
+
+        for (let i in this.form) {
+          this.form[i] = rs.data[0][i]
+        }
+
+        this.productInfo = {
+          productname: rs.data[0].productname,
+          specs: rs.data[0].specs
+        }
       }
-    }
-  },
-  created() {
-    this.fetchData();
-  },
-  methods: {
-    async fetchData() {
-      this.listLoading = true;
-      let rs = await this.$http({
-        url: `/admin/productkldictionarylist`,
-        method: 'get'
-      });
-
-      this.list = rs.data;
-      this.pageTotal = rs.total;
-      this.listLoading = false;
     },
-    handleSizeChange(val) {
-    },
-    handleCurrentChange(val) {
-      this.pageIndex = val;
-    },
-    async submit() {
-      this.dialog = false;
-      let rs = await this.$http({
-        url: `/admin/${this.isModify ? 'dodeptmod' : 'dodeptnew'}`,
-        method: "post",
-        data: this.form
-      });
-
-      if (rs.success == 'true') this.$message({
-        message: '保存成功',
-        type: 'success'
-      })
-
-      this.$refs.form.resetFields();
-      this.fetchData()
-    },
-    cancel() {
-      this.dialog = false;
-      this.$refs.form.resetFields();
-    },
-    clearForm() {
-      this.$refs.form.resetFields();
-    },
-    dispatch(isModify, data) {
-      this.isModify = isModify;
-      this.dialog = true;
-      this.title = isModify ? "编辑部门" : "添加部门";
-
-      if (this.isModify) {
-        this.getDepInfos(data)
-        this.form.deptid = data.deptid
-      }
-
-      this.initProducts()
-    },
-    async initProducts(){
-      let rs = await this.$http({
-        url: `/admin/productkllist`,
-        method: 'get'
-      });
-
-      this.products = rs.data
-    },
-    async getDepInfos(data) {
-      let rs = await this.$http({
-        url: `/admin/deptdetail?deptid=${data.deptid}`,
-        method: "get"
-      });
-
-      for (let i in this.form) {
-        this.form[i] = rs.data[0][i]
-      }
-    }
-  },
-};
+  };
 </script>
 
 <style lang="scss" scoped>
-.content-box {
-  & > div {
-    display: flex;
-    .el-input,
-    .el-select,
-    .el-date-editor {
-      width: 20%;
-      margin-right: 30px;
+  .content-box {
+    &>div {
+      display: flex;
+      .el-input,
+      .el-select,
+      .el-date-editor {
+        width: 20%;
+        margin-right: 30px;
+      }
     }
   }
-}
 </style>

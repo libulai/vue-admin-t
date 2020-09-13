@@ -88,7 +88,7 @@ export default {
     async fetchData() {
       this.listLoading = true;
       let rs = await this.$http({
-        url: `/admin/productkllist`,
+        url: `/admin/productkllist?page.pageIndex=${this.pageIndex}`,
         method: 'get'
       });
 

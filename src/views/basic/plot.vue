@@ -58,9 +58,9 @@
               <span>{{ scope.row.totalhouseholds}}</span>
             </template>
           </el-table-column>
-          <el-table-column align="center" prop="created_at" label="操作" width="200">
+          <el-table-column align="center" prop="created_at" label="操作">
             <template slot-scope="scope">
-              <span class="detail handle" @click="dispatch(true, scope.row)" style="margin-right: 20px">编辑</span>
+              <span class="detail handle" @click="dispatch(true, scope.row)">编辑</span>
             </template>
           </el-table-column>
         </el-table>

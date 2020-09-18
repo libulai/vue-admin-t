@@ -1,22 +1,11 @@
 <template>
   <div class="orderState" style="margin-top: 10px">
-    <el-table v-loading="listLoading" :data="list" element-loading-text="Loading" fit highlight-current-row border>
-
-      <el-table-column align="center" label="物料名称">
+    <el-table :data="list" element-loading-text="Loading" fit highlight-current-row border>
+      <el-table-column label="户型" align="center">
         <template slot-scope="scope">
-          {{ scope.row.productname }}
+          {{ scope.row.housetypename }}
         </template>
       </el-table-column>
-      <el-table-column label="物料规格" align="center">
-        <template slot-scope="scope">
-          {{ scope.row.specs }}
-        </template>
-      </el-table-column>
-      <!-- <el-table-column label="所属公司" align="center">
-        <template slot-scope="scope">
-          {{ scope.row.author }}
-        </template>
-      </el-table-column> -->
       <el-table-column label="积分数值" align="center">
         <template slot-scope="scope">
           {{ scope.row.scorea }}
@@ -33,8 +22,8 @@
     <el-dialog title="设置积分" :visible.sync="dialog1">
 
       <el-form :model="form" :rules="rules3" ref="form" label-width="100px" class="dialog3-ruleForm">
-        <el-form-item label="分值" prop="scorea">
-          <el-input v-model.number="form.scorea" placeholder="设置积分"></el-input>
+        <el-form-item label="分值" prop="scorec">
+          <el-input v-model.number="form.scorec" placeholder="设置积分"></el-input>
         </el-form-item>
 
       </el-form>
@@ -48,16 +37,10 @@
 </template>
 
 <script>
-import { getList } from "@/api/table";
-
+import bus from '@/utils/bus'
 export default {
   data() {
     return {
-      pageSize: 15,
-      pageTotal: 0,
-      pageIndex: 1,
-      list: null,
-      listLoading: true,
       dialog1: false,
       form: {
         scorea: '',
@@ -71,34 +54,24 @@ export default {
       }
     };
   },
+  props: ['list'],
   created() {
-    this.fetchData();
+
   },
   methods: {
-    async fetchData() {
-      this.listLoading = true;
-      let rs = await this.$http({
-        url: `/admin/productkldictionarylist?forbidden=-1&page.pageIndex=${this.pageIndex}`,
-        method: 'get'
-      });
-
-      this.list = rs.data;
-      this.pageTotal = rs.total;
-      this.listLoading = false;
+    dispatch(data) {
+      this.dialog1 = true;
+      this.getDepInfos(data)
+      this.form.id = data.id
     },
     async getDepInfos(data) {
       let rs = await this.$http({
-        url: `/admin/productkldictionarydetail?id=${data.id}`,
+        url: `/admin/housetypescorekldetail?id=${data.id}`,
         method: "get"
       });
 
       this.form.scorec = rs.data[0].scorec
       this.form.scorea = rs.data[0].scorea
-    },
-    dispatch(data) {
-      this.dialog1 = true;
-      this.getDepInfos(data)
-      this.form.id = data.id
     },
     cancel() {
       this.dialog1 = false;
@@ -107,7 +80,7 @@ export default {
     async submit() {
       this.dialog1 = false;
       let rs = await this.$http({
-        url: `/admin/doproductkldictionaryscoremod`,
+        url: `/admin/dohousetypescoreklmod`,
         method: "post",
         data: this.form
       });
@@ -118,8 +91,8 @@ export default {
       })
 
       this.$refs.form.resetFields();
-      this.fetchData()
-    }
+      bus.$emit('successed')
+    },
   },
 };
 </script>

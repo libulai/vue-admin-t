@@ -114,7 +114,7 @@ export const constantRoutes = [
       {
         path: 'settingC',
         name: 'SettingC',
-        component: () => import('@/views/score/settingA'),
+        component: () => import('@/views/score/settingC'),
         meta: { title: 'C分设置', icon: '' }
       },
       {

@@ -31,10 +31,9 @@
     </el-table>
 
     <el-dialog title="设置积分" :visible.sync="dialog1">
-
       <el-form :model="form" :rules="rules3" ref="form" label-width="100px" class="dialog3-ruleForm">
-        <el-form-item label="分值" prop="scorea">
-          <el-input v-model.number="form.scorea" placeholder="设置积分"></el-input>
+        <el-form-item label="分值" prop="scorec">
+          <el-input v-model.number="form.scorec" placeholder="设置积分"></el-input>
         </el-form-item>
 
       </el-form>

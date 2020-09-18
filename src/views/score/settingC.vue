@@ -4,10 +4,10 @@
       <div style="position: relative;">
         <el-tabs v-model="activeName" @tab-click="handleClick">
           <el-tab-pane label="按数量" name="first">
-            <a1></a1>
+            <c1></c1>
           </el-tab-pane>
           <el-tab-pane label="按户型" name="second">
-            <a2 :list="data2"></a2>
+            <c2 :list="data2"></c2>
           </el-tab-pane>
         </el-tabs>
       </div>
@@ -17,13 +17,13 @@
 
 <script>
 import bus from '@/utils/bus'
-import A1 from './A1.vue'
-import A2 from './A2.vue'
+import C1 from './C1.vue'
+import C2 from './C2.vue'
 export default {
-  name: 'SettingA',
+  name: 'SettingC',
   components: {
-    A1,
-    A2
+    C1,
+    C2
   },
   data() {
     return {

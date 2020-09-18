@@ -88,7 +88,8 @@
           </el-select>
         </el-form-item>
         <el-form-item label="交房时间" prop="deliverdate">
-          <el-date-picker v-model="form.deliverdate" type="date" placeholder="选择日期" value-format="yyyy-MM-dd HH-mm-ss"></el-date-picker>
+          <el-date-picker v-model="form.deliverdate" type="date" placeholder="选择日期" value-format="yyyy-MM-dd"></el-date-picker>
+          <!-- <el-date-picker v-model="form.deliverdate" type="date" placeholder="选择日期" value-format="yyyy-MM-dd HH-mm-ss"></el-date-picker> -->
         </el-form-item>
         <el-form-item label="小区类型" prop="communitytype">
           <el-input v-model="form.communitytype" placeholder="请输入小区类型"></el-input>
@@ -196,7 +197,7 @@ export default {
     async fetchData() {
       this.listLoading = true;
       let rs = await this.$http({
-        url: `/admin/communitylist?commnuityname=${this.search.commnuityname}&depid=${this.search.depid}&areaid=${this.search.areaid}&page.pageIndex=${this.pageIndex}`,
+        url: `/admin/communitylist?commnuityname=${this.search.commnuityname}&formalname=${this.search.formalname}&areaid=${this.search.areaid}&page.pageIndex=${this.pageIndex}`,
         method: "get"
       });
 
@@ -223,7 +224,7 @@ export default {
       this.dialog = false;
 
       let rs = await this.$http({
-        url: `/admin/${this.isModify ? 'doempmod' : 'doempnew'}`,
+        url: `/admin/${this.isModify ? 'docommunitymod' : 'docommunitynew'}`,
         method: "post",
         data: this.form
       });

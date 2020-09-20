@@ -50,7 +50,7 @@
           <!-- <el-select v-model="form.productid" placeholder="请选择（可搜索）" filterable>
             <el-option v-for="item in products" :key="item.id" :label="item.productname" :value="item.id" @click.native="changeVal(item)"></el-option>
           </el-select> -->
-          <el-input placeholder="选择产品" v-model="productInfo.productname" class="input-with-select" disabled>
+          <el-input placeholder="选择产品" v-model="productInfo.productname" class="input-with-select select-btn" disabled>
             <el-button slot="append" @click="dialog2Open">请选择</el-button>
           </el-input>
         </el-form-item>

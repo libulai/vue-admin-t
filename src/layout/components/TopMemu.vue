@@ -39,9 +39,9 @@
             {{user.rolename}}
             <i class="el-icon-arrow-down el-icon--right"></i>
           </span>
-            <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item v-for="item in role" :key="item.roleid" @click.native="shifitRole(item)">{{item.rolename}}</el-dropdown-item>
-            </el-dropdown-menu>
+          <el-dropdown-menu slot="dropdown">
+            <el-dropdown-item v-for="item in role" :key="item.roleid" @click.native="shifitRole(item)">{{item.rolename}}</el-dropdown-item>
+          </el-dropdown-menu>
         </el-dropdown>
       </div>
 
@@ -64,7 +64,7 @@
     </div>
 
     <!-- 退出登录 -->
-    <el-dialog title="退出登录" :visible.sync="dialog3" width="30%">
+    <el-dialog title="退出登录" :visible.sync="dialog3" width="30%" class="dialog1">
       <span>是否退出</span>
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialog3 = false">取 消</el-button>
@@ -95,7 +95,7 @@
     </el-dialog>
 
     <!-- 个人信息 -->
-    <el-dialog title="个人信息" :visible.sync="dialog1">
+    <el-dialog title="个人信息" :visible.sync="dialog1" class="dialog3">
       <el-form :model="this.ruleForm2" ref="ruleForm1" label-width="100px" class="dialog3-ruleForm">
         <el-form-item label="用户名">
           <span>{{user.username}}</span>
@@ -138,8 +138,8 @@ export default {
       logo2: require("@/assets/pic/admin.png"),
       header: require("@/assets/pic/demo.png"),
       compcony: [],
-      role:[],
-      userinfo:{
+      role: [],
+      userinfo: {
         empname: '',
         mobilephone: '',
         company: {},
@@ -304,8 +304,8 @@ export default {
 </script>
 
 <style lang="scss">
-.dialog3-ruleForm .el-form-item__label{
-  padding-right: 50px!important;
+.dialog3-ruleForm .el-form-item__label {
+  padding-right: 50px !important;
 }
 
 .top-bar {
@@ -373,5 +373,19 @@ export default {
 
 .el-form {
   padding: 0 130px 0 70px;
+}
+</style>
+
+<style lang="scss" scoped>
+::v-deep .dialog1 {
+  .el-dialog {
+    width: 450px !important;
+  }
+}
+
+::v-deep .dialog3 {
+  .el-dialog {
+    width: 650px !important;
+  }
 }
 </style>

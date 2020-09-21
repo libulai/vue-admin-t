@@ -64,7 +64,7 @@
                 {{ scope.row.contacterphone }}
               </template>
             </el-table-column>
-            <el-table-column label="会员卡号" align="center" min-width="200">
+            <el-table-column label="会员卡号" align="center" min-width="180">
               <template slot-scope="scope">
                 {{ scope.row.cardNum }}
               </template>
@@ -95,8 +95,7 @@
           </el-table>
 
           <div class="pagination">
-            <el-pagination background @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page.sync="pageIndex"
-              :page-size="pageSize" layout="prev, pager, next, jumper" :total="pageTotal"></el-pagination>
+            <el-pagination background @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page.sync="pageIndex" :page-size="pageSize" layout="prev, pager, next, jumper" :total="pageTotal"></el-pagination>
           </div>
         </div>
       </div>
@@ -142,14 +141,14 @@
           <el-form-item label="会员卡号" prop='cardNum'>
             <el-input v-model="form.cardNum" placeholder="请填写"></el-input>
           </el-form-item>
-          <el-form-item label="分类">
-            <el-select v-model="form.order" placeholder="请选择">
-              <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value">
+          <el-form-item label="分类" prop="workerscategory">
+            <el-select v-model="form.workerscategory" placeholder="请选择" >
+              <el-option v-for="item in sstypes" :key="item.diccode" :label="item.dicvalue" :value="item.diccode">
               </el-option>
             </el-select>
           </el-form-item>
-          <el-form-item label="类别">
-            <el-select v-model="form.workerstype" placeholder="请选择">
+          <el-form-item label="类别" prop="workerstype">
+            <el-select v-model="form.workerstype" placeholder="请选择" >
               <el-option v-for="item in types" :key="item.value" :label="item.label" :value="item.value">
               </el-option>
             </el-select>
@@ -163,9 +162,9 @@
           <el-form-item label="工人数量" prop='workerscount'>
             <el-input v-model="form.workerscount" placeholder="请填写"></el-input>
           </el-form-item>
-          <el-form-item label="水工等级">
-            <el-select v-model="form.order" placeholder="请选择">
-              <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value">
+          <el-form-item label="水工等级" prop="workergrade">
+            <el-select v-model="form.workergrade" placeholder="请选择" >
+              <el-option v-for="item in levels" :key="item.diccode" :label="item.dicvalue" :value="item.diccode">
               </el-option>
             </el-select>
           </el-form-item>
@@ -188,192 +187,232 @@
 </template>
 
 <script>
-  import { regionData, CodeToText, TextToCode  } from 'element-china-area-data'
-  export default {
-    name: 'Customer',
-    data() {
-      return {
-        pageSize: 15,
-        pageTotal: 0,
-        pageIndex: 1,
-        search: {
-          startDate: '',
-          contacterphone: '',
-          customertype: '',
-          areaid: '',
-          customername: '',
-          yzxx: 0,
-          endDate: ''
+import { regionData, CodeToText, TextToCode } from 'element-china-area-data'
+export default {
+  name: 'Customer',
+  data() {
+    return {
+      pageSize: 15,
+      pageTotal: 0,
+      pageIndex: 1,
+      search: {
+        startDate: '',
+        contacterphone: '',
+        customertype: '',
+        areaid: '',
+        customername: '',
+        yzxx: 0,
+        endDate: ''
+      },
+      ssxOptions: regionData,
+      ssx: [],
+      areas: [],
+      sstypes: [],
+      levels: [],
+      options: [
+        {
+          value: "业主",
         },
-        ssxOptions: regionData,
-        ssx: [],
-        areas: [],
-        options: [
-          {
-            value: "业主",
-          },
-          {
-            value: "水工",
-          },
-          {
-            value: "经销商",
-          },
-          {
-            value: "工长",
-          },
-          {
-            value: "装饰公司",
-          },
-        ],
-        types: [{
-          value: '工长'
-        }, {
-          value: '水工'
-        }, {
-          value: '安装工'
-        }],
-        form: {
-          customertype: "",
-          customername: "",
-          contacter: "",
-          contacterphone: "",
-          // firstname: '',
-          nativeplace: '',
-          cooptime: '',
-          pthistorydesc: '',
-          cardid: '',
-          workerstype: '',
-          coopdealer: '',
-          coopdec: '',
-          workerscount: '',
-          address:'',
-          cardNum:'',
-          birthday:'',
-
-          economize: '',
-          city: '',
-          county: ''
+        {
+          value: "水工",
         },
-        dialog: false,
-        title: '新增客户',
-        list: null,
-        listLoading: true
-      };
-    },
-    watch: {
-      pageIndex(index) {
-        if (index) this.fetchData(index);
-      },
-    },
-    created() {
-      this.fetchData();
-      this.initDeps();
-    },
-    methods: {
-      async initDeps() {
-        let rs = await this.$http({
-          url: `/admin/arealist`,
-          method: 'get'
-        });
+        {
+          value: "经销商",
+        },
+        {
+          value: "工长",
+        },
+        {
+          value: "装饰公司",
+        },
+      ],
+      types: [{
+        value: '工长'
+      }, {
+        value: '水工'
+      }, {
+        value: '安装工'
+      }],
+      form: {
+        customertype: "",
+        customername: "",
+        contacter: "",
+        contacterphone: "",
+        // firstname: '',
+        nativeplace: '',
+        cooptime: '',
+        pthistorydesc: '',
+        cardid: '',
+        workerstype: '',
+        coopdealer: '',
+        coopdec: '',
+        workerscount: '',
+        address: '',
+        cardNum: '',
+        birthday: '',
+        workerscategory: '',
+        workergrade: '',
 
-        this.areas = rs.data
+        economize: '',
+        city: '',
+        county: ''
       },
-      async fetchData() {
-        this.listLoading = true;
-        let rs = await this.$http({
-          url: `/admin/customerlist?startDate=${this.search.startDate}&endDate=${this.search.endDate}&contacterphone=${this.search.contacterphone}&customertype=${this.search.customertype}&areaid=${this.search.areaid}&customername=${this.search.customername}&yzxx=${this.search.yzxx}&page.pageIndex=${this.pageIndex}`,
-          method: "get"
-        });
+      dialog: false,
+      title: '新增客户',
+      list: null,
+      listLoading: true
+    };
+  },
+  watch: {
+    pageIndex(index) {
+      if (index) this.fetchData(index);
+    },
+  },
+  created() {
+    this.fetchData()
+    this.initDeps()
+  },
+  methods: {
+    async initDeps() {
+      let rs = await this.$http({
+        url: `/admin/arealist`,
+        method: 'get'
+      });
 
-        this.list = rs.data;
-        this.pageTotal = rs.total;
-        this.listLoading = false;
-      },
-      reset() {
-        this.search = {
-          startDate: '',
-          contacterphone: '',
-          customertype: '',
-          areaid: '',
-          customername: '',
-          yzxx: 0,
-          endDate: ''
+      this.areas = rs.data
+    },
+    async fetchData() {
+      this.listLoading = true;
+      let rs = await this.$http({
+        url: `/admin/customerlist?startDate=${this.search.startDate}&endDate=${this.search.endDate}&contacterphone=${this.search.contacterphone}&customertype=${this.search.customertype}&areaid=${this.search.areaid}&customername=${this.search.customername}&yzxx=${this.search.yzxx}&page.pageIndex=${this.pageIndex}`,
+        method: "get"
+      });
+
+      this.list = rs.data;
+      this.pageTotal = rs.total;
+      this.listLoading = false;
+    },
+    reset() {
+      this.search = {
+        startDate: '',
+        contacterphone: '',
+        customertype: '',
+        areaid: '',
+        customername: '',
+        yzxx: 0,
+        endDate: ''
+      }
+    },
+    handleSizeChange(val) {
+    },
+    handleCurrentChange(val) {
+      this.pageIndex = val;
+    },
+    dispatch(isModify, data) {
+      this.isModify = isModify;
+      this.dialog = true;
+      this.title = isModify ? "编辑客户" : "新增客户";
+
+      if (this.isModify) {
+        this.getDepInfos(data)
+        this.form.customerid = data.customerid
+      }
+
+      this.initInfos()
+    },
+    async getDepInfos(data) {
+      let rs = await this.$http({
+        url: `/admin/customerdetail?customerid=${data.customerid}`,
+        method: "get"
+      });
+
+      for (let i in this.form) {
+        this.form[i] = rs.data[0][i]
+      }
+      this.handlessx()
+    },
+    handlessx() {
+      let form = this.form
+      this.ssx = [TextToCode[form.economize].code, TextToCode[form.economize][form.city].code, TextToCode[form.economize][form.city][form.county].code]
+    },
+    cancel() {
+      this.dialog = false;
+      this.$refs.form.resetFields();
+      this.ssx = []
+    },
+    clearForm() {
+      this.$refs.form.resetFields();
+      this.ssx = []
+    },
+    handleChange() {
+      let form = this.form;
+      form.economize = CodeToText[this.ssx[0]]
+      form.city = CodeToText[this.ssx[1]]
+      form.county = CodeToText[this.ssx[2]]
+    },
+    async initInfos() {
+      let rs = await this.$http({
+        url: `/admin/dictionarylist?dictype=12`,
+        method: "get"
+      });
+
+      this.sstypes = rs.data.map(i => {
+        return {
+          dicvalue: i.dicvalue,
+          diccode: i.diccode
         }
-      },
-      handleSizeChange(val) {
-      },
-      handleCurrentChange(val) {
-        this.pageIndex = val;
-      },
-      dispatch(isModify, data) {
-        this.isModify = isModify;
-        this.dialog = true;
-        this.title = isModify ? "编辑客户" : "新增客户";
+      })
 
-        if (this.isModify) {
-          this.getDepInfos(data)
-          this.form.customerid = data.customerid
+      rs = await this.$http({
+        url: `/admin/dictionarylist?dictype=13`,
+        method: "get"
+      });
+
+      this.levels = rs.data.map(i => {
+        return {
+          dicvalue: i.dicvalue,
+          diccode: i.diccode
         }
-      },
-      async getDepInfos(data) {
-        let rs = await this.$http({
-          url: `/admin/customerdetail?customerid=${data.customerid}`,
-          method: "get"
-        });
-
-        for (let i in this.form) {
-          this.form[i] = rs.data[0][i]
-        }
-        this.handlessx()
-      },
-      handlessx(){
-        let form = this.form
-        this.ssx = [TextToCode[form.economize].code, TextToCode[form.economize][form.city].code, TextToCode[form.economize][form.city][form.county].code]
-      },
-      cancel() {
-        this.dialog = false;
-        this.$refs.form.resetFields();
-      },
-      clearForm() {
-        this.$refs.form.resetFields();
-      },
-      handleChange() {
-        let form = this.form;
-        form.economize = CodeToText[this.ssx[0]]
-        form.city = CodeToText[this.ssx[1]]
-        form.county = CodeToText[this.ssx[2]]
-      },
-      async submit() {
-        this.dialog = false;
-
-        let rs = await this.$http({
-          url: `/admin/${this.isModify ? 'docustomermod' : 'docustomernew'}`,
-          method: "post",
-          data: this.form
-        });
-
-        if (rs.success == 'true') this.$message({
-          message: '保存成功',
-          type: 'success'
-        })
-
-        this.$refs.form.resetFields();
-        this.fetchData()
-      },
+      })
     },
-  };
+    async submit() {
+      this.dialog = false;
+
+      let rs = await this.$http({
+        url: `/admin/${this.isModify ? 'docustomermod' : 'docustomernew'}`,
+        method: "post",
+        data: this.form
+      });
+
+      if (rs.success == 'true') this.$message({
+        message: '保存成功',
+        type: 'success'
+      })
+
+      this.$refs.form.resetFields();
+      this.ssx = []
+      this.fetchData()
+    },
+  },
+};
 </script>
 
 <style lang="scss" scoped>
-  .content-box {
-    &>div {
-      display: flex;
-      .el-input,
-      .el-select,
-      .el-date-editor {
-        width: 18%;
-        margin-right: 30px;
-      }
+.content-box {
+  & > div {
+    display: flex;
+    .el-input,
+    .el-select,
+    .el-date-editor {
+      width: 18%;
+      margin-right: 30px;
     }
   }
+}
+
+::v-deep .big-form{
+  .el-dialog {
+    width: 1200px !important;
+  }
+}
 </style>

@@ -121,3 +121,9 @@ form .el-date-editor--date{
 label{
     font-weight: 500!important
 }
+
+.content-wrap{
+    .content-box > div>div{
+        width: 230px!important;
+    }
+}

@@ -37,7 +37,7 @@
           </el-table-column>
           <el-table-column label="绑定员工" align="center">
             <template slot-scope="scope">
-              {{ scope.row.employee ? scope.row.employee.empname : '/'  }}
+              {{ scope.row.employee ? scope.row.employee.empname : '/' }}
             </template>
           </el-table-column>
           <el-table-column align="center" prop="created_at" label="启用状态">
@@ -53,7 +53,8 @@
         </el-table>
 
         <div class="pagination">
-          <el-pagination background @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page.sync="pageIndex" :page-size="pageSize" layout="prev, pager, next, jumper" :total="pageTotal"></el-pagination>
+          <el-pagination background @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page.sync="pageIndex"
+            :page-size="pageSize" layout="prev, pager, next, jumper" :total="pageTotal"></el-pagination>
         </div>
       </div>
     </div>
@@ -69,12 +70,11 @@
         <el-form-item label="用户姓名" prop="username">
           <el-input v-model="form.username" placeholder="请输入真实姓名"></el-input>
         </el-form-item>
-        <!-- <el-form-item label="绑定员工">
-          <el-select v-model="form.empid" placeholder="选择员工">
-            <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value">
-            </el-option>
-          </el-select>
-        </el-form-item> -->
+        <el-form-item label="绑定员工">
+          <el-input placeholder="选择员工" v-model="productInfo.productname" class="input-with-select select-btn" disabled>
+            <el-button slot="append" @click="dialog2Open">请选择</el-button>
+          </el-input>
+        </el-form-item>
         <el-form-item label="启用状态" prop="forbidden">
           <el-radio v-model="form.forbidden" :label="0">启用</el-radio>
           <el-radio v-model="form.forbidden" :label="1">关闭</el-radio>
@@ -92,195 +92,232 @@
         <el-button type="primary" @click="submit">确定</el-button>
       </div>
     </el-dialog>
+
+    <el-dialog title="选择员工" :visible.sync="dialog2" width="400px">
+      <div class="select-dialog">
+        <el-table v-loading="listLoading2" :data="list2" element-loading-text="Loading" fit highlight-current-row border @current-change="selectItem">
+          <el-table-column align="center" label="姓名">
+            <template slot-scope="scope">{{ scope.row.productname }}</template>
+          </el-table-column>
+        </el-table>
+        <div class="pagination">
+          <el-pagination background @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page.sync="pageIndex2"
+            :page-size="pageSize" layout="prev, pager, next" :total="pageTotal2"></el-pagination>
+        </div>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
 <script>
-export default {
-  name: 'User',
-  data() {
-    return {
-      pageSize: 15,
-      pageTotal: 0,
-      pageIndex: 1,
-      isModify: false,
-      comp: [],
-      role: [],
-      search: {
-        usercode: "",
-        username: "",
-      },
-      form: {
-        usercode: "",
-        username: "",
-        forbidden: 0,
-        passwd: "",
-        // userid: '',
-        empid: 0,
-        comids: [],
-        roleids: []
-      },
-      list: null,
-      listLoading: true,
-      dialog: false,
-      title: '',
-      rules: {
-        usercode: [
-          { required: true, message: "请输入当前密码", trigger: "blur" }
-        ],
-        passwd: [
-          { required: true, message: "请输入密码", trigger: "blur" },
-          { min: 6, max: 16, message: "长度在 6 到 16 个字符", trigger: "blur" },
-        ]
-      }
-    };
-  },
-  created() {
-    this.fetchData();
-  },
-  computed: {
-    forbidden() {
-      return function (val) {
-        return val == 0 ? '启用' : '关闭'
-      }
-    }
-  },
-  watch: {
-    pageIndex(index) {
-      if (index) this.fetchData(index);
-    },
-  },
-  methods: {
-    async fetchData() {
-      this.listLoading = true;
-      let rs = await this.$http({
-        url: `/admin/userlist?usercode=${this.search.usercode}&username=${this.search.username}&page.pageIndex=${this.pageIndex}`,
-        method: "get"
-      });
-
-      this.list = rs.data;
-      this.pageTotal = rs.total;
-      this.listLoading = false;
-    },
-    handleSizeChange(val) {
-      console.log(`每页 ${val} 条`);
-    },
-    handleCurrentChange(val) {
-      this.pageIndex = val;
-      console.log(`当前页: ${val}`);
-    },
-    async submit() {
-      this.dialog = false;
-
-      this.form.comids = this.form.comids.length == 0 ? '' : this.form.comids.join(',')
-      this.form.roleids = this.form.roleids.length == 0 ? '' : this.form.roleids.join(',')
-
-      let rs = await this.$http({
-        url: `/admin/${this.isModify ? 'dousermod' : 'dousernew'}`,
-        method: "post",
-        data: this.form
-      });
-
-      if (rs.success == 'true') this.$message({
-        message: '保存成功',
-        type: 'success'
-      })
-
-      this.$refs.form.resetFields()
-      this.fetchData()
-    },
-    clearForm() {
-      this.$refs.form.resetFields();
-    },
-    cancel() {
-      this.dialog = false;
-      this.$refs.form.resetFields()
-    },
-    dispatch(isModify, data) {
-      this.dialog = true;
-      this.title = isModify ? "编辑用户" : "添加用户"
-      this.isModify = isModify;
-
-      if (this.isModify) {
-        this.getDepInfos(data)
-        this.form.userid = data.userid
-      }
-
-      this.initComp()
-      this.initRole()
-    },
-    async getDepInfos(data) {
-      let rs = await this.$http({
-        url: `/admin/userdetail?userid=${data.userid}`,
-        method: "get"
-      });
-
-      for (let i in this.form) {
-        this.form[i] = rs.data[0][i]
-      }
-      
-      this.form.comids = this.form.comids.split(',')
-      this.form.roleids = this.form.roleids.split(',')
-
-      // Object.assign(this.form, rs.data[0])
-    },
-    async initComp(data) {
-      let rs = await this.$http({
-        url: `/admin/companyuserlist`,
-        method: "get",
-        params: {
-          userid: "",
+  export default {
+    name: 'User',
+    data() {
+      return {
+        pageSize: 15,
+        pageTotal: 0,
+        pageIndex: 1,
+        pageIndex2: 1,
+        pageTotal2: 0,
+        isModify: false,
+        comp: [],
+        role: [],
+        productInfo: {},
+        list2:[],
+        search: {
+          usercode: "",
+          username: "",
         },
-      });
-
-      const generateData = _ => {
-        let data = [];
-        let d = rs.data
-        for (let i = 0; i < d.length; i++) {
-          data.push({
-            key: d[i].comid,
-            label: d[i].comname
-          });
+        form: {
+          usercode: "",
+          username: "",
+          forbidden: 0,
+          passwd: "",
+          // userid: '',
+          empid: 0,
+          comids: [],
+          roleids: []
+        },
+        list: null,
+        listLoading: true,
+        listLoading2: true,
+        dialog: false,
+        dialog2: false,
+        title: '',
+        rules: {
+          usercode: [
+            { required: true, message: "请输入当前密码", trigger: "blur" }
+          ],
+          passwd: [
+            { required: true, message: "请输入密码", trigger: "blur" },
+            { min: 6, max: 16, message: "长度在 6 到 16 个字符", trigger: "blur" },
+          ]
         }
-        return data;
       };
-
-      this.comp = generateData()
     },
-    async initRole(data) {
-      let rs = await this.$http({
-        url: `/admin/roleuserlist`,
-        method: "get"
-      });
-
-      const generateData = _ => {
-        let data = [];
-        let d = rs.data
-        for (let i = 0; i < d.length; i++) {
-          data.push({
-            key: d[i].roleid,
-            label: d[i].rolename
-          });
+    created() {
+      this.fetchData();
+    },
+    computed: {
+      forbidden() {
+        return function (val) {
+          return val == 0 ? '启用' : '关闭'
         }
-        return data;
-      };
+      }
+    },
+    watch: {
+      pageIndex(index) {
+        if (index) this.fetchData(index);
+      },
+    },
+    methods: {
+      async fetchData() {
+        this.listLoading = true;
+        let rs = await this.$http({
+          url: `/admin/userlist?usercode=${this.search.usercode}&username=${this.search.username}&page.pageIndex=${this.pageIndex}`,
+          method: "get"
+        });
 
-      this.role = generateData()
-    }
-  },
-};
+        this.list = rs.data;
+        this.pageTotal = rs.total;
+        this.listLoading = false;
+      },
+      handleSizeChange(val) {
+      },
+      handleCurrentChange(val) {
+        this.pageIndex = val;
+      },
+      async submit() {
+        this.dialog = false;
+
+        this.form.comids = this.form.comids.length == 0 ? '' : this.form.comids.join(',')
+        this.form.roleids = this.form.roleids.length == 0 ? '' : this.form.roleids.join(',')
+
+        let rs = await this.$http({
+          url: `/admin/${this.isModify ? 'dousermod' : 'dousernew'}`,
+          method: "post",
+          data: this.form
+        });
+
+        if (rs.success == 'true') this.$message({
+          message: '保存成功',
+          type: 'success'
+        })
+
+        this.$refs.form.resetFields()
+        this.fetchData()
+      },
+      clearForm() {
+        this.$refs.form.resetFields();
+      },
+      cancel() {
+        this.dialog = false;
+        this.$refs.form.resetFields()
+      },
+      dispatch(isModify, data) {
+        this.dialog = true;
+        this.title = isModify ? "编辑用户" : "添加用户"
+        this.isModify = isModify;
+
+        if (this.isModify) {
+          this.getDepInfos(data)
+          this.form.userid = data.userid
+        }
+
+        this.initComp()
+        this.initRole()
+      },
+      async getDepInfos(data) {
+        let rs = await this.$http({
+          url: `/admin/userdetail?userid=${data.userid}`,
+          method: "get"
+        });
+
+        for (let i in this.form) {
+          this.form[i] = rs.data[0][i]
+        }
+
+        this.form.comids = rs.data[0].comids.split(',')
+        this.form.roleids = rs.data[0].roleids.split(',')
+
+        // Object.assign(this.form, rs.data[0])
+      },
+      async initComp(data) {
+        let rs = await this.$http({
+          url: `/admin/companyuserlist`,
+          method: "get",
+          params: {
+            userid: "",
+          },
+        });
+
+        const generateData = _ => {
+          let data = [];
+          let d = rs.data
+          for (let i = 0; i < d.length; i++) {
+            data.push({
+              key: d[i].comid,
+              label: d[i].comname
+            });
+          }
+          return data;
+        };
+
+        this.comp = generateData()
+      },
+      async initRole(data) {
+        let rs = await this.$http({
+          url: `/admin/roleuserlist`,
+          method: "get"
+        });
+
+        const generateData = _ => {
+          let data = [];
+          let d = rs.data
+          for (let i = 0; i < d.length; i++) {
+            data.push({
+              key: d[i].roleid,
+              label: d[i].rolename
+            });
+          }
+          return data;
+        };
+
+        this.role = generateData()
+      },
+      async dialog2Open() {
+        this.dialog2 = true
+        this.listLoading2 = true;
+        let rs = await this.$http({
+          url: `/admin/productkllist`,
+          method: 'get'
+        });
+
+        this.list2 = rs.data;
+        this.pageTotal2 = rs.total;
+        this.listLoading2 = false;
+      },
+      selectItem(val) {
+        if (!val) return
+        this.dialog2 = false
+        this.form.productid = val.id
+        this.productInfo.productname = val.productname
+        this.productInfo.specs = val.specs
+      }
+    },
+  };
 </script>
 
 <style lang="scss" scoped>
-.content-box {
-  & > div {
-    display: flex;
-    .el-input,
-    .el-select,
-    .el-date-editor {
-      width: 20%;
-      margin-right: 30px;
+  .content-box {
+    &>div {
+      display: flex;
+      .el-input,
+      .el-select,
+      .el-date-editor {
+        width: 20%;
+        margin-right: 30px;
+      }
     }
   }
-}
 </style>

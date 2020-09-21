@@ -59,12 +59,12 @@ export const constantRoutes = [
     name: 'WorkOrder',
     meta: { title: '工单管理', icon: 'el-icon-s-help' },
     children: [
-      // {
-      //   path: 'appointment',
-      //   name: 'Appointment',
-      //   component: () => import('@/views/table/index'),
-      //   meta: { title: '预约登记', icon: '' }
-      // },
+      {
+        path: 'addOrder',
+        name: 'AddOrder',
+        component: () => import('@/views/workOrder/addOrder'),
+        meta: { title: '预约登记', icon: '' }
+      },
       {
         path: 'dispatch',
         name: 'Dispatch',
@@ -89,6 +89,18 @@ export const constantRoutes = [
         name: 'NetworkOrder',
         component: () => import('@/views/workOrder/networkOrder'),
         meta: { title: '网络预约单审核', icon: '' }
+      },
+      {
+        path: 'orderManger',
+        name: 'OrderManger',
+        component: () => import('@/views/workOrder/networkOrder'),
+        meta: { title: '工单信息管理', icon: '' }
+      },
+      {
+        path: 'orderDetail',
+        name: 'OrderDetail',
+        component: () => import('@/views/workOrder/networkOrder'),
+        meta: { title: '工单详情单', icon: '' }
       },
       {
         path: 'qualityOrder',
@@ -195,6 +207,12 @@ export const constantRoutes = [
     name: 'Setting',
     meta: { title: '系统设置', icon: 'el-icon-s-help' },
     children: [
+      {
+        path: 'menu',
+        name: 'Menu',
+        component: () => import('@/views/setting/user'),
+        meta: { title: '菜单管理', icon: '' }
+      },
       {
         path: 'user',
         name: 'User',

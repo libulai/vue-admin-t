@@ -36,9 +36,9 @@
     <div class="content-wrap" style="margin-top:20px">
       <div class="content-title">
         <div>
-          <el-button class="com-btn" type="primary" :disabled="btnState">分派</el-button>
+          <el-button class="com-btn" type="primary" :disabled="btnState" @click="dialog1Click">分派</el-button>
           <el-button type="warning" class="com-btn" :disabled="btnState" @click='dialog3 = true'>派单</el-button>
-          <el-button type="info" class="com-btn" :disabled="btnState">取消派单</el-button>
+          <el-button type="info" class="com-btn" :disabled="btnState" @click='dialog2 = true'>取消派单</el-button>
         </div>
 
         <div>
@@ -51,7 +51,7 @@
           <el-table-column type="selection" width="55">
           </el-table-column>
 
-          <el-table-column align="center" label="订单号" min-width="100">
+          <el-table-column align="center" label="订单号" min-width="110">
             <template slot-scope="scope">
               {{ scope.row.ordercode }}
             </template>
@@ -88,7 +88,7 @@
           </el-table-column>
           <el-table-column align="center" prop="created_at" label="服务人员">
             <template slot-scope="scope">
-              <span>{{ scope.row.trackusername }}</span>
+              <span>{{ scope.row.trackusername || '/'}}</span>
             </template>
           </el-table-column>
           <el-table-column align="center" prop="created_at" label="操作">
@@ -99,14 +99,14 @@
         </el-table>
 
         <div class="pagination">
-          <el-pagination background @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page.sync="pageIndex" :page-size="pageSize" layout="prev, pager, next, jumper" :total="pageTotal"></el-pagination>
+          <el-pagination background @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page.sync="pageIndex"
+            :page-size="pageSize" layout="prev, pager, next, jumper" :total="pageTotal"></el-pagination>
         </div>
       </div>
     </div>
 
     <!-- 分派 -->
     <el-dialog title="分派" :visible.sync="dialog1" width="550px">
-
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialog1 = false">取 消</el-button>
         <el-button type="primary" @click="submit1">确 定</el-button>
@@ -114,7 +114,7 @@
     </el-dialog>
 
     <!-- 取消派单 -->
-    <el-dialog title="取消派单" :visible.sync="dialog2" width="450px">
+    <el-dialog title="取消派单" :visible.sync="dialog2" width="450px" class="dialog">
       <span>是否取消派单？</span>
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialog2 = false">取 消</el-button>
@@ -123,7 +123,7 @@
     </el-dialog>
 
     <!-- 派单 -->
-    <el-dialog title="派单" :visible.sync="dialog3" width="450px">
+    <el-dialog title="派单" :visible.sync="dialog3" width="450px" class="dialog">
       <span>是否进行派单？</span>
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialog3 = false">取 消</el-button>
@@ -134,139 +134,152 @@
 </template>
 
 <script>
-export default {
-  name: "Dispatch",
-  data() {
-    return {
-      pageSize: 15,
-      pageTotal: 0,
-      pageIndex: 1,
-      btnState: true,
-      dialog1: false,
-      dialog2: false,
-      dialog3: false,
-      selection: [],
-      search: {
-        startDate: '',
-        endDate: '',
-        address: '',
-        ordercode: '',
-        areaid: '',
-        pttype: '',
-        status: '',
-        trackusername: '',
-      },
-      options: [
-        {
-          value: "选项1",
-          label: "黄金糕",
+  import moment from 'moment'
+  export default {
+    name: "Dispatch",
+    data() {
+      let tom = moment().add(1, 'days').format('YYYY-MM-DD')
+      return {
+        pageSize: 15,
+        pageTotal: 0,
+        pageIndex: 1,
+        btnState: true,
+        dialog1: false,
+        dialog2: false,
+        dialog3: false,
+        selection: [],
+        search: {
+          startDate: tom,
+          endDate: tom,
+          address: '',
+          ordercode: '',
+          areaid: '',
+          pttype: '',
+          status: '',
+          trackusername: '',
         },
-        {
-          value: "选项2",
-          label: "双皮奶",
+        options: [
+          {
+            value: "选项1",
+            label: "黄金糕",
+          },
+          {
+            value: "选项2",
+            label: "双皮奶",
+          },
+        ],
+        form: {
+          order: "",
+          plot: "",
+          orderState: "",
+          time: "",
         },
-      ],
-      form: {
-        order: "",
-        plot: "",
-        orderState: "",
-        time: "",
-      },
-      list: null,
-      listLoading: true,
-    };
-  },
-  computed: {
-    status(val) {
-      return function (val) {
-        const MAP = {
-          1: '已登记', 2: '已派单', 3: '正在服务',
-          4: '已完成', 5: '已复核', 6: '已关闭', 22: '时间已确认'
+        list: null,
+        listLoading: true,
+      };
+    },
+    computed: {
+      status(val) {
+        return function (val) {
+          const MAP = {
+            1: '已登记', 2: '已派单', 3: '正在服务',
+            4: '已完成', 5: '已复核', 6: '已关闭', 22: '时间已确认'
+          }
+          return MAP[val]
         }
-        return MAP[val]
       }
-    }
-  },
-  watch: {
-    pageIndex(index) {
-      if (index) this.fetchData(index);
     },
-  },
-  created() {
-    this.fetchData();
-  },
-  methods: {
-    handleSelectionChange(val) {
-      this.selection = val.map(i => i.id)
-      this.btnState = val.length == 0
+    watch: {
+      pageIndex(index) {
+        if (index) this.fetchData(index);
+      },
     },
-    async fetchData() {
-      console.log(this.form.time)
-      this.listLoading = true;
-      let rs = await this.$http({
-        url: `/kl/arrangeklorderlist?startDate=${this.search.startDate}&trackusername=${this.search.trackusername}&status=${this.search.status}&pttype=${this.search.pttype}&areaid=${this.search.areaid}&ordercode=${this.search.ordercode}&endDate=${this.search.endDate}&address=${this.search.address}&page.pageIndex=${this.pageIndex}`,
-        method: "get"
-      });
+    created() {
+      this.fetchData();
+    },
+    methods: {
+      handleSelectionChange(val) {
+        this.selection = val.map(i => i.orderid)
+        this.btnState = val.length == 0
+      },
+      async fetchData() {
+        this.listLoading = true;
+        let rs = await this.$http({
+          url: `/kl/arrangeklorderlist?startDate=${this.search.startDate}&trackusername=${this.search.trackusername}&status=${this.search.status}&pttype=${this.search.pttype}&areaid=${this.search.areaid}&ordercode=${this.search.ordercode}&endDate=${this.search.endDate}&address=${this.search.address}&page.pageIndex=${this.pageIndex}`,
+          method: "get"
+        });
 
-      this.list = rs.data;
-      this.pageTotal = rs.total;
-      this.listLoading = false;
-    },
-    async submit3() {
-      let rs = await this.$http({
-        url: `/kl/klorderdispatch`,
-        params: {
-          dispatchorderids: this.selection.join(',')
-        },
-        method: "get"
-      });
+        this.list = rs.data;
+        this.pageTotal = rs.total;
+        this.listLoading = false;
+      },
+      async dialog1Click() {
+        this.dialog1 = true
 
-      if (rs.success == 'true') this.$message({
-        message: '保存成功',
-        type: 'success'
-      })
+      },
+      async submit3() {
+        let rs = await this.$http({
+          url: `/kl/klorderdispatch`,
+          params: {
+            dispatchorderids: this.selection.join(',')
+          },
+          method: "get"
+        });
 
-      this.fetchData()
-    },
-    async submit2() {
-      let rs = await this.$http({
-        url: `/kl/klorderdispatchcancel`,
-        params: {
-          dispatchorderids: this.selection.join(',')
-        },
-        method: "get"
-      });
+        if (rs.success == 'true') this.$message({
+          message: '保存成功',
+          type: 'success'
+        })
 
-      if (rs.success == 'true') this.$message({
-        message: '保存成功',
-        type: 'success'
-      })
+        this.dialog3 = false
+        this.fetchData()
+      },
+      async submit2() {
+        let rs = await this.$http({
+          url: `/kl/klorderdispatchcancel`,
+          params: {
+            dispatchorderids: this.selection.join(',')
+          },
+          method: "get"
+        });
 
-      this.fetchData()
-    },
-    async submit1() {
+        if (rs.success == 'true') this.$message({
+          message: '保存成功',
+          type: 'success'
+        })
 
+        this.dialog2 = false
+        this.fetchData()
+      },
+      async submit1() {
+
+      },
+      handleSizeChange(val) {
+        console.log(`每页 ${val} 条`);
+      },
+      handleCurrentChange(val) {
+        this.pageIndex = val;
+      },
     },
-    handleSizeChange(val) {
-      console.log(`每页 ${val} 条`);
-    },
-    handleCurrentChange(val) {
-      this.pageIndex = val;
-    },
-  },
-};
+  };
 </script>
 
 <style lang="scss" scoped>
-.content-box {
-  & > div {
-    display: flex;
-    .el-input,
-    .el-select,
-    .el-date-editor {
-      width: 20%;
-      margin-right: 30px;
+  .content-box {
+    &>div {
+      display: flex;
+      .el-input,
+      .el-select,
+      .el-date-editor {
+        width: 20%;
+        margin-right: 30px;
+      }
     }
   }
-}
+
+  ::v-deep .dialog {
+    .el-dialog {
+      width: 450px !important;
+    }
+  }
 </style>

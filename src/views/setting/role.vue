@@ -37,7 +37,7 @@
             </template>
           </el-table-column>
           <el-table-column align="center" prop="created_at" label="操作">
-            <template>
+            <template slot-scope="scope">
               <span class="detail handle" @click="dispatch(true, scope.row)">编辑</span>
             </template>
           </el-table-column>
@@ -52,10 +52,10 @@
     <el-dialog :title="title" :visible.sync="dialog" class="dialog" :close-on-click-modal="false" width="1000px" @closed="clearForm">
       <el-form :model="form" :rules="rules" ref="form" label-width="100px" class="dialog-form">
         <el-form-item label="角色名称" prop="rolename">
-          <el-input v-model="form.rolename" placeholder="请输入用户登录账号"></el-input>
+          <el-input v-model="form.rolename" placeholder="请输入"></el-input>
         </el-form-item>
         <el-form-item label="级别" prop="rolelevel">
-          <el-input v-model.number="form.rolelevel" placeholder="请输入用户登录密码"></el-input>
+          <el-input v-model.number="form.rolelevel" placeholder="请输入"></el-input>
         </el-form-item>
         <el-form-item label="是否对外" prop="rolestatus">
           <el-radio v-model="form.rolestatus" :label="0">是</el-radio>
@@ -93,10 +93,10 @@ export default {
       buttons: [],
       form: {
         rolename: "",
-        rolelevel: "",
-        rolestatus: 0,
-        menuids: '',
-        buttonids: ''
+        rolelevel: 99,
+        rolestatus: 1,
+        menuids: [],
+        buttonids: []
       },
       list: null,
       listLoading: true,
@@ -141,11 +141,11 @@ export default {
     async submit() {
       this.dialog = false;
 
-      this.form.comids = this.form.comids.join(',')
-      this.form.roleids = this.form.roleids.join(',')
+      this.form.menuids = this.form.menuids.join(',')
+      this.form.buttonids = this.form.buttonids.join(',')
 
       let rs = await this.$http({
-        url: `/admin/${this.isModify ? 'dousermod' : 'dousernew'}`,
+        url: `/admin/${this.isModify ? 'dorolemod' : 'dorolenew'}`,
         method: "post",
         data: this.form
       });
@@ -176,9 +176,6 @@ export default {
         this.getComp()
         this.getRole()
       }
-
-      this.getComp()
-        this.getRole()
 
       this.initComp()
       this.initRole()
@@ -244,7 +241,7 @@ export default {
         }
       });
 
-      this.form.buttons = rs.data.map(i => i.comid)
+      this.form.buttonids = rs.data.map(i => i.buttonid)
     },
     async getRole() {
       let rs = await this.$http({
@@ -255,7 +252,7 @@ export default {
         }
       });
 
-      this.form.menus = rs.data.map(i => i.roleid)
+      this.form.menuids = rs.data.map(i => i.menuid)
     }
   },
 };

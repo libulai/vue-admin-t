@@ -6,9 +6,9 @@
       </div>
       <div class="content-box">
         <div>
-          <el-input v-model="form.order" placeholder="请输入订单号"></el-input>
-          <el-input v-model="form.plot" placeholder="请输入小区名称"></el-input>
-          <el-select v-model="form.orderState" placeholder="选择工单状态">
+          <el-input v-model="search.ordercode" placeholder="请输入订单号"></el-input>
+          <el-input v-model="search.plot" placeholder="请输入小区名称"></el-input>
+          <el-select v-model="search.orderState" placeholder="选择工单状态">
             <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value">
             </el-option>
           </el-select>
@@ -18,9 +18,12 @@
           </el-select>
         </div>
         <div style="margin-top:20px">
-          <el-date-picker v-model="form.time" type="daterange" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期">
+          <!-- <el-date-picker v-model="form.time" type="daterange" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期"></el-date-picker> -->
+          <el-date-picker v-model="search.startDate" type="date" placeholder="开始时间" value-format="yyyy-MM-dd">
           </el-date-picker>
-          <el-select v-model="form.orderState" placeholder="选择工单类型">
+          <el-date-picker v-model="search.endDate" type="date" placeholder="结束时间" value-format="yyyy-MM-dd">
+          </el-date-picker>
+          <el-select v-model="search.orderState" placeholder="选择工单类型">
             <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value">
             </el-option>
           </el-select>
@@ -48,44 +51,44 @@
           <el-table-column type="selection" width="55">
           </el-table-column>
 
-          <el-table-column align="center" label="订单号">
+          <el-table-column align="center" label="订单号" min-width="100">
             <template slot-scope="scope">
-              {{ scope.$index }}
+              {{ scope.row.ordercode }}
             </template>
           </el-table-column>
           <el-table-column label="客户名称" align="center">
             <template slot-scope="scope">
-              {{ scope.row.pageviews }}
+              {{ scope.row.customer.customername }}
             </template>
           </el-table-column>
-          <el-table-column label="联系方式" align="center">
+          <el-table-column label="联系方式" align="center" min-width="110">
             <template slot-scope="scope">
-              <span>{{ scope.row.author }}</span>
+              <span>{{ scope.row.customer.contacterphone }}</span>
             </template>
           </el-table-column>
-          <el-table-column label="上门时间" align="center">
+          <el-table-column label="上门时间" align="center" min-width="120">
             <template slot-scope="scope">
-              {{ scope.row.pageviews }}
+              {{ scope.row.reservedate }}
             </template>
           </el-table-column>
-          <el-table-column class-name="status-col" label="客户地址" min-width="360" align="center">
+          <el-table-column class-name="status-col" label="客户地址" min-width="250" align="center">
             <template slot-scope="scope">
-              {{ scope.row.title }}
+              {{ scope.row.customer.address }}
             </template>
           </el-table-column>
           <el-table-column align="center" prop="created_at" label="服务类型">
             <template slot-scope="scope">
-              <span>{{ scope.row.author }}</span>
+              <span>{{ scope.row.pttype }}</span>
             </template>
           </el-table-column>
           <el-table-column align="center" prop="created_at" label="状态">
             <template slot-scope="scope">
-              <span>{{ scope.row.author }}</span>
+              <span>{{ status(scope.row.status) }}</span>
             </template>
           </el-table-column>
           <el-table-column align="center" prop="created_at" label="服务人员">
             <template slot-scope="scope">
-              <span>{{ scope.row.author }}</span>
+              <span>{{ scope.row.trackusername }}</span>
             </template>
           </el-table-column>
           <el-table-column align="center" prop="created_at" label="操作">
@@ -96,15 +99,14 @@
         </el-table>
 
         <div class="pagination">
-          <el-pagination background @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page.sync="pageIndex"
-            :page-size="pageSize" layout="prev, pager, next, jumper" :total="pageTotal"></el-pagination>
+          <el-pagination background @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page.sync="pageIndex" :page-size="pageSize" layout="prev, pager, next, jumper" :total="pageTotal"></el-pagination>
         </div>
       </div>
     </div>
 
     <!-- 分派 -->
     <el-dialog title="分派" :visible.sync="dialog1" width="550px">
-      
+
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialog1 = false">取 消</el-button>
         <el-button type="primary" @click="submit1">确 定</el-button>
@@ -132,125 +134,139 @@
 </template>
 
 <script>
-  export default {
-    name: "Dispatch",
-    data() {
-      return {
-        pageSize: 15,
-        pageTotal: 0,
-        pageIndex: 1,
-        btnState: true,
-        dialog1: false,
-        dialog2: false,
-        dialog3: false,
-        selection: [],
-        search: {
-          startDate: '',
-          endDate: '',
-          address: '',
-          ordercode: '',
-          areaid: '',
-          pttype: '',
-          status: '',
-          trackusername: '',
+export default {
+  name: "Dispatch",
+  data() {
+    return {
+      pageSize: 15,
+      pageTotal: 0,
+      pageIndex: 1,
+      btnState: true,
+      dialog1: false,
+      dialog2: false,
+      dialog3: false,
+      selection: [],
+      search: {
+        startDate: '',
+        endDate: '',
+        address: '',
+        ordercode: '',
+        areaid: '',
+        pttype: '',
+        status: '',
+        trackusername: '',
+      },
+      options: [
+        {
+          value: "选项1",
+          label: "黄金糕",
         },
-        options: [
-          {
-            value: "选项1",
-            label: "黄金糕",
-          },
-          {
-            value: "选项2",
-            label: "双皮奶",
-          },
-        ],
-        form: {
-          order: "",
-          plot: "",
-          orderState: "",
-          time: "",
+        {
+          value: "选项2",
+          label: "双皮奶",
         },
-        list: null,
-        listLoading: true,
-      };
+      ],
+      form: {
+        order: "",
+        plot: "",
+        orderState: "",
+        time: "",
+      },
+      list: null,
+      listLoading: true,
+    };
+  },
+  computed: {
+    status(val) {
+      return function (val) {
+        const MAP = {
+          1: '已登记', 2: '已派单', 3: '正在服务',
+          4: '已完成', 5: '已复核', 6: '已关闭', 22: '时间已确认'
+        }
+        return MAP[val]
+      }
+    }
+  },
+  watch: {
+    pageIndex(index) {
+      if (index) this.fetchData(index);
     },
-    watch: {
-      pageIndex(index) {
-        if (index) this.fetchData(index);
-      },
+  },
+  created() {
+    this.fetchData();
+  },
+  methods: {
+    handleSelectionChange(val) {
+      this.selection = val.map(i => i.id)
+      this.btnState = val.length == 0
     },
-    created() {
-      this.fetchData();
+    async fetchData() {
+      console.log(this.form.time)
+      this.listLoading = true;
+      let rs = await this.$http({
+        url: `/kl/arrangeklorderlist?startDate=${this.search.startDate}&trackusername=${this.search.trackusername}&status=${this.search.status}&pttype=${this.search.pttype}&areaid=${this.search.areaid}&ordercode=${this.search.ordercode}&endDate=${this.search.endDate}&address=${this.search.address}&page.pageIndex=${this.pageIndex}`,
+        method: "get"
+      });
+
+      this.list = rs.data;
+      this.pageTotal = rs.total;
+      this.listLoading = false;
     },
-    methods: {
-      handleSelectionChange(val) {
-        this.selection = val.map(i => i.id)
-        this.btnState = val.length == 0
-      },
-      async fetchData() {
-        console.log(this.form.time)
-        this.listLoading = true;
-        let rs = await this.$http({
-          url: `/kl/arrangeklorderlist?startDate=${this.search.startDate}&trackusername=${this.search.trackusername}&status=${this.search.status}&pttype=${this.search.pttype}&areaid=${this.search.areaid}&ordercode=${this.search.ordercode}&endDate=${this.search.endDate}&address=${this.search.address}&page.pageIndex=${this.pageIndex}`,
-          method: "get"
-        });
+    async submit3() {
+      let rs = await this.$http({
+        url: `/kl/klorderdispatch`,
+        params: {
+          dispatchorderids: this.selection.join(',')
+        },
+        method: "get"
+      });
 
-        this.list = rs.data;
-        this.pageTotal = rs.total;
-        this.listLoading = false;
-      },
-      async submit3() {
-        let rs = await this.$http({
-          url: `/kl/klorderdispatch`,
-          params: {
-            dispatchorderids: this.selection.join(',')
-          },
-          method: "get"
-        });
+      if (rs.success == 'true') this.$message({
+        message: '保存成功',
+        type: 'success'
+      })
 
-        if (rs.success == 'true') this.$message({
-          message: '保存成功',
-          type: 'success'
-        })
-
-        this.fetchData()
-      },
-      async submit2() {
-        let rs = await this.$http({
-          url: `/kl/klorderdispatchcancel`,
-          params: {
-            dispatchorderids: this.selection.join(',')
-          },
-          method: "get"
-        });
-
-        if (rs.success == 'true') this.$message({
-          message: '保存成功',
-          type: 'success'
-        })
-
-        this.fetchData()
-      },
-      handleSizeChange(val) {
-        console.log(`每页 ${val} 条`);
-      },
-      handleCurrentChange(val) {
-        this.pageIndex = val;
-      },
+      this.fetchData()
     },
-  };
+    async submit2() {
+      let rs = await this.$http({
+        url: `/kl/klorderdispatchcancel`,
+        params: {
+          dispatchorderids: this.selection.join(',')
+        },
+        method: "get"
+      });
+
+      if (rs.success == 'true') this.$message({
+        message: '保存成功',
+        type: 'success'
+      })
+
+      this.fetchData()
+    },
+    async submit1() {
+
+    },
+    handleSizeChange(val) {
+      console.log(`每页 ${val} 条`);
+    },
+    handleCurrentChange(val) {
+      this.pageIndex = val;
+    },
+  },
+};
 </script>
 
 <style lang="scss" scoped>
-  .content-box {
-    &>div {
-      display: flex;
-      .el-input,
-      .el-select,
-      .el-date-editor {
-        width: 20%;
-        margin-right: 30px;
-      }
+.content-box {
+  & > div {
+    display: flex;
+    .el-input,
+    .el-select,
+    .el-date-editor {
+      width: 20%;
+      margin-right: 30px;
     }
   }
+}
 </style>

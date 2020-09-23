@@ -88,7 +88,7 @@
           </el-table-column>
           <el-table-column align="center" prop="created_at" label="服务人员">
             <template slot-scope="scope">
-              <span>{{ scope.row.trackusername || '/'}}</span>
+              <span>{{ scope.row.trackuser ? scope.row.trackuser.username : '/'}}</span>
             </template>
           </el-table-column>
           <el-table-column align="center" prop="created_at" label="操作">
@@ -107,8 +107,16 @@
 
     <!-- 分派 -->
     <el-dialog title="分派" :visible.sync="dialog1" width="550px">
+      <el-form :model="form" :rules="rules3" ref="form" label-width="150px" class="dialog3-ruleForm">
+        <el-form-item label="选择人员" prop="scorea">
+          <el-select v-model="form.trackuserid" placeholder="选择">
+            <el-option v-for="item in tracks" :key="item.userid" :label="item.username" :value="item.userid">
+            </el-option>
+          </el-select>
+        </el-form-item>
+      </el-form>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="dialog1 = false">取 消</el-button>
+        <el-button @click="cancel">取 消</el-button>
         <el-button type="primary" @click="submit1">确 定</el-button>
       </span>
     </el-dialog>
@@ -148,6 +156,7 @@
         dialog2: false,
         dialog3: false,
         selection: [],
+        tracks: [],
         search: {
           startDate: tom,
           endDate: tom,
@@ -169,10 +178,8 @@
           },
         ],
         form: {
-          order: "",
-          plot: "",
-          orderState: "",
-          time: "",
+          dispatchorderids: "",
+          trackuserid: ''
         },
         list: null,
         listLoading: true,
@@ -202,6 +209,9 @@
         this.selection = val.map(i => i.orderid)
         this.btnState = val.length == 0
       },
+      cancel() {
+        this.$refs.form.resetFields();
+      },
       async fetchData() {
         this.listLoading = true;
         let rs = await this.$http({
@@ -215,7 +225,12 @@
       },
       async dialog1Click() {
         this.dialog1 = true
+        let rs = await this.$http({
+          url: `/admin/trackers`,
+          method: "get"
+        });
 
+        this.tracks = rs.data
       },
       async submit3() {
         let rs = await this.$http({
@@ -252,7 +267,23 @@
         this.fetchData()
       },
       async submit1() {
+        let rs = await this.$http({
+          url: `/kl/klorderarrangesave`,
+          params: {
+            dispatchorderids: this.selection.join(','),
+            trackuserid: this.form.trackuserid
+          },
+          method: "get"
+        });
 
+        if (rs.success == 'true') this.$message({
+          message: '保存成功',
+          type: 'success'
+        })
+
+        this.dialog1 = false
+        this.$refs.form.resetFields();
+        this.fetchData()
       },
       handleSizeChange(val) {
         console.log(`每页 ${val} 条`);
@@ -271,7 +302,7 @@
       .el-input,
       .el-select,
       .el-date-editor {
-        width: 20%;
+        /* width: 20%; */
         margin-right: 30px;
       }
     }

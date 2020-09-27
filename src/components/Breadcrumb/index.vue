@@ -10,12 +10,12 @@
     </el-breadcrumb>
 
     <!-- home -->
-    <div v-if="isHome" class="login-info">
+    <!-- <div v-if="isHome" class="login-info">
       <span>上次登录时间为</span>
       <span>2020-09-09 上午12:00</span>
       <span>，如有异常，请</span>&nbsp;
       <span style="font-size:13px;text-decoration: underline;">修改密码</span>
-    </div>
+    </div> -->
   </div>
 
 </template>
@@ -104,17 +104,16 @@
     }
   }
 
-  .bread{
+  .bread {
     display: flex;
     justify-content: space-between;
     width: 100%;
     align-items: center;
 
-    .login-info{
+    .login-info {
       color: #fff;
-      font-size:11px;
-      margin-right:20px;
+      font-size: 11px;
+      margin-right: 20px;
     }
   }
-
 </style>

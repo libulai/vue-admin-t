@@ -58,48 +58,6 @@
             <div>张三</div>
             <div class="detail">12</div>
           </div>
-
-          <!-- <div class="tr tr-d">
-            <div>张三</div>
-            <div class="detail">12</div>
-          </div>
-          <div class="tr tr-d">
-            <div>张三</div>
-            <div class="detail">12</div>
-          </div>
-          <div class="tr tr-d">
-            <div>张三</div>
-            <div class="detail">12</div>
-          </div>
-          <div class="tr tr-d">
-            <div>张三</div>
-            <div class="detail">12</div>
-          </div>
-          <div class="tr tr-d">
-            <div>张三</div>
-            <div class="detail">12</div>
-          </div>
-          <div class="tr tr-d">
-            <div>张三</div>
-            <div class="detail">12</div>
-          </div>
-          <div class="tr tr-d">
-            <div>张三</div>
-            <div class="detail">12</div>
-          </div>
-          <div class="tr tr-d">
-            <div>张三</div>
-            <div class="detail">12</div>
-          </div>
-          <div class="tr tr-d">
-            <div>张三</div>
-            <div class="detail">12</div>
-          </div>
-          <div class="tr tr-d">
-            <div>张三</div>
-            <div class="detail">12</div>
-          </div> -->
-
         </div>
       </div>
       <div class="content-wrap">
@@ -126,6 +84,7 @@
 
 <script>
   import { mapGetters } from "vuex";
+  import Layout from '@/layout'
 
   export default {
     name: "Home",
@@ -140,6 +99,29 @@
     computed: {
       ...mapGetters(["name"]),
     },
+    created() {
+      // this.$store.dispatch('permission/asyncRouter', this.$router)
+      // setTimeout(() => {
+      //   let routes = [{
+      //     path: '/setting',
+      //     component: Layout,
+      //     redirect: '/setting/user',
+      //     name: 'Setting',
+      //     meta: { title: '系统设置222', icon: 'el-icon-s-help' },
+      //     children: [
+      //       {
+      //         path: 'user',
+      //         name: 'User',
+      //         component: () => import('@/views/setting/user'),
+      //         meta: { title: '用户管理', icon: '' }
+      //       },
+      //     ]
+      //   }]
+      //   // this.$router.options.routes = routes;
+      //   this.$router.addRoutes(routes)
+      // }, 500);
+
+    }
   };
 </script>
 

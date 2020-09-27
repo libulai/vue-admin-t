@@ -99,6 +99,7 @@
         this.$refs.loginForm.validate(valid => {
           if (valid) {
             this.loading = true
+            localStorage.setItem('q', this.loginForm.password)
             this.$store.dispatch('user/login', this.loginForm).then((data) => {
               this.loading = false
               if (data.success == 'false') {

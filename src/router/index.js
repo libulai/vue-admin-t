@@ -6,6 +6,11 @@ Vue.use(Router)
 /* Layout */
 import Layout from '@/layout'
 
+import asyncRouter from './asyncRouter'
+
+// let rs = await asyncRouter()
+// console.log(rs)
+// console.log(asyncRouter(),'123')  
 /**
  * Note: sub-menu only appear when route children.length >= 1
  * Detail see: https://panjiachen.github.io/vue-element-admin-site/guide/essentials/router-and-nav.html
@@ -30,7 +35,14 @@ import Layout from '@/layout'
  * a base page that does not have permission requirements
  * all roles can be accessed
  */
-export const constantRoutes = [
+
+// let constantRoutes = []
+
+// asyncRouter().then(rs=>{
+//   console.log(rs,'90')
+// })
+
+export let constantRoutes = [
   {
     path: '/login',
     component: () => import('@/views/login/index'),
@@ -179,7 +191,7 @@ export const constantRoutes = [
         name: 'Plot',
         component: () => import('@/views/basic/plot'),
         meta: { title: '小区管理', icon: '' }
-      }, 
+      },
       {
         path: 'iProducts',
         name: 'IProducts',
@@ -210,7 +222,7 @@ export const constantRoutes = [
       {
         path: 'menu',
         name: 'Menu',
-        component: () => import('@/views/setting/user'),
+        component: () => import('@/views/setting/menu'),
         meta: { title: '菜单管理', icon: '' }
       },
       {
@@ -228,13 +240,21 @@ export const constantRoutes = [
     ]
   },
 
-  
+  // 404 page must be placed at the end !!!
+  // { path: '*', redirect: '/404', hidden: true }
+]
 
-
+export const asyncRoutes = [
+  {
+    path: '/login',
+    component: () => import('@/views/login/index'),
+    hidden: true
+  },
 
   // 404 page must be placed at the end !!!
   { path: '*', redirect: '/404', hidden: true }
 ]
+
 
 const createRouter = () => new Router({
   // mode: 'history', // require service support

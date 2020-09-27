@@ -6,15 +6,15 @@
       </div>
       <div class="content-box">
         <div>
-          <el-date-picker v-model="form.time" type="daterange" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期">
+          <el-date-picker v-model="search.startDate" type="date" placeholder="开始时间" value-format="yyyy-MM-dd">
           </el-date-picker>
-
-          <el-select v-model="form.orderState" placeholder="全部">
+          <el-date-picker v-model="search.endDate" type="date" placeholder="结束时间" value-format="yyyy-MM-dd">
+          </el-date-picker>
+          <el-select v-model="search.status" placeholder="请选择">
             <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value">
             </el-option>
           </el-select>
-
-          <el-button type="warning" class="com-btn">查询</el-button>
+          <el-button type="warning" class="com-btn" @click="fetchData">查询</el-button>
           <el-button class="com-btn">导出</el-button>
         </div>
       </div>
@@ -23,13 +23,13 @@
     <div class="content-wrap" style="margin-top:20px">
       <div class="content-title">
         <div>
-          <el-button class="com-btn" type="primary">作废</el-button>
-          <el-button type="info" class="com-btn">取消作废</el-button>
+          <el-button class="com-btn" type="primary" :disabled="btnState" @click="dialog = true">作废</el-button>
+          <el-button type="info" class="com-btn" :disabled="btnState" @click="dialog2 = true">取消作废</el-button>
         </div>
       </div>
 
       <div>
-        <el-table v-loading="listLoading" :data="list" element-loading-text="Loading" fit highlight-current-row>
+        <el-table v-loading="listLoading" :data="list" element-loading-text="Loading" fit highlight-current-row @selection-change="handleSelectionChange">
           <el-table-column type="selection" width="55">
           </el-table-column>
 
@@ -76,59 +76,131 @@
         </el-table>
 
         <div class="pagination">
-          <el-pagination background @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page.sync="currentPage"
-            :page-size="100" layout="prev, pager, next, jumper" :total="1000">
-          </el-pagination>
+          <el-pagination background @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page.sync="pageIndex"
+            :page-size="pageSize" layout="prev, pager, next, jumper" :total="pageTotal"></el-pagination>
         </div>
       </div>
     </div>
+
+    <el-dialog title="作废" :visible.sync="dialog" width="450px" class="dialog">
+      <span>是否作废该订单？</span>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialog = false">取 消</el-button>
+        <el-button type="primary" @click="submit">确 定</el-button>
+      </span>
+    </el-dialog>
+
+    <el-dialog title="取消作废" :visible.sync="dialog2" width="450px" class="dialog">
+      <span>是否取消作废该订单？</span>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialog2 = false">取 消</el-button>
+        <el-button type="primary" @click="submit2">确 定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
 <script>
-  import { getList } from "@/api/table";
-
+  import moment from 'moment'
   export default {
     name: 'NetworkOrder',
     data() {
+      let tom = moment().add(1, 'days').format('YYYY-MM-DD')
       return {
+        pageSize: 15,
+        pageTotal: 0,
+        pageIndex: 1,
+        btnState: true,
+        dialog: false,
+        dialog2: false,
+        selection: [],
+        search: {
+          startDate: tom,
+          endDate: tom,
+          status: '', //1-制单 2-已登记 3-已作废
+        },
         options: [
           {
-            value: "选项1",
-            label: "黄金糕",
+            value: 1,
+            label: "制单",
           },
           {
-            value: "选项2",
-            label: "双皮奶",
+            value: 2,
+            label: "已登记",
+          },
+          {
+            value: 3,
+            label: "已作废",
           },
         ],
-        form: {
-          order: "",
-          plot: "",
-          orderState: "",
-          time: "",
-        },
         list: null,
         listLoading: true,
-        currentPage: 10,
       };
+    },
+    watch: {
+      pageIndex(index) {
+        if (index) this.fetchData(index);
+      },
     },
     created() {
       this.fetchData();
     },
     methods: {
-      fetchData() {
+      handleSelectionChange(val) {
+        this.selection = val.map(i => i.chatorderid)
+        this.btnState = val.length == 0
+      },
+      async fetchData() {
         this.listLoading = true;
-        getList().then((response) => {
-          this.list = response.data.items;
-          this.listLoading = false;
+        let rs = await this.$http({
+          url: `kl/klwechatorderlist`,
+          method: "post",
+          data: this.search
         });
+
+        this.list = rs.data;
+        this.pageTotal = rs.total;
+        this.listLoading = false;
       },
       handleSizeChange(val) {
         console.log(`每页 ${val} 条`);
       },
       handleCurrentChange(val) {
-        console.log(`当前页: ${val}`);
+        this.pageIndex = val;
+      },
+      async submit() {
+        let rs = await this.$http({
+          url: `/wechat/wechatcancelorder`,
+          params: {
+            chatorderids: this.selection.join(',')
+          },
+          method: "get"
+        });
+
+        if (rs.success == 'true') this.$message({
+          message: '保存成功',
+          type: 'success'
+        })
+
+        this.dialog = false
+        this.fetchData()
+      },
+      async submit2() {
+        let rs = await this.$http({
+          url: `/wechat/wechatnocancelorder`,
+          params: {
+            chatorderids: this.selection.join(',')
+          },
+          method: "get"
+        });
+
+        if (rs.success == 'true') this.$message({
+          message: '保存成功',
+          type: 'success'
+        })
+
+        this.dialog2 = false
+        this.fetchData()
       },
     },
   };

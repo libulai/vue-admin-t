@@ -8,27 +8,23 @@
         <div>
           <el-input v-model="search.ordercode" placeholder="请输入订单号"></el-input>
           <el-input v-model="search.plot" placeholder="请输入小区名称"></el-input>
-          <el-select v-model="search.orderState" placeholder="选择工单状态">
-            <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value">
+          <el-select v-model="search.status" placeholder="选择工单状态">
+            <el-option v-for="item in statuss" :key="item.id" :label="item.value" :value="item.id">
             </el-option>
           </el-select>
-          <el-select v-model="form.orderState" placeholder="选择区域">
-            <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value">
-            </el-option>
-          </el-select>
+          <el-input v-model="search.trackusername" placeholder="服务专员"></el-input>
         </div>
         <div style="margin-top:20px">
-          <!-- <el-date-picker v-model="form.time" type="daterange" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期"></el-date-picker> -->
           <el-date-picker v-model="search.startDate" type="date" placeholder="开始时间" value-format="yyyy-MM-dd">
           </el-date-picker>
           <el-date-picker v-model="search.endDate" type="date" placeholder="结束时间" value-format="yyyy-MM-dd">
           </el-date-picker>
-          <el-select v-model="search.orderState" placeholder="选择工单类型">
-            <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value">
+          <el-select v-model="search.pttype" placeholder="选择服务类型">
+            <el-option v-for="item in pttype" :key="item.dicid" :label="item.dicvalue" :value="item.dicid">
             </el-option>
           </el-select>
           <el-button type="warning" class="com-btn" @click="fetchData">查询</el-button>
-          <el-button type="info" class="com-btn">重置</el-button>
+          <el-button type="info" class="com-btn" @click="reset">重置</el-button>
         </div>
       </div>
     </div>
@@ -107,8 +103,8 @@
 
     <!-- 分派 -->
     <el-dialog title="分派" :visible.sync="dialog1" width="550px">
-      <el-form :model="form" :rules="rules3" ref="form" label-width="150px" class="dialog3-ruleForm">
-        <el-form-item label="选择人员" prop="scorea">
+      <el-form :model="form" :rules="rules" ref="form" label-width="150px" class="dialog3-ruleForm">
+        <el-form-item label="选择人员" prop="trackuserid">
           <el-select v-model="form.trackuserid" placeholder="选择">
             <el-option v-for="item in tracks" :key="item.userid" :label="item.username" :value="item.userid">
             </el-option>
@@ -156,6 +152,8 @@
         dialog2: false,
         dialog3: false,
         selection: [],
+        statuss: [{ id: 1, value: '已登记' }, { id: 2, value: '已派单' }, { id: 3, value: '正在服务' }, { id: 4, value: '已完成' }, { id: 5, value: '已复核' }, { id: 6, value: '已关闭' }, { id: 7, value: '时间已确认' }],
+        pttype: [],
         tracks: [],
         search: {
           startDate: tom,
@@ -167,19 +165,14 @@
           status: '',
           trackusername: '',
         },
-        options: [
-          {
-            value: "选项1",
-            label: "黄金糕",
-          },
-          {
-            value: "选项2",
-            label: "双皮奶",
-          },
-        ],
         form: {
           dispatchorderids: "",
           trackuserid: ''
+        },
+        rules: {
+          trackuserid: [
+            { required: true, message: "请选择专员", trigger: "blur" },
+          ]
         },
         list: null,
         listLoading: true,
@@ -203,14 +196,41 @@
     },
     created() {
       this.fetchData();
+      this.initDic()
     },
     methods: {
+      reset() {
+        this.search = {
+          startDate: '',
+          endDate: '',
+          address: '',
+          ordercode: '',
+          areaid: '',
+          pttype: '',
+          status: '',
+          trackusername: '',
+        }
+      },
+      async initDic() {
+        let rs = await this.$http({
+          url: `/admin/dictionarylist?dictype=40`,
+          method: "get"
+        });
+
+        this.pttype = rs.data.map(i => {
+          return {
+            dicvalue: i.dicvalue,
+            dicid: i.dicid
+          }
+        })
+      },
       handleSelectionChange(val) {
         this.selection = val.map(i => i.orderid)
         this.btnState = val.length == 0
       },
       cancel() {
         this.$refs.form.resetFields();
+        this.dialog1 = false
       },
       async fetchData() {
         this.listLoading = true;
@@ -267,23 +287,27 @@
         this.fetchData()
       },
       async submit1() {
-        let rs = await this.$http({
-          url: `/kl/klorderarrangesave`,
-          params: {
-            dispatchorderids: this.selection.join(','),
-            trackuserid: this.form.trackuserid
-          },
-          method: "get"
-        });
+        this.$refs.form.validate(async (valid) => {
+          if (valid) {
+            let rs = await this.$http({
+              url: `/kl/klorderarrangesave`,
+              params: {
+                dispatchorderids: this.selection.join(','),
+                trackuserid: this.form.trackuserid
+              },
+              method: "get"
+            });
 
-        if (rs.success == 'true') this.$message({
-          message: '保存成功',
-          type: 'success'
+            if (rs.success == 'true') this.$message({
+              message: '保存成功',
+              type: 'success'
+            })
+
+            this.dialog1 = false
+            this.$refs.form.resetFields();
+            this.fetchData()
+          }
         })
-
-        this.dialog1 = false
-        this.$refs.form.resetFields();
-        this.fetchData()
       },
       handleSizeChange(val) {
         console.log(`每页 ${val} 条`);
@@ -306,6 +330,10 @@
         margin-right: 30px;
       }
     }
+  }
+
+  ::v-deep .el-select {
+    width: 100%
   }
 
   ::v-deep .dialog {

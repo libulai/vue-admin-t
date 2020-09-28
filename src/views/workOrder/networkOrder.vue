@@ -117,7 +117,7 @@
         search: {
           startDate: tom,
           endDate: tom,
-          status: '', //1-制单 2-已登记 3-已作废
+          status: 1, //1-制单 2-已登记 3-已作废
         },
         options: [
           {

@@ -24,41 +24,54 @@
 </template>
 
 <script>
-  import appointment from './appointment.vue'
-  import orderState from './orderState.vue'
-  import constructionDetail from './constructionDetail.vue'
-  import confirm from './confirm.vue'
+import appointment from './appointment.vue'
+import orderState from './orderState.vue'
+import constructionDetail from './constructionDetail.vue'
+import confirm from './confirm.vue'
+import bus from '@/utils/bus'
 
-  export default {
-    components: {
-      appointment,
-      orderState,
-      confirm,
-      constructionDetail
-    },
-    data() {
-      return {
-        activeName: 'first'
-      };
-    },
-    created() {
+export default {
+  components: {
+    appointment,
+    orderState,
+    confirm,
+    constructionDetail
+  },
+  data() {
+    return {
+      activeName: 'first'
+    };
+  },
+  created() {
+    this.initData()
+    bus.$on('go', rs => {
+      console.log(rs)
+      this.initData(rs)
+    })
+  },
+  methods: {
+    async initData(data) {
+      let rs = await this.$http({
+        url: `/kl/klorderdetailforreceipt?orderid=${data.id}`,
+        method: "get"
+      });
+
 
     },
-    methods: {
-      handleClick(tab, event) {
-        console.log(tab, event)
-      },
-      back() {
-        this.$router.push({ path: '/workOrder/review' })
-      }
+    handleClick(tab, event) {
+      console.log(tab, event)
     },
-  };
+    back() {
+      this.$router.push({ path: '/workOrder/review' })
+    }
+  },
+};
 </script>
 
 <style lang="scss" scoped>
-  .back {
-    position: absolute;
-    right: 0;
-    top: -6px;
-  }
+.back {
+  position: absolute;
+  right: 0;
+  top: -6px;
+}
 </style>

@@ -230,7 +230,7 @@ export default {
         this.getRole()
       }
 
-      this.initComp()
+      await this.initComp()
       this.initRole()
     },
     async getDepInfos(data) {

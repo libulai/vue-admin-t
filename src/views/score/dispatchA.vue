@@ -34,10 +34,10 @@
 
           <el-table-column align="center" label="订单号">
             <template slot-scope="scope">
-              {{ scope.$index }}
+              {{ scope.row.ordercode }}
             </template>
           </el-table-column>
-          <el-table-column label="技师名称" align="center">
+          <!-- <el-table-column label="技师名称" align="center">
             <template slot-scope="scope">
               {{ scope.row.pageviews }}
             </template>
@@ -46,23 +46,23 @@
             <template slot-scope="scope">
               <span>{{ scope.row.author }}</span>
             </template>
-          </el-table-column>
+          </el-table-column> -->
           <el-table-column label="积分" align="center">
             <template slot-scope="scope">
-              {{ scope.row.pageviews }}
+              {{ scope.row.scorea }}
             </template>
           </el-table-column>
-          <el-table-column class-name="status-col" label="备注" width="380">
+          <el-table-column class-name="status-col" align="center" label="备注">
             <template slot-scope="scope">
-              {{ scope.row.title }}
+              {{ scope.row.orderdesc }}
             </template>
           </el-table-column>
           <el-table-column align="center" prop="created_at" label="发放状态">
             <template slot-scope="scope">
-              <span>{{ scope.row.author }}</span>
+              <span>{{ scope.row.scoreastatus==1?'已发放':'未发放' }}</span>
             </template>
           </el-table-column>
-          <el-table-column align="center" prop="created_at" label="发放类型">
+          <!-- <el-table-column align="center" prop="created_at" label="发放类型">
             <template slot-scope="scope">
               <span>{{ scope.row.author }}</span>
             </template>
@@ -71,7 +71,7 @@
             <template slot-scope="scope">
               <span>{{ scope.row.author }}</span>
             </template>
-          </el-table-column>
+          </el-table-column> -->
         </el-table>
 
         <div class="pagination">
@@ -92,9 +92,12 @@
 </template>
 
 <script>
+import moment from 'moment'
   export default {
     name: 'DispatchA',
     data() {
+      let tom = moment().add(15, 'days').format('YYYY-MM-DD')
+      let yes = moment().add(-15, 'days').format('YYYY-MM-DD')
       return {
         pageSize: 15,
         pageTotal: 0,
@@ -102,17 +105,17 @@
         btnState: true,
         selection: [],
         search: {
-          startDate: '',
-          endDate: '',
-          status: ''
+          startDate: yes,
+          endDate: tom,
+          status: 0
         },
         options: [
           {
-            value: "0",
+            value: 0,
             label: "未发放",
           },
           {
-            value: "1",
+            value: 1,
             label: "已发放",
           },
         ],

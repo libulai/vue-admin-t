@@ -7,7 +7,7 @@
       <div class="content-box">
         <div>
           <el-input v-model="search.ordercode" placeholder="请输入订单号"></el-input>
-          <el-input v-model="search.plot" placeholder="请输入小区名称"></el-input>
+          <el-input v-model="search.address" placeholder="请输入小区地址"></el-input>
           <el-select v-model="search.status" placeholder="选择工单状态">
             <el-option v-for="item in statuss" :key="item.id" :label="item.value" :value="item.id">
             </el-option>
@@ -205,9 +205,9 @@
           endDate: '',
           address: '',
           ordercode: '',
-          areaid: '',
+          areaid: undefined,
           pttype: '',
-          status: '',
+          status: undefined,
           trackusername: '',
         }
       },

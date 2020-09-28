@@ -24,8 +24,8 @@
         'sidebar'
       ]),
       routes() {
-        return this.$store.state.permission.routes
-        // return this.$router.options.routes
+        // return this.$store.state.permission.routes
+        return this.$router.options.routes
       },
       activeMenu() {
         const route = this.$route

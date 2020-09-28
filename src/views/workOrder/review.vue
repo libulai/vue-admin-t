@@ -1,6 +1,5 @@
 <template>
   <div class="app-container">
-
     <div v-if="reviewPage">
       <div class="content-wrap">
         <div class="content-title">
@@ -8,39 +7,22 @@
         </div>
         <div class="content-box">
           <div>
-            <el-input v-model="form.order" placeholder="请输入订单号"></el-input>
-
-            <el-input v-model="form.plot" placeholder="请输入客户名称"></el-input>
-
-            <el-input v-model="form.plot" placeholder="请输入小区名称"></el-input>
-
-            <el-input v-model="form.plot" placeholder="请输入联系人和业主名称"></el-input>
-
-            <el-input v-model="form.plot" placeholder="请输入公司名称"></el-input>
+            <el-input v-model="search.ordercode" placeholder="请输入订单号"></el-input>
+            <el-input v-model="search.address" placeholder="请输入小区地址"></el-input>
+            <el-select v-model="search.status" placeholder="选择工单状态">
+              <el-option v-for="item in statuss" :key="item.id" :label="item.value" :value="item.id">
+              </el-option>
+            </el-select>
+            <el-input v-model="search.trackusername" placeholder="服务专员"></el-input>
           </div>
-
           <div style="margin-top:20px">
-            <el-date-picker v-model="form.time" type="daterange" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期">
+            <el-date-picker v-model="search.startDate" type="date" placeholder="开始时间" value-format="yyyy-MM-dd">
             </el-date-picker>
-
-            <el-select v-model="form.orderState" placeholder="选择工单类型">
-              <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value">
-              </el-option>
-            </el-select>
-
-            <el-select v-model="form.orderState" placeholder="选择工单状态">
-              <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value">
-              </el-option>
-            </el-select>
-
-            <el-select v-model="form.orderState" placeholder="选择区域">
-              <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value">
-              </el-option>
-            </el-select>
-
-            <el-button type="warning" class="com-btn">查询</el-button>
-
-            <el-button type="info" class="com-btn">重置</el-button>
+            <el-date-picker v-model="search.endDate" type="date" placeholder="结束时间" value-format="yyyy-MM-dd">
+            </el-date-picker>
+            <el-input v-model="search.ownerphone" placeholder="业主电话"></el-input>
+            <el-button type="warning" class="com-btn" @click="fetchData">查询</el-button>
+            <el-button type="info" class="com-btn" @click="reset">重置</el-button>
           </div>
         </div>
       </div>
@@ -48,65 +30,62 @@
       <div class="content-wrap" style="margin-top:20px">
         <div class="content-title">
           <div>
-            <el-button type="warning" class="com-btn">批量复核</el-button>
-
-            <el-button class="com-btn">批量删除</el-button>
+            <el-button type="warning" class="com-btn" :disabled="btnState">批量复核</el-button>
+            <el-button class="com-btn" :disabled="btnState">批量删除</el-button>
           </div>
         </div>
 
         <div>
-          <el-table v-loading="listLoading" :data="list" element-loading-text="Loading" fit highlight-current-row>
+          <el-table v-loading="listLoading" :data="list" element-loading-text="Loading" fit highlight-current-row @selection-change="handleSelectionChange">
             <el-table-column type="selection" width="55">
             </el-table-column>
 
             <el-table-column align="center" label="订单号">
               <template slot-scope="scope">
-                {{ scope.$index }}
+                {{ scope.row.ordercode }}
               </template>
             </el-table-column>
             <el-table-column label="客户名称" align="center">
               <template slot-scope="scope">
-                {{ scope.row.pageviews }}
+                {{ scope.row.ownername }}
               </template>
             </el-table-column>
             <el-table-column label="联系方式" align="center">
               <template slot-scope="scope">
-                <span>{{ scope.row.author }}</span>
+                <span>{{ scope.row.ownerphone }}</span>
               </template>
             </el-table-column>
             <el-table-column label="施工时间" align="center">
               <template slot-scope="scope">
-                {{ scope.row.pageviews }}
+                {{ scope.row.processtime }}
               </template>
             </el-table-column>
-            <el-table-column class-name="status-col" label="客户地址" width="380">
+            <el-table-column class-name="status-col" label="客户地址" align="center">
               <template slot-scope="scope">
-                {{ scope.row.title }}
+                {{ scope.row.address }}
               </template>
             </el-table-column>
-            <el-table-column align="center" prop="created_at" label="施工类型">
+            <el-table-column align="center" prop="created_at" label="服务类型">
               <template slot-scope="scope">
-                <span>{{ scope.row.author }}</span>
+                <span>{{ scope.row.pttype }}</span>
               </template>
             </el-table-column>
             <el-table-column align="center" prop="created_at" label="状态">
               <template slot-scope="scope">
-                <span>{{ scope.row.author }}</span>
+                <span>{{ status(scope.row.status) }}</span>
               </template>
             </el-table-column>
 
             <el-table-column align="center" prop="created_at" label="操作" width="130">
-              <template>
-                <span class="detail handle" @click="go">详情</span>
+              <template slot-scope="scope">
+                <span class="detail handle" @click="go(scope.row.orderid)">详情</span>
                 <span class="handle" style="margin-left:30px">删除</span>
               </template>
             </el-table-column>
           </el-table>
 
           <div class="pagination">
-            <el-pagination background @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page.sync="currentPage"
-              :page-size="100" layout="prev, pager, next, jumper" :total="1000">
-            </el-pagination>
+            <el-pagination background @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page.sync="pageIndex" :page-size="pageSize" layout="prev, pager, next, jumper" :total="pageTotal"></el-pagination>
           </div>
         </div>
       </div>
@@ -117,69 +96,129 @@
 </template>
 
 <script>
-  import { getList } from "@/api/table";
-
-  export default {
-    name: 'Review',
-    data() {
-      return {
-        options: [
-          {
-            value: "选项1",
-            label: "黄金糕",
-          },
-          {
-            value: "选项2",
-            label: "双皮奶",
-          },
-        ],
-        form: {
-          order: "",
-          plot: "",
-          orderState: "",
-          time: "",
-        },
-        list: null,
-        listLoading: true,
-        currentPage: 10,
-        reviewPage: true
-      };
+import moment from 'moment'
+export default {
+  name: 'Review',
+  data() {
+    let tom = moment().add(15, 'days').format('YYYY-MM-DD')
+    let yes = moment().add(-15, 'days').format('YYYY-MM-DD')
+    return {
+      pageSize: 15,
+      pageTotal: 0,
+      pageIndex: 1,
+      btnState: true,
+      selection: [],
+      statuss: [{ id: 4, value: '未复核' }, { id: 5, value: '已复核' }],
+      pttype: [],
+      tracks: [],
+      search: {
+        startDate: yes,
+        endDate: tom,
+        address: '',
+        ordercode: '',
+        areaid: undefined,
+        ownerphone: '',
+        contacterphone: '',
+        status: undefined,
+        trackusername: '',
+      },
+      form: {
+        order: "",
+        plot: "",
+        orderState: "",
+        time: "",
+      },
+      list: null,
+      listLoading: true,
+      reviewPage: true,
+      num: 0
+    };
+  },
+  watch: {
+    pageIndex(index) {
+      if (index) this.fetchData(index);
     },
-    created() {
-      this.fetchData();
-      this.reviewPage = this.$route.name === 'Review'
-    },
-    methods: {
-      fetchData() {
-        this.listLoading = true;
-        getList().then((response) => {
-          this.list = response.data.items;
-          this.listLoading = false;
-        });
-      },
-      handleSizeChange(val) {
-        console.log(`每页 ${val} 条`);
-      },
-      handleCurrentChange(val) {
-        console.log(`当前页: ${val}`);
-      },
-      go() {
-        this.$router.push({ path: '/workOrder/review/reviewDetail' })
+  },
+  computed: {
+    status(val) {
+      return function (val) {
+        const MAP = {
+          4: '未复核', 5: '已复核'
+        }
+        return MAP[val]
+      }
+    }
+  },
+  created() {
+    this.fetchData();
+    this.initDic()
+    this.reviewPage = this.$route.name === 'Review'
+  },
+  methods: {
+    reset() {
+      this.search = {
+        startDate: '',
+        endDate: '',
+        address: '',
+        ordercode: '',
+        areaid: undefined,
+        pttype: '',
+        status: undefined,
+        trackusername: '',
       }
     },
-  };
+    async initDic() {
+      let rs = await this.$http({
+        url: `/admin/dictionarylist?dictype=40`,
+        method: "get"
+      });
+
+      this.pttype = rs.data.map(i => {
+        return {
+          dicvalue: i.dicvalue,
+          dicid: i.dicid
+        }
+      })
+    },
+    handleSelectionChange(val) {
+      this.selection = val.map(i => i.orderid)
+      this.btnState = val.length == 0
+    },
+    async fetchData() {
+      this.listLoading = true;
+      let rs = await this.$http({
+        url: `/kl/klorderchecklist`,
+        method: "post",
+        data: this.search
+      });
+
+      this.list = rs.data;
+      this.pageTotal = rs.total;
+      this.listLoading = false;
+    },
+    handleSizeChange(val) {
+      console.log(`每页 ${val} 条`);
+    },
+    handleCurrentChange(val) {
+      this.pageIndex = val;
+    },
+    go(id) {
+      this.$router.push({ name: `ReviewDetail`, params: { id, detailType: 1 } })
+    }
+  },
+};
 </script>
 
 <style lang="scss" scoped>
-  .content-box {
-    &>div {
-      display: flex;
-      .el-input,
-      .el-select,
-      .el-date-editor {
-        width: 18%;
-        margin-right: 30px;
-      }
+.content-box {
+  & > div {
+    display: flex;
+    .el-input,
+    .el-select,
+    .el-date-editor {
+      width: 18%;
+      margin-right: 30px;
     }
   }
+}
 </style>

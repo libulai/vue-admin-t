@@ -50,7 +50,7 @@ service.interceptors.response.use(
    */
   response => {
     const res = response.data
-
+    console.log(res)
     if (res.data === '登录超时！') {
       store.dispatch('user/resetToken').then(() => {
         location.reload()

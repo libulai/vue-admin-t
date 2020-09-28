@@ -20,15 +20,15 @@ router.beforeEach(async (to, from, next) => {
 
   // determine whether the user has logged in
   const hasToken = getToken()
-  
+
   if (hasToken) {
     if (to.path === '/login') {
       // if is logged in, redirect to the home page
       next({ path: '/' })
       NProgress.done()
     } else {
-      if (to.params.detailType) {
-        bus.$emit('go', to.params)
+      if (to.query.detailType) {
+          bus.$emit('go', to.query)
       }
       // if (store.state.permission.routes.length == 0) {
       //   await store.commit('permission/RESET_ROUTERS', router)

@@ -203,7 +203,7 @@ export default {
       this.pageIndex = val;
     },
     go(id) {
-      this.$router.push({ name: `ReviewDetail`, params: { id, detailType: 1 } })
+      this.$router.push({ name: `ReviewDetail`, query: { id, detailType: 2 } })
     }
   },
 };

@@ -76,9 +76,9 @@
               <span>{{ status(scope.row.status) }}</span>
             </template>
           </el-table-column>
-          <el-table-column align="center" prop="created_at" label="操作" width="200">
+          <el-table-column align="center" prop="created_at" label="操作">
             <template>
-              <span class="detail handle" style="margin-right: 10px">发放质保卡</span>
+              <!-- <span class="detail handle" style="margin-right: 10px">发放质保卡</span> -->
               <span class="detail handle">详情</span>
             </template>
           </el-table-column>

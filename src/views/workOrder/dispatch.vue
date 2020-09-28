@@ -88,8 +88,8 @@
             </template>
           </el-table-column>
           <el-table-column align="center" prop="created_at" label="操作">
-            <template>
-              <span class="detail handle">详情</span>
+            <template slot-scope="scope">
+              <span class="detail handle" @click="go(scope.row.orderid)">详情</span>
             </template>
           </el-table-column>
         </el-table>
@@ -210,6 +210,9 @@
           status: undefined,
           trackusername: '',
         }
+      },
+      go(id) {
+        this.$router.push({ name: `ReviewDetail`, query: { id, detailType: 1 } })
       },
       async initDic() {
         let rs = await this.$http({

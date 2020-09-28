@@ -43,7 +43,8 @@ export default {
     };
   },
   created() {
-    this.initData()
+    this.initData(this.$route.query)
+   
     bus.$on('go', rs => {
       console.log(rs)
       this.initData(rs)

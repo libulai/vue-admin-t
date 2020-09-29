@@ -74,7 +74,7 @@
           </el-table-column>
           <el-table-column align="center" prop="created_at" label="服务类型">
             <template slot-scope="scope">
-              <span>{{ scope.row.pttype }}</span>
+              <span>{{ pttypee(scope.row.pttype) }}</span>
             </template>
           </el-table-column>
           <el-table-column align="center" prop="created_at" label="状态">
@@ -187,6 +187,15 @@
           }
           return MAP[val]
         }
+      },
+      pttypee(val){
+        return function (val) {
+          const MAP = {
+            292: '施工单', 293: '外部验收单', 294: '售后检查单',
+            295: '售后处理单'
+          }
+          return MAP[val]
+        }
       }
     },
     watch: {
@@ -212,7 +221,7 @@
         }
       },
       go(id) {
-        this.$router.push({ name: `ReviewDetail`, query: { id, detailType: 1 } })
+        this.$router.push({ name: `DispatchDetail`, query: { id, detailType: 1 } })
       },
       async initDic() {
         let rs = await this.$http({

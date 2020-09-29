@@ -1,23 +1,30 @@
 <template>
-  <div class="app-container" style="padding:0">
+  <div class="app-container">
     <div class="content-wrap">
-      <div style="position: relative;">
+      <div style="position: relative;" v-loading="loading">
         <el-tabs v-model="activeName" @tab-click="handleClick">
           <el-tab-pane label="预约信息" name="first">
-            <appointment />
+            <appointment :data="data" :type="type" />
           </el-tab-pane>
-          <el-tab-pane label="工单状态" name="second">
+          <el-tab-pane label="工单状态" name="second" v-if="type!=1 && type!=4">
             <order-state />
           </el-tab-pane>
-          <el-tab-pane label="施工详情单" name="third">
+          <el-tab-pane label="施工详情单" name="third" v-if="type!=1 && type!=4">
             <construction-detail />
           </el-tab-pane>
-          <el-tab-pane label="验收详情单" name="fourth">
+          <el-tab-pane label="验收详情单" name="fourth" v-if="type!=1 && type!=4">
+            <confirm />
+          </el-tab-pane>
+          <el-tab-pane label="核销记录" name="fifth" v-if="type==4">
             <confirm />
           </el-tab-pane>
         </el-tabs>
 
-        <el-button class="back defalut-btn" size="medium" @click="back" icon="el-icon-back">返回</el-button>
+        <div class="back">
+          <el-button type="warning" size="medium" @click="produce('294')" v-if="data.pttype==292 && type==4">生成售后单</el-button>
+          <el-button type="warning" size="medium" @click="produce('295')" v-if="data.pttype==292 && type==4">生成维修单</el-button>
+          <el-button class=" defalut-btn" size="medium" @click="back" icon="el-icon-back">返回</el-button>
+        </div>
       </div>
     </div>
   </div>
@@ -39,31 +46,53 @@ export default {
   },
   data() {
     return {
-      activeName: 'first'
+      loading: false,
+      firstLoad: true,
+      activeName: 'first',
+      type: 1, // 1分派  2复核  4工单信息管理
+      data: {}
     };
   },
   created() {
     this.initData(this.$route.query)
-   
+
     bus.$on('go', rs => {
-      console.log(rs)
       this.initData(rs)
     })
   },
   methods: {
     async initData(data) {
+      if (!this.firstLoad) return
+      this.firstLoad = false
+      this.type = data.detailType
+      this.loading = true
+
       let rs = await this.$http({
         url: `/kl/klorderdetailforreceipt?orderid=${data.id}`,
         method: "get"
       });
 
-
+      this.data = rs.data[0]
+      this.loading = false
     },
     handleClick(tab, event) {
       console.log(tab, event)
     },
     back() {
-      this.$router.push({ path: '/workOrder/review' })
+      this.$router.go(-1)
+    },
+    async produce(id) {
+      console.log(this.data)
+      let rs = await this.$http({
+        url: `/kl/doklordersave`,
+        method: "post",
+        data: this.data
+      });
+
+      if (rs.success == 'true') this.$message({
+        message: '保存成功',
+        type: 'success'
+      })
     }
   },
 };

@@ -1,11 +1,11 @@
 <template>
-  <div class="app-container">
+  <div class="app-container" v-loading="loading">
     <div>
       <div class="content-wrap">
         <div class="content-title">
-          <h3>- 新建工单</h3>
+          <h3>- {{title}}</h3>
           <div>
-            <el-button type="warning" size="medium" @click="">最近保存</el-button>
+            <!-- <el-button type="warning" size="medium" @click="">最近保存</el-button> -->
           </div>
         </div>
         <div class="content-box">
@@ -89,7 +89,7 @@
                       <el-option v-for="item in ystypes" :key="item.id" :label="item.value" :value="item.id"></el-option>
                     </el-select>
                   </el-form-item>
-                  <el-form-item label="施工户型" class="other" prop="Receipt20">
+                  <el-form-item label="户型" class="other" prop="Receipt20">
                     <el-input v-model="form.Receipt20" placeholder="数字"></el-input>厨
                     <el-input v-model="form.Receipt21" placeholder="数字"></el-input>卫
                     <el-input v-model="form.Receipt22" placeholder="数字"></el-input>阳台
@@ -97,9 +97,9 @@
                   </el-form-item>
                 </div>
                 <div>
-                  <el-form-item label="挡水台" prop="dst">
-                    <el-radio v-model="form.dst" :label="0">有</el-radio>
-                    <el-radio v-model="form.dst" :label="1">无</el-radio>
+                  <el-form-item label="挡水台" prop="dst" v-if="form.pttype==292">
+                    <el-radio v-model="form.dst" label="是">是</el-radio>
+                    <el-radio v-model="form.dst" label="否">否</el-radio>
                   </el-form-item>
                 </div>
                 <div>
@@ -116,7 +116,7 @@
               </el-form>
             </div>
 
-            <div class="right">
+            <div class="right" v-if="right">
               <p>来电信息</p>
               <ul>
                 <li>
@@ -153,7 +153,7 @@
 
           <div style="margin-top:20px;">
             <el-button type="primary" class="com-btn" @click="save">保存</el-button>
-            <el-button type="info" class="com-btn" @click="reset">重置</el-button>
+            <el-button type="info" class="com-btn" @click="reset" v-if="right">重置</el-button>
           </div>
         </div>
       </div>
@@ -162,17 +162,23 @@
 </template>
 
 <script>
+import bus from '@/utils/bus'
+
 export default {
   name: 'AddOrder',
   data() {
     return {
+      right: false,
+      loading: false,
+      firstLoad:true,
+      title:'',
       areas: [],
       pttype: [],
       times: [{ id: 1, value: '上午' }, { id: 2, value: '下午' }, { id: 3, value: '无' }],
       sgtypes: [{ id: 1, value: '墙地施工' }, { id: 2, value: '墙施工' }, { id: 3, value: '地施工' }, { id: 4, value: '同层底面施工' }],
-      ystypes: [{ id: 1, value: '隔层排水面验收' }, { id: 2, value: '同层排水底层验收' }, { id: 3, value: '同层排水面层验收' }],
-      types: ['施工单', '预约单'],
-      type: '施工单',
+      ystypes: [{ id: 1, value: '面层验收' }, { id: 2, value: '同层排水底层验收' }],
+      // types: ['施工单', '预约单'],
+      // type: '施工单',
       form: {
         ordercode: '',
         communityname: '',
@@ -192,7 +198,7 @@ export default {
         Receipt22: '',
         Receipt23: '',
         areaid: '',
-        dst: 0,
+        dst: '是',
         pttype: '',
         fwpzhstatus: 0,
         fwpzhisnormal: '',
@@ -214,6 +220,19 @@ export default {
     this.getOrderId()
     this.initAras()
     this.initDic()
+
+    let query = this.$route.query
+    if (!query.detailType) {
+      this.right = true
+      this.title = '新建工单'
+    } else {
+      this.getOrderDetail(query)
+      this.title = '编辑工单'
+    }
+
+    bus.$on('detail', rs => {
+      this.getOrderDetail(rs)
+    })
   },
   methods: {
     async initDic() {
@@ -228,6 +247,23 @@ export default {
           dicid: i.dicid
         }
       })
+    },
+    async getOrderDetail(query) {
+      if (!this.firstLoad) return 
+      this.firstLoad = false
+      this.loading = true
+      let rs = await this.$http({
+        url: `/kl/klorderdetail?orderid=${query.id}`,
+        method: "get",
+      });
+
+      this.loading = false
+
+      for (let i in this.form) {
+        this.form[i] = rs.data[0][i]
+      }
+
+      this.form.orderid = rs.data[0].orderid
     },
     async getOrderId() {
       let rs = await this.$http({
@@ -254,7 +290,7 @@ export default {
     },
     async save() {
       let rs = await this.$http({
-        url: `/kl/doklordersave`,
+        url: `/kl/${this.right ? 'doklordersave' : 'doklordermod'}`,
         method: "post",
         data: this.form
       });

@@ -1,6 +1,6 @@
 <template>
   <div class="app-container">
-    <div v-if="reviewPage">
+    <div>
       <div class="content-wrap">
         <div class="content-title">
           <h3>- 数据筛选</h3>
@@ -31,7 +31,6 @@
         <div class="content-title">
           <div>
             <el-button type="warning" class="com-btn" :disabled="btnState">批量复核</el-button>
-            <el-button class="com-btn" :disabled="btnState">批量删除</el-button>
           </div>
         </div>
 
@@ -76,10 +75,10 @@
               </template>
             </el-table-column>
 
-            <el-table-column align="center" prop="created_at" label="操作" width="130">
+            <el-table-column align="center" prop="created_at" label="操作">
               <template slot-scope="scope">
                 <span class="detail handle" @click="go(scope.row.orderid)">详情</span>
-                <span class="handle" style="margin-left:30px">删除</span>
+                <!-- <span class="handle" style="margin-left:30px">删除</span> -->
               </template>
             </el-table-column>
           </el-table>
@@ -91,7 +90,7 @@
       </div>
     </div>
 
-    <router-view></router-view>
+    <!-- <router-view></router-view> -->
   </div>
 </template>
 
@@ -152,7 +151,7 @@ export default {
   created() {
     this.fetchData();
     this.initDic()
-    this.reviewPage = this.$route.name === 'Review'
+    // this.reviewPage = this.$route.name === 'Review'
   },
   methods: {
     reset() {

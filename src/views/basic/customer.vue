@@ -34,8 +34,6 @@
         <div class="content-title">
           <div>
             <el-button type="primary" class="com-btn" @click="dispatch(false)">添加客户</el-button>
-
-            <el-button class="com-btn" disabled>批量删除</el-button>
           </div>
         </div>
 

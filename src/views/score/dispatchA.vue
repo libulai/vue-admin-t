@@ -15,7 +15,7 @@
             </el-option>
           </el-select>
           <el-button type="warning" class="com-btn" @click="fetchData">查询</el-button>
-          <el-button class="com-btn" @click="exportt">导出</el-button>
+          <!-- <el-button class="com-btn" @click="exportt">导出</el-button> -->
         </div>
       </div>
     </div>

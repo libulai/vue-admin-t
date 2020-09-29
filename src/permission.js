@@ -29,6 +29,7 @@ router.beforeEach(async (to, from, next) => {
     } else {
       if (to.query.detailType) {
           bus.$emit('go', to.query)
+          bus.$emit('detail', to.query)
       }
       // if (store.state.permission.routes.length == 0) {
       //   await store.commit('permission/RESET_ROUTERS', router)

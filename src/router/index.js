@@ -81,20 +81,34 @@ export let constantRoutes = [
         path: 'dispatch',
         name: 'Dispatch',
         component: () => import('@/views/workOrder/dispatch'),
-        meta: { title: '分派工单', icon: '' }
+        meta: { title: '分派工单', icon: '' },
+      },
+      {
+        path: 'dispatchDetail',
+        name: 'DispatchDetail',
+        component: () => import('@/views/workOrder/reviewDetail/reviewDetail'),
+        hidden: true,
+        meta: { title: '工单信息', icon: '', activeMenu: '/workOrder/dispatch' }
       },
       {
         path: 'review',
         name: 'Review',
         component: () => import('@/views/workOrder/review'),
         meta: { title: '复核工单', icon: '' },
-        children: [{
-          path: 'reviewDetail',
-          name: 'ReviewDetail',
-          hidden: true,
-          component: () => import('@/views/workOrder/reviewDetail/reviewDetail'),
-          meta: { title: '工单信息', icon: '', activeMenu: '/workOrder/review' }
-        },]
+        // children: [{
+        //   path: 'reviewDetail',
+        //   name: 'ReviewDetail',
+        //   hidden: true,
+        //   component: () => import('@/views/workOrder/reviewDetail/reviewDetail'),
+        //   meta: { title: '工单信息', icon: '', activeMenu: '/workOrder/review' }
+        // },]
+      },
+      {
+        path: 'reviewDetail',
+        name: 'ReviewDetail',
+        component: () => import('@/views/workOrder/reviewDetail/reviewDetail'),
+        hidden: true,
+        meta: { title: '工单信息', icon: '', activeMenu: '/workOrder/review' }
       },
       {
         path: 'networkOrder',
@@ -105,14 +119,35 @@ export let constantRoutes = [
       {
         path: 'orderManger',
         name: 'OrderManger',
-        component: () => import('@/views/workOrder/networkOrder'),
+        component: () => import('@/views/workOrder/orderManger'),
         meta: { title: '工单信息管理', icon: '' }
+      },
+      {
+        path: 'orderMangerDetail',
+        name: 'OrderMangerDetail',
+        hidden: true,
+        component: () => import('@/views/workOrder/reviewDetail/reviewDetail'),
+        meta: { title: '工单信息详情', icon: '', activeMenu: '/workOrder/orderManger' }
+      },
+      {
+        path: 'orderMangerEdit',
+        name: 'OrderMangerEdit',
+        hidden: true,
+        component: () => import('@/views/workOrder/addOrder'),
+        meta: { title: '工单信息编辑', icon: '', activeMenu: '/workOrder/orderManger' }
       },
       {
         path: 'orderDetail',
         name: 'OrderDetail',
-        component: () => import('@/views/workOrder/networkOrder'),
+        component: () => import('@/views/workOrder/orderDetail'),
         meta: { title: '工单详情单', icon: '' }
+      },
+      {
+        path: 'orderDetailEdit',
+        name: 'OrderDetailEdit',
+        hidden: true,
+        component: () => import('@/views/workOrder/addOrder'),
+        meta: { title: '工单详情单编辑', icon: '', activeMenu: '/workOrder/orderDetail' }
       },
       {
         path: 'qualityOrder',

@@ -1,6 +1,12 @@
-import { asyncRoutes, constantRoutes } from '@/router'
+import {
+  asyncRoutes,
+  constantRoutes
+} from '@/router'
 import request from '@/utils/request'
 import Layout from '@/layout'
+import {
+  RouterLinkStub
+} from '@vue/test-utils'
 
 /**
  * Use meta.role to determine if the current user has permission
@@ -24,7 +30,9 @@ export function filterAsyncRoutes(routes, roles) {
   const res = []
 
   routes.forEach(route => {
-    const tmp = { ...route }
+    const tmp = {
+      ...route
+    }
     if (hasPermission(roles, tmp)) {
       if (tmp.children) {
         tmp.children = filterAsyncRoutes(tmp.children, roles)
@@ -57,38 +65,64 @@ const mutations = {
 
         let data = rs.data
         let routes = []
+        let settingMenu = [8, 9, 10]
         console.log(data)
+
+        const ROUTERMAP = {
+          8: import('@/views/setting/role'),
+          9: import('@/views/setting/menu'),
+          10: import('@/views/setting/user'),
+
+          11: import('@/views/basic/dep'),
+          12: import('@/views/basic/employees'),
+          13: import('@/views/basic/area'),
+          14: import('@/views/basic/plot'),
+          17: import('@/views/basic/customer')
+        }
+
+        // 首页
+        routes.push({
+          path: '/',
+          component: Layout,
+          redirect: '/home',
+          children: [{
+            path: 'home',
+            name: 'Home',
+            component: () => import('@/views/home/index'),
+            meta: {
+              title: '首页',
+              icon: 'dashboard'
+            }
+          }]
+        })
 
         data.forEach(item => {
           let children = item.subMenus
           let childrenArr = []
           let ppath = ''
-          for (let i = 0; i < children.length; i++) {
-            ppath = children[i].menuurl.split('/')[0]
+          children.forEach(i => {
+            ppath = '/' + i.menuurl.split('/')[1]
             childrenArr.push({
-              path: children[i].menuurl.split('/')[1],
-              name: children[i].menuurl.split('/')[1],
-              component: () => import('@/views/setting/user'),
-              meta: { title: '用户管理', icon: '' }
+              path: i.menuurl,
+              name: i.menuid,
+              component: () => ROUTERMAP[i.menuid],
+              meta: {
+                title: i.menuname,
+                icon: ''
+              }
             })
-          }
-          // children.forEach(i => {
-          //   ppath = i.menuurl.split('/')[0]
-          // })
+          })
+
           routes.push({
-            path: `/${ppath}`,
+            path: ppath,
             component: Layout,
-            redirect: '/setting/user',
-            name: `/${ppath}`,
-            meta: { title: item.menuname, icon: 'el-icon-s-help' },
-            children: [
-              {
-                path: 'user',
-                name: 'User',
-                component: () => import('@/views/setting/user'),
-                meta: { title: '用户管理', icon: '' }
-              },
-            ]
+            redirect: children[0].menuurl,
+            name: item.menuid,
+            meta: {
+              title: item.menuname,
+              icon: item.menuicon
+            },
+            children: childrenArr
           })
         })
 
@@ -100,13 +134,21 @@ const mutations = {
         //   meta: { title: '系统设置222', icon: 'el-icon-s-help' },
         //   children: [
         //     {
+        //       path: 'menu',
+        //       name: 'Menu',
+        //       component: () => import('@/views/setting/menu'),
+        //       meta: { title: '菜单管理', icon: '' }
+        //     },
+        //     {
         //       path: 'user',
         //       name: 'User',
         //       component: () => import('@/views/setting/user'),
         //       meta: { title: '用户管理', icon: '' }
-        //     },
+        //     }
         //   ]
         // }]
+
+        console.log(routes)
 
         route.options.routes = routes;
         route.addRoutes(routes)
@@ -128,7 +170,9 @@ const mutations = {
 }
 
 const actions = {
-  generateRoutes({ commit }, roles) {
+  generateRoutes({
+    commit
+  }, roles) {
     return new Promise(resolve => {
       let accessedRoutes
       if (roles.includes('admin')) {
@@ -140,7 +184,9 @@ const actions = {
       resolve(accessedRoutes)
     })
   },
-  asyncRouter({ commit }, router) {
+  asyncRouter({
+    commit
+  }, router) {
     commit('RESET_ROUTERS', router)
   }
 }

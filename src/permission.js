@@ -39,7 +39,7 @@ router.beforeEach(async (to, from, next) => {
       // } else {
       //   next()
       // }
-      // await store.commit('permission/RESET_ROUTERS', router)
+      await store.commit('permission/RESET_ROUTERS', router)
       next()
       // const hasGetUserInfo = store.getters.name
       // if (hasGetUserInfo) {

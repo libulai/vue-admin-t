@@ -209,14 +209,15 @@
     },
     methods: {
       reset() {
+        let tom = moment().add(1, 'days').format('YYYY-MM-DD')
         this.search = {
-          startDate: '',
-          endDate: '',
+          startDate: tom,
+          endDate: tom,
           address: '',
           ordercode: '',
-          areaid: undefined,
+          areaid: '',
           pttype: '',
-          status: undefined,
+          status: '',
           trackusername: '',
         }
       },

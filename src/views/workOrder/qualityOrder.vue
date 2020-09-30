@@ -77,9 +77,9 @@
             </template>
           </el-table-column>
           <el-table-column align="center" prop="created_at" label="操作">
-            <template>
+            <template slot-scope="scope">
               <!-- <span class="detail handle" style="margin-right: 10px">发放质保卡</span> -->
-              <span class="detail handle">详情</span>
+              <span class="detail handle" @click="go(scope.row.orderid)">详情</span>
             </template>
           </el-table-column>
         </el-table>
@@ -201,6 +201,9 @@ export default {
     },
     handleCurrentChange(val) {
       this.pageIndex = val;
+    },
+    go(id) {
+      this.$router.push({ name: `QualityOrderDetail`, query: { id, detailType: 6 } })
     },
     async submit() {
       this.dialog1 = false;

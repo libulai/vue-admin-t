@@ -15,8 +15,8 @@
           <el-tab-pane label="验收详情单" name="fourth" v-if="type!=1 && type!=4">
             <confirm />
           </el-tab-pane>
-          <el-tab-pane label="核销记录" name="fifth" v-if="type==4">
-            <confirm />
+          <el-tab-pane label="核销记录" name="fifth" v-if="type==4 || type==2 || type==6">
+            <record />
           </el-tab-pane>
         </el-tabs>
 
@@ -35,6 +35,7 @@ import appointment from './appointment.vue'
 import orderState from './orderState.vue'
 import constructionDetail from './constructionDetail.vue'
 import confirm from './confirm.vue'
+import record from './record.vue'
 import bus from '@/utils/bus'
 
 export default {
@@ -42,6 +43,7 @@ export default {
     appointment,
     orderState,
     confirm,
+    record,
     constructionDetail
   },
   data() {
@@ -49,7 +51,7 @@ export default {
       loading: false,
       firstLoad: true,
       activeName: 'first',
-      type: 1, // 1分派  2复核  4工单信息管理
+      type: 1, // 1分派  2复核  4工单信息管理  6质保卡
       data: {}
     };
   },
@@ -60,10 +62,13 @@ export default {
       this.initData(rs)
     })
   },
+   beforeDestroy(){
+      bus.$off('go');//组件销毁时关闭监听
+  },
   methods: {
     async initData(data) {
-      if (!this.firstLoad) return
-      this.firstLoad = false
+      // if (!this.firstLoad) return
+      // this.firstLoad = false
       this.type = data.detailType
       this.loading = true
 
@@ -82,11 +87,55 @@ export default {
       this.$router.go(-1)
     },
     async produce(id) {
-      console.log(this.data)
+      let form = {
+        ordercode: '',
+        communityname: '',
+        address: '',
+        ownername: '',
+        ownerphone: '',
+        contacterphone: '',
+        customername: '',
+        reservedate: '',
+        reservetime: '',
+        fwpzhname: '',
+        pressurerangeflag: 0,
+        customertype: '业主',
+        orderdesc: '',
+        Receipt20: '',
+        Receipt21: '',
+        Receipt22: '',
+        Receipt23: '',
+        areaid: '',
+        dst: '是',
+        pttype: '',
+        fwpzhstatus: 0,
+        fwpzhisnormal: '',
+        ystype: '',
+        sgtype: ''
+      }
+
+      for (let i in form) {
+        form[i] = this.data[i]
+      }
+
+      form.pttype = id
+
+      let customer = this.data.customer
+      form.contacterphone = customer.contacterphone
+      form.customername = customer.customername
+      form.customertype = customer.customertype
+
       let rs = await this.$http({
+        url: `/kl/getklordercode`,
+        method: "get",
+      });
+
+      form.ordercode = rs.data
+
+      rs = await this.$http({
         url: `/kl/doklordersave`,
         method: "post",
-        data: this.data
+        data: form
       });
 
       if (rs.success == 'true') this.$message({

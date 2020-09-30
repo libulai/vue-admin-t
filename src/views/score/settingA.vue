@@ -52,6 +52,9 @@ export default {
       console.log(tab, event)
     }
   },
+  beforeDestroy(){
+      bus.$off('successed');//组件销毁时关闭监听
+  }
 };
 </script>
 

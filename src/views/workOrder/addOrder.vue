@@ -175,8 +175,8 @@ export default {
       areas: [],
       pttype: [],
       times: [{ id: 1, value: '上午' }, { id: 2, value: '下午' }, { id: 3, value: '无' }],
-      sgtypes: [{ id: 1, value: '墙地施工' }, { id: 2, value: '墙施工' }, { id: 3, value: '地施工' }, { id: 4, value: '同层底面施工' }],
-      ystypes: [{ id: 1, value: '面层验收' }, { id: 2, value: '同层排水底层验收' }],
+      sgtypes: [{ id: '1', value: '墙地施工' }, { id: '2', value: '墙施工' }, { id: '3', value: '地施工' }, { id: '4', value: '同层底面施工' }],
+      ystypes: [{ id: '1', value: '面层验收' }, { id: '2', value: '同层排水底层验收' }],
       // types: ['施工单', '预约单'],
       // type: '施工单',
       form: {
@@ -244,13 +244,13 @@ export default {
       this.pttype = rs.data.map(i => {
         return {
           dicvalue: i.dicvalue,
-          dicid: i.dicid
+          dicid: String(i.dicid)
         }
       })
     },
     async getOrderDetail(query) {
-      if (!this.firstLoad) return 
-      this.firstLoad = false
+      // if(!this.$store.state.permission.tabshift) return
+      
       this.loading = true
       let rs = await this.$http({
         url: `/kl/klorderdetail?orderid=${query.id}`,
@@ -258,12 +258,17 @@ export default {
       });
 
       this.loading = false
+      // this.$store.state.permission.tabshift = false
 
       for (let i in this.form) {
         this.form[i] = rs.data[0][i]
       }
-
+      
+      let customer = rs.data[0].customer
       this.form.orderid = rs.data[0].orderid
+      this.form.contacterphone = customer.contacterphone
+      this.form.customername = customer.customername
+      this.form.customertype = customer.customertype
     },
     async getOrderId() {
       let rs = await this.$http({
@@ -301,6 +306,9 @@ export default {
       })
     }
   },
+  beforeDestroy(){
+      bus.$off('detail');//组件销毁时关闭监听
+  }
 };
 </script>
 

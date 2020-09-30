@@ -30,7 +30,7 @@
       <div class="content-wrap" style="margin-top:20px">
         <div class="content-title">
           <div>
-            <el-button type="warning" class="com-btn" :disabled="btnState">批量复核</el-button>
+            <el-button type="warning" class="com-btn" :disabled="btnState" @click="check">批量复核</el-button>
           </div>
         </div>
 
@@ -155,9 +155,11 @@ export default {
   },
   methods: {
     reset() {
+       let tom = moment().add(15, 'days').format('YYYY-MM-DD')
+      let yes = moment().add(-15, 'days').format('YYYY-MM-DD')
       this.search = {
-        startDate: '',
-        endDate: '',
+       startDate: yes,
+        endDate: tom,
         address: '',
         ordercode: '',
         areaid: undefined,
@@ -203,6 +205,17 @@ export default {
     },
     go(id) {
       this.$router.push({ name: `ReviewDetail`, query: { id, detailType: 2 } })
+    },
+    async check() {
+      let rs = await this.$http({
+        url: `/kl/doklordercheck?orderids=${this.selection.join(',')}&check=是`,
+        method: "get"
+      });
+
+      if (rs.success == 'true') this.$message({
+        message: '保存成功',
+        type: 'success'
+      })
     }
   },
 };

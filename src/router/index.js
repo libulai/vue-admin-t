@@ -155,6 +155,13 @@ export let constantRoutes = [
         component: () => import('@/views/workOrder/qualityOrder'),
         meta: { title: '发放质保单', icon: '' }
       },
+      {
+        path: 'qualityOrderDetail',
+        name: 'QualityOrderDetail',
+        hidden: true,
+        component: () => import('@/views/workOrder/reviewDetail/reviewDetail'),
+        meta: { title: '工单详情', icon: '' , activeMenu: '/workOrder/qualityOrder'}
+      },
     ]
   },
   {

@@ -106,7 +106,7 @@ export default {
   data() {
     let tom = moment().add(1, 'days').format('YYYY-MM-DD')
     return {
-      pageSize: 15,
+      pageSize: 10,
       pageTotal: 0,
       pageIndex: 1,
       btnState: true,
@@ -168,7 +168,7 @@ export default {
       let rs = await this.$http({
         url: `kl/klwechatorderlist`,
         method: "post",
-        data: this.search
+        data: {...this.search, pageIndex:this.pageIndex}
       });
 
       this.list = rs.data;

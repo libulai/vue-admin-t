@@ -60,124 +60,128 @@
 </template>
 
 <script>
-export default {
-  name: "Dep",
-  data() {
-    return {
-      pageSize: 15,
-      pageTotal: 0,
-      pageIndex: 1,
-      isModify: false,
-      form: {
-        deptcode: "",
-        deptname: "",
-        forbidden: 0,
-        deptid: ""
-      },
-      list: null,
-      listLoading: true,
-      currentPage: 10,
-      dialog: false,
-      title: "",
-      rules: {
-        deptcode: [
-          { required: true, message: "请输入部门编号", trigger: "blur" },
-        ],
-        deptname: [
-          { required: true, message: "请输入部门名称", trigger: "blur" },
-        ],
-      },
-    };
-  },
-  watch: {
-    pageIndex: {
-      handler: function (index) {
-        if (index) this.fetchData(index);
-      }
-    }
-  },
-  created() {
-    this.fetchData();
-  },
-  methods: {
-    async fetchData() {
-      this.listLoading = true;
-      let rs = await this.$http({
-        url: `/admin/departmentlist`,
-        method: 'get',
-        params: {
-          forbidden: -1
+  export default {
+    name: "Dep",
+    data() {
+      return {
+        pageSize: 15,
+        pageTotal: 0,
+        pageIndex: 1,
+        isModify: false,
+        form: {
+          deptcode: "",
+          deptname: "",
+          forbidden: 0,
+          deptid: ""
         },
-      });
-
-      this.list = rs.data;
-      this.pageTotal = rs.total;
-      this.listLoading = false;
+        list: null,
+        listLoading: true,
+        currentPage: 10,
+        dialog: false,
+        title: "",
+        rules: {
+          deptcode: [
+            { required: true, message: "请输入部门编号", trigger: "blur" },
+          ],
+          deptname: [
+            { required: true, message: "请输入部门名称", trigger: "blur" },
+          ],
+        },
+      };
     },
-    handleSizeChange(val) {
-    },
-    handleCurrentChange(val) {
-      this.pageIndex = val;
-    },
-    async submit() {
-      this.dialog = false;
-      let rs = await this.$http({
-        url: `/admin/${this.isModify ? 'dodeptmod' : 'dodeptnew'}`,
-        method: "post",
-        data: this.form
-      });
-
-      if (rs.success=='true') this.$message({
-        message: '保存成功',
-        type: 'success'
-      })
-
-      this.$refs.form.resetFields();
-      this.fetchData()
-    },
-    cancel() {
-      this.dialog = false;
-      this.$refs.form.resetFields();
-    },
-    clearForm() {
-      this.$refs.form.resetFields();
-    },
-    dispatch(isModify, data) {
-      this.isModify = isModify;
-      this.dialog = true;
-      this.title = isModify ? "编辑部门" : "添加部门";
-
-      if (this.isModify) {
-        this.getDepInfos(data)
-        this.form.deptid = data.deptid
+    watch: {
+      pageIndex: {
+        handler: function (index) {
+          if (index) this.fetchData(index);
+        }
       }
     },
-    async getDepInfos(data) {
-      let rs = await this.$http({
-        url: `/admin/deptdetail?deptid=${data.deptid}`,
-        method: "get"
-      });
+    created() {
+      this.fetchData();
+    },
+    methods: {
+      async fetchData() {
+        this.listLoading = true;
+        let rs = await this.$http({
+          url: `/admin/departmentlist`,
+          method: 'get',
+          params: {
+            forbidden: -1
+          },
+        });
 
-      for (let i in this.form) {
-        this.form[i] = rs.data[0][i]
+        this.list = rs.data;
+        this.pageTotal = rs.total;
+        this.listLoading = false;
+      },
+      handleSizeChange(val) {
+      },
+      handleCurrentChange(val) {
+        this.pageIndex = val;
+      },
+      async submit() {
+        this.$refs.form.validate(async (valid) => {
+          if (valid) {
+            this.dialog = false;
+            let rs = await this.$http({
+              url: `/admin/${this.isModify ? 'dodeptmod' : 'dodeptnew'}`,
+              method: "post",
+              data: this.form
+            });
+
+            if (rs.success == 'true') this.$message({
+              message: '保存成功',
+              type: 'success'
+            })
+
+            this.$refs.form.resetFields();
+            this.fetchData()
+          }
+        });
+      },
+      cancel() {
+        this.dialog = false;
+        this.$refs.form.resetFields();
+      },
+      clearForm() {
+        this.$refs.form.resetFields();
+      },
+      dispatch(isModify, data) {
+        this.isModify = isModify;
+        this.dialog = true;
+        this.title = isModify ? "编辑部门" : "添加部门";
+
+        if (this.isModify) {
+          this.getDepInfos(data)
+          this.form.deptid = data.deptid
+        }
+      },
+      async getDepInfos(data) {
+        let rs = await this.$http({
+          url: `/admin/deptdetail?deptid=${data.deptid}`,
+          method: "get"
+        });
+
+        for (let i in this.form) {
+          this.form[i] = rs.data[0][i]
+        }
+
+        // this.form.deptcode = Number(this.form.deptcode)
       }
-
-      // this.form.deptcode = Number(this.form.deptcode)
-    }
-  },
-};
+    },
+  };
 </script>
 
 <style lang="scss" scoped>
-.content-box {
-  & > div {
-    display: flex;
-    .el-input,
-    .el-select,
-    .el-date-editor {
-      width: 20%;
-      margin-right: 30px;
+  .content-box {
+    &>div {
+      display: flex;
+      .el-input,
+      .el-select,
+      .el-date-editor {
+        width: 20%;
+        margin-right: 30px;
+      }
     }
   }
-}
 </style>

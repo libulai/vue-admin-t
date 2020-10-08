@@ -2,16 +2,42 @@
   <div class="appointment">
     <!-- 基本信息 -->
     <div class="basic-info">
-      <h4>施工信息</h4>
+      <h4>基本信息</h4>
       <div>
-
         <div class="list-items">
           <div>
-            <span>验收地址</span>
+            <span>小区名称</span>
             <span class="light">上海开发商</span>
           </div>
           <div>
-            <span>验收户型</span>
+            <span>楼号-门牌号</span>
+            <span class="light">乐而美装饰公司</span>
+          </div>
+          <div>
+            <span>详细地址</span>
+            <span class="light">墙面施工</span>
+          </div>
+        </div>
+
+        <div class="list-items" style="margin: 35px 10px">
+          <div style="width: 500px">
+            <span>施工户型</span>
+            <div class="rooms">
+              <span class="light">1 厨</span>
+              <span class="light">1 卫</span>
+              <span class="light">1 阳台</span>
+              <span class="light">1 其他</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="list-items" style="margin: 35px 10px">
+          <div>
+            <span>蓄水时间</span>
+            <span class="light">上海开发商</span>
+          </div>
+          <div>
+            <span>排水时间</span>
             <span class="light">2203</span>
           </div>
           <div>
@@ -20,10 +46,18 @@
           </div>
         </div>
 
-        <div class="list-items" style="margin: 35px 10px 0 10px">
+        <div class="list-items">
           <div>
             <span>下次业主是否到场</span>
             <span class="light">上海开发商</span>
+          </div>
+          <div>
+            <span>蓄水验收情况</span>
+            <span class="light">【合格】</span>
+          </div>
+          <div>
+            <span>排水验收情况</span>
+            <span class="light">南京托乐嘉</span>
           </div>
         </div>
       </div>
@@ -148,113 +182,10 @@
             <span class="light">2010-02-02</span>
           </div>
           <div>
-            <span>验收详情单备注</span>
+            <span>备注</span>
             <span class="light">无</span>
           </div>
         </div>
-      </div>
-    </div>
-
-    <div class="basic-info">
-      <h4>验收信息</h4>
-      <div>
-        <div class="list-items">
-          <div>
-            <span>厨房 1</span>
-            <span class="light">无</span>
-          </div>
-          <div>
-            <span>厨房 2</span>
-            <span class="light">2010-02-02</span>
-          </div>
-          <div>
-            <span>卫生间 1</span>
-            <span class="light">无</span>
-          </div>
-        </div>
-
-        <div class="list-items" style="margin: 35px 10px">
-          <div>
-            <span>卫生间 2</span>
-            <span class="light">否</span>
-          </div>
-          <div>
-            <span>阳台 1</span>
-            <span class="light">2203</span>
-          </div>
-          <div>
-            <span>阳台 2</span>
-            <span class="light">2203</span>
-          </div>
-        </div>
-
-        <div class="list-items" style="margin: 35px 10px 0 10px">
-          <div>
-            <span>其他 1</span>
-            <span class="light">否</span>
-          </div>
-          <div>
-            <span>其他 2</span>
-            <span class="light">2203</span>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="basic-info">
-      <h4>保护层</h4>
-      <div>
-        <div class="list-items">
-          <div>
-            <span>是否做保护层</span>
-            <span class="light">是</span>
-          </div>
-          <div>
-            <span>厨房 1</span>
-            <span class="light">无</span>
-          </div>
-          <div>
-            <span>厨房 2</span>
-            <span class="light">2010-02-02</span>
-          </div>
-        </div>
-
-        <div class="list-items" style="margin: 35px 10px">
-          <div>
-            <span>卫生间 1</span>
-            <span class="light">无</span>
-          </div>
-          <div>
-            <span>卫生间 2</span>
-            <span class="light">否</span>
-          </div>
-          <div>
-            <span>阳台 1</span>
-            <span class="light">2203</span>
-          </div>
-        </div>
-
-        <div class="list-items" style="margin: 35px 10px">
-          <div>
-            <span>阳台 2</span>
-            <span class="light">2203</span>
-          </div>
-          <div>
-            <span>其他 1</span>
-            <span class="light">否</span>
-          </div>
-          <div>
-            <span>其他 2</span>
-            <span class="light">2203</span>
-          </div>
-        </div>
-
-        <div class="list-items" style="margin: 35px 10px 0 10px">
-            <div>
-                <span>施工确认单备注</span>
-              <span class="light">2203</span>
-            </div>
-          </div>
       </div>
     </div>
 

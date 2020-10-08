@@ -80,22 +80,6 @@ const mutations = {
           17: import('@/views/basic/customer')
         }
 
-        // 首页
-        routes.push({
-          path: '/',
-          component: Layout,
-          redirect: '/home',
-          children: [{
-            path: 'home',
-            name: 'Home',
-            component: () => import('@/views/home/index'),
-            meta: {
-              title: '首页',
-              icon: 'dashboard'
-            }
-          }]
-        })
-
         data.forEach(item => {
           let children = item.subMenus
           let childrenArr = []
@@ -126,27 +110,21 @@ const mutations = {
           })
         })
 
-        // let routes = [{
-        //   path: '/setting',
+        // shouye
+        // routes.push({
+        //   path: '*',
         //   component: Layout,
-        //   redirect: '/setting/user',
-        //   name: 'Setting',
-        //   meta: { title: '系统设置222', icon: 'el-icon-s-help' },
-        //   children: [
-        //     {
-        //       path: 'menu',
-        //       name: 'Menu',
-        //       component: () => import('@/views/setting/menu'),
-        //       meta: { title: '菜单管理', icon: '' }
-        //     },
-        //     {
-        //       path: 'user',
-        //       name: 'User',
-        //       component: () => import('@/views/setting/user'),
-        //       meta: { title: '用户管理', icon: '' }
+        //   redirect: '/home',
+        //   children: [{
+        //     path: 'home',
+        //     name: 'Home',
+        //     component: () => import('@/views/home/index'),
+        //     meta: {
+        //       title: '首页',
+        //       icon: 'el-icon-s-home'
         //     }
-        //   ]
-        // }]
+        //   }]
+        // })
 
         console.log(routes)
 

@@ -10,7 +10,7 @@
         <el-form-item prop="username">
           <span class="svg-container">
             <!-- <svg-icon icon-class="user" /> -->
-            <i class="el-icon-mobile-phone" style="font-size: 18px;"/>
+            <i class="el-icon-mobile-phone" style="font-size: 18px;" />
           </span>
           <el-input ref="username" v-model="loginForm.username" placeholder="请输入手机号" name="username" tabindex="1" />
         </el-form-item>
@@ -18,7 +18,7 @@
         <el-form-item prop="password">
           <span class="svg-container">
             <!-- <svg-icon icon-class="password" /> -->
-            <i class="el-icon-lock" style="font-size: 18px;"/>
+            <i class="el-icon-lock" style="font-size: 18px;" />
           </span>
           <el-input :key="passwordType" ref="password" v-model="loginForm.password" :type="passwordType" placeholder="请输入密码" name="password"
             tabindex="2" auto-complete="on" @keyup.enter.native="handleLogin" />
@@ -48,7 +48,7 @@
     data() {
       const validateUsername = (rule, value, callback) => {
         if (!validUsername(value)) {
-          callback(new Error('Please enter the correct user name'))
+          callback(new Error('请输入用户名'))
         } else {
           callback()
         }
@@ -62,12 +62,12 @@
       }
       return {
         loginForm: {
-          username: 'kaletest',
-          password: 'aaaaaa'
+          username: 'zoo111',
+          password: '111111'
         },
         loginRules: {
-          username: [{ required: true, trigger: 'blur' }],
-          password: [{ required: true, trigger: 'blur', validator: validatePassword }]
+          username: [{ required: true, trigger: 'blur', message: "请输入用户名", }],
+          password: [{ required: true, trigger: 'blur', message: "请输入密码", }]
         },
         loading: false,
         passwordType: 'password',
@@ -102,10 +102,10 @@
             localStorage.setItem('q', this.loginForm.password)
             this.$store.dispatch('user/login', this.loginForm).then((data) => {
               this.loading = false
-              if (data.success == 'false') {
-                return Message.error(data.data)
-              }
-      
+              // if (data.success == 'false') {
+              //   return Message.error(data.data)
+              // }
+
               this.$router.push({ path: this.redirect || '/' })
             }).catch(() => {
               this.loading = false
@@ -242,13 +242,13 @@
     }
   }
 
-  .footer{
+  .footer {
     position: absolute;
     bottom: 20px;
     color: #fff;
     font-size: 12px;
-    div{
-      display:flex;
+    div {
+      display: flex;
       justify-content: center;
     }
   }

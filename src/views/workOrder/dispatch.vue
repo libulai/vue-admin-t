@@ -144,7 +144,7 @@
     data() {
       let tom = moment().add(1, 'days').format('YYYY-MM-DD')
       return {
-        pageSize: 15,
+        pageSize: 10,
         pageTotal: 0,
         pageIndex: 1,
         btnState: true,

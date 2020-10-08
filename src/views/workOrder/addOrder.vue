@@ -226,8 +226,13 @@ export default {
       this.right = true
       this.title = '新建工单'
     } else {
-      this.getOrderDetail(query)
-      this.title = '编辑工单'
+      if (query.detailType == 3) {
+        this.initnetworkOrder(query)
+        this.title = '网络预约单生成'
+      } else {
+        this.getOrderDetail(query)
+        this.title = '编辑工单'
+      }
     }
 
     bus.$on('detail', rs => {
@@ -235,6 +240,9 @@ export default {
     })
   },
   methods: {
+    initnetworkOrder(query){
+      
+    },
     async initDic() {
       let rs = await this.$http({
         url: `/admin/dictionarylist?dictype=40`,

@@ -2,7 +2,7 @@
   <div class="appointment">
     <!-- 基本信息 -->
     <div class="basic-info">
-      <h4>施工信息</h4>
+      <h4>基本信息</h4>
       <div>
         <div class="list-items">
           <div>
@@ -10,6 +10,17 @@
             <span class="light">上海开发商</span>
           </div>
           <div>
+            <span>到达时间</span>
+            <span class="light">乐而美装饰公司</span>
+          </div>
+          <div>
+            <span>开始施工时间</span>
+            <span class="light">墙面施工</span>
+          </div>
+        </div>
+
+        <div class="list-items" style="margin: 35px 10px">
+          <div style="width: 500px">
             <span>施工户型</span>
             <div class="rooms">
               <span class="light">1 厨</span>
@@ -19,12 +30,27 @@
             </div>
           </div>
         </div>
+
+        <div class="list-items">
+          <div>
+            <span>小区名称</span>
+            <span class="light">上海开发商</span>
+          </div>
+          <div>
+            <span>楼号-门牌号</span>
+            <span class="light">2203</span>
+          </div>
+          <div>
+            <span>详细地址</span>
+            <span class="light">南京托乐嘉</span>
+          </div>
+        </div>
       </div>
     </div>
 
     <!-- 联系人信息 -->
     <div class="basic-info">
-      <h4>联系方式</h4>
+      <h4>联系人信息</h4>
       <div>
         <div class="list-items">
           <div>
@@ -80,7 +106,7 @@
           </div>
         </div>
 
-        <div class="list-items" style="margin: 35px 10px 0 10px">
+        <div class="list-items" style="margin: 35px 10px">
           <div>
             <span>施工工艺</span>
             <span class="light">否</span>
@@ -94,7 +120,7 @@
     </div>
 
     <!-- 现场施工照片 -->
-    <!-- <div class="basic-info">
+    <div class="basic-info">
       <h4>现场施工照片</h4>
       <div>
         <div class="list-pic">
@@ -121,11 +147,11 @@
           </div>
         </div>
       </div>
-    </div> -->
+    </div>
 
     <!-- 施工确认信息 -->
     <div class="basic-info">
-      <h4>安装信息</h4>
+      <h4>施工确认信息</h4>
       <div>
         <div class="list-items">
           <div>
@@ -133,113 +159,32 @@
             <span class="light">无</span>
           </div>
           <div>
-            <span>厨房 2</span>
+            <span>卫生间 1</span>
             <span class="light">2010-02-02</span>
           </div>
           <div>
-            <span>卫生间 1</span>
+            <span>阳台 1</span>
             <span class="light">无</span>
           </div>
         </div>
 
         <div class="list-items" style="margin: 35px 10px">
           <div>
-            <span>卫生间 2</span>
-            <span class="light">否</span>
-          </div>
-          <div>
-            <span>阳台 1</span>
-            <span class="light">2203</span>
-          </div>
-          <div>
-            <span>阳台 2</span>
-            <span class="light">2203</span>
-          </div>
-        </div>
-
-        <div class="list-items" style="margin: 35px 10px 0 10px">
-          <div>
             <span>其他 1</span>
             <span class="light">否</span>
           </div>
-          <div>
-            <span>其他 2</span>
-            <span class="light">2203</span>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="basic-info">
-      <h4>保护层</h4>
-      <div>
-        <div class="list-items">
           <div>
             <span>是否做保护层</span>
-            <span class="light">是</span>
-          </div>
-          <div>
-            <span>厨房 1</span>
-            <span class="light">无</span>
-          </div>
-          <div>
-            <span>厨房 2</span>
-            <span class="light">2010-02-02</span>
-          </div>
-        </div>
-
-        <div class="list-items" style="margin: 35px 10px">
-          <div>
-            <span>卫生间 1</span>
-            <span class="light">无</span>
-          </div>
-          <div>
-            <span>卫生间 2</span>
-            <span class="light">否</span>
-          </div>
-          <div>
-            <span>阳台 1</span>
             <span class="light">2203</span>
-          </div>
-        </div>
-
-        <div class="list-items" style="margin: 35px 10px 0 10px">
-          <div>
-            <span>阳台 2</span>
-            <span class="light">2203</span>
-          </div>
-          <div>
-            <span>其他 1</span>
-            <span class="light">否</span>
-          </div>
-          <div>
-            <span>其他 2</span>
-            <span class="light">2203</span>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="basic-info">
-      <h4>实际物料使用量</h4>
-      <div>
-        <div class="list-items">
-          <div>
-            <span>物料 1</span>
-            <span class="light">2 桶/组</span>
-          </div>
-          <div>
-            <span>物料 2</span>
-            <span class="light">2 桶/组</span>
           </div>
           <div>
             <span>施工确认单备注</span>
-            <span class="light">2010-02-02</span>
+            <span class="light">2203</span>
           </div>
         </div>
       </div>
-
     </div>
+
   </div>
 </template>
 
@@ -300,7 +245,6 @@
       }
     }
     .rooms {
-      width: 500px;
       span {
         width: 100px;
         display: inline-flex;

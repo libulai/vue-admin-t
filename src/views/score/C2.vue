@@ -37,64 +37,69 @@
 </template>
 
 <script>
-import bus from '@/utils/bus'
-export default {
-  data() {
-    return {
-      dialog1: false,
-      form: {
-        scorea: '',
-        scorec: '',
-        id: ''
+  import bus from '@/utils/bus'
+  export default {
+    data() {
+      return {
+        dialog1: false,
+        form: {
+          scorea: '',
+          scorec: '',
+          id: ''
+        },
+        rules3: {
+          scorec: [
+            { type: 'number', required: true, message: "必须是数值", trigger: "blur" }
+          ]
+        }
+      };
+    },
+    props: ['list'],
+    created() {
+
+    },
+    methods: {
+      dispatch(data) {
+        this.dialog1 = true;
+        this.getDepInfos(data)
+        this.form.id = data.id
       },
-      rules3: {
-        score: [
-          { required: true, message: "必须是数值", trigger: "blur" }
-        ]
-      }
-    };
-  },
-  props: ['list'],
-  created() {
+      async getDepInfos(data) {
+        let rs = await this.$http({
+          url: `/admin/housetypescorekldetail?id=${data.id}`,
+          method: "get"
+        });
 
-  },
-  methods: {
-    dispatch(data) {
-      this.dialog1 = true;
-      this.getDepInfos(data)
-      this.form.id = data.id
-    },
-    async getDepInfos(data) {
-      let rs = await this.$http({
-        url: `/admin/housetypescorekldetail?id=${data.id}`,
-        method: "get"
-      });
+        this.form.scorec = rs.data[0].scorec
+        this.form.scorea = rs.data[0].scorea
+      },
+      cancel() {
+        this.dialog1 = false;
+        this.$refs.form.resetFields()
+      },
+      async submit() {
+        this.$refs.form.validate(async (valid) => {
+          if (valid) {
+            this.dialog1 = false;
+            let rs = await this.$http({
+              url: `/admin/dohousetypescoreklmod`,
+              method: "post",
+              data: this.form
+            });
 
-      this.form.scorec = rs.data[0].scorec
-      this.form.scorea = rs.data[0].scorea
-    },
-    cancel() {
-      this.dialog1 = false;
-      this.$refs.form.resetFields()
-    },
-    async submit() {
-      this.dialog1 = false;
-      let rs = await this.$http({
-        url: `/admin/dohousetypescoreklmod`,
-        method: "post",
-        data: this.form
-      });
+            if (rs.success == 'true') this.$message({
+              message: '保存成功',
+              type: 'success'
+            })
 
-      if (rs.success == 'true') this.$message({
-        message: '保存成功',
-        type: 'success'
-      })
+            this.$refs.form.resetFields();
+            bus.$emit('successed')
+          }
+        });
 
-      this.$refs.form.resetFields();
-      bus.$emit('successed')
+      },
     },
-  },
-};
+  };
 </script>
 
 <style lang="scss" scoped>

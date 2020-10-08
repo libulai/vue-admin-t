@@ -68,7 +68,8 @@
         </el-table>
 
         <div class="pagination">
-          <el-pagination background @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page.sync="pageIndex" :page-size="pageSize" layout="prev, pager, next, jumper" :total="pageTotal"></el-pagination>
+          <el-pagination background @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page.sync="pageIndex"
+            :page-size="pageSize" layout="prev, pager, next, jumper" :total="pageTotal"></el-pagination>
         </div>
       </div>
     </div>
@@ -129,7 +130,7 @@
     </el-dialog>
 
     <el-dialog :title="title2" :visible.sync="dialog2" class="dialog" :close-on-click-modal="false" @closed="clearForm(2)">
-      <el-form :model="form2" :rules="rules" ref="form2" label-width="100px" class="dialog-form">
+      <el-form :model="form2" :rules="rules2" ref="form2" label-width="100px" class="dialog-form">
         <el-form-item label="公司">
           <span class="text">上海分公司</span>
         </el-form-item>
@@ -161,196 +162,223 @@
 </template>
 
 <script>
-export default {
-  name: "Employees",
-  data() {
-    return {
-      pageSize: 15,
-      pageTotal: 0,
-      pageIndex: 1,
-      deps: [],
-      attrs: [{ id: 1, val: '服务人员' }, { id: 2, val: '服务主管' }, { id: 3, val: '内情人员' }, { id: 4, val: '分销商' }, { id: 5, val: '业务员' }, { id: 6, val: '装饰公司' }],
-      levels: [{ id: 1, val: '部长' }, { id: 2, val: '主管' }, { id: 3, val: '负责人（产业未下发文件）' }, { id: 4, val: '组长' }, { id: 5, val: '高级技师' }, { id: 6, val: '中级技师' }, { id: 7, val: '初级技师' }, { id: 8, val: '见习技师' }, { id: 9, val: '内勤主管' }, { id: 10, val: '服务内勤' }],
-      edus: [{ id: 1, val: '初中' }, { id: 2, val: '高中/中专' }, { id: 3, val: '大专' }, { id: 4, val: '本科' }, { id: 5, val: '硕士' }, { id: 6, val: '博士及以上' }, { id: 7, val: '其他' }],
-      search: {
-        depid: '',
-        empname: ''
-      },
-      selected: '',
-      form: {
-        empcode: "",
-        // empid: "",
-        empname: "",
-        deptid: "",
-        empattr: '',
-        emplevel: '',
-        education: '',
-        hiredate: '',
-        mobilephone: '',
-        forbidden:0,
-        email: '',
-        // destempid: '',
-        register: 0,
-        jlybh: '',
-      },
-      form2: {
-        empid: "",
-        leavereason: "",
-        leavedate: "",
-      },
-      list: null,
-      listLoading: true,
-      dialog: false,
-      dialog2: false,
-      dialog3: false,
-      title: "",
-      title2: "停用",
-      rules: {
-        account: [
-          { required: true, message: "请输入当前密码", trigger: "blur" },
-        ],
-        password: [
-          { required: true, message: "请输入新密码", trigger: "blur" },
-          {
-            min: 6,
-            max: 16,
-            message: "长度在 6 到 16 个字符",
-            trigger: "blur",
-          },
-        ],
-      },
-    };
-  },
-  watch: {
-    pageIndex(index) {
-      if (index) this.fetchData(index);
-    },
-  },
-  created() {
-    this.fetchData();
-    this.initDeps();
-  },
-  methods: {
-    async initDeps() {
-      let rs = await this.$http({
-        url: `/admin/departmentlist`,
-        method: 'get',
-        params: {
-          forbidden: -1
+  export default {
+    name: "Employees",
+    data() {
+      return {
+        pageSize: 15,
+        pageTotal: 0,
+        pageIndex: 1,
+        deps: [],
+        attrs: [{ id: 1, val: '服务人员' }, { id: 2, val: '服务主管' }, { id: 3, val: '内情人员' }, { id: 4, val: '分销商' }, { id: 5, val: '业务员' }, { id: 6, val: '装饰公司' }],
+        levels: [{ id: 1, val: '部长' }, { id: 2, val: '主管' }, { id: 3, val: '负责人（产业未下发文件）' }, { id: 4, val: '组长' }, { id: 5, val: '高级技师' }, { id: 6, val: '中级技师' }, { id: 7, val: '初级技师' }, { id: 8, val: '见习技师' }, { id: 9, val: '内勤主管' }, { id: 10, val: '服务内勤' }],
+        edus: [{ id: 1, val: '初中' }, { id: 2, val: '高中/中专' }, { id: 3, val: '大专' }, { id: 4, val: '本科' }, { id: 5, val: '硕士' }, { id: 6, val: '博士及以上' }, { id: 7, val: '其他' }],
+        search: {
+          depid: '',
+          empname: ''
         },
-      });
+        selected: '',
+        form: {
+          empcode: "",
+          // empid: "",
+          empname: "",
+          deptid: "",
+          empattr: '',
+          emplevel: '',
+          education: '',
+          hiredate: '',
+          mobilephone: '',
+          forbidden: 0,
+          email: '',
+          // destempid: '',
+          register: 0,
+          jlybh: '',
+        },
+        form2: {
+          empid: "",
+          leavereason: "",
+          leavedate: "",
+        },
+        list: null,
+        listLoading: true,
+        dialog: false,
+        dialog2: false,
+        dialog3: false,
+        title: "",
+        title2: "停用",
+        rules: {
+          deptid: [
+            { required: true, message: "请选择部门", trigger: "blur" },
+          ],
+          empcode: [
+            { required: true, message: "请输入工号", trigger: "blur" },
+          ],
+          empname: [
+            { required: true, message: "请输入姓名", trigger: "blur" },
+          ],
+          empattr: [
+            { required: true, message: "请选择属性", trigger: "blur" },
+          ],
+          emplevel: [
+            { required: true, message: "请选择级别", trigger: "blur" },
+          ],
+          education: [
+            { required: true, message: "请选择学历", trigger: "blur" },
+          ],
+          hiredate: [
+            { required: true, message: "请选择在职时间", trigger: "blur" },
+          ]
+        },
+        rules2: {
+          leavedate: [
+            { required: true, message: "请选择日期", trigger: "blur" },
+          ],
+          leavereason: [
+            { required: true, message: "请填写原因", trigger: "blur" },
+          ]
+        },
+      };
+    },
+    watch: {
+      pageIndex(index) {
+        if (index) this.fetchData(index);
+      },
+    },
+    created() {
+      this.fetchData();
+      this.initDeps();
+    },
+    methods: {
+      async initDeps() {
+        let rs = await this.$http({
+          url: `/admin/departmentlist`,
+          method: 'get',
+          params: {
+            forbidden: -1
+          },
+        });
 
-      this.deps = rs.data
-    },
-    async fetchData() {
-      this.listLoading = true;
-      let rs = await this.$http({
-        url: `/admin/emplist?empname=${this.search.empname}&deptid=${this.search.depid}&forbidden=-1&page.pageIndex=${this.pageIndex}`,
-        method: "get"
-      });
+        this.deps = rs.data
+      },
+      async fetchData() {
+        this.listLoading = true;
+        let rs = await this.$http({
+          url: `/admin/emplist?empname=${this.search.empname}&deptid=${this.search.depid}&forbidden=-1&page.pageIndex=${this.pageIndex}`,
+          method: "get"
+        });
 
-      this.list = rs.data;
-      this.pageTotal = rs.total;
-      this.listLoading = false;
-    },
-    handleSizeChange(val) {
-    },
-    handleCurrentChange(val) {
-      this.pageIndex = val;
-    },
-    reset() {
-      this.search = {
-        depid: '',
-        empname: ''
-      }
-    },
-    clearForm(n='') {
-      this.$refs[`form${n}`].resetFields();
-    },
-    async submit() {
-      this.dialog = false;
+        this.list = rs.data;
+        this.pageTotal = rs.total;
+        this.listLoading = false;
+      },
+      handleSizeChange(val) {
+      },
+      handleCurrentChange(val) {
+        this.pageIndex = val;
+      },
+      reset() {
+        this.search = {
+          depid: '',
+          empname: ''
+        }
+      },
+      clearForm(n = '') {
+        this.$refs[`form${n}`].resetFields();
+      },
+      async submit() {
+        this.$refs.form.validate(async (valid) => {
+          if (valid) {
+            this.dialog = false;
 
-      let rs = await this.$http({
-        url: `/admin/${this.isModify ? 'doempmod' : 'doempnew'}`,
-        method: "post",
-        data: this.form
-      });
+            let rs = await this.$http({
+              url: `/admin/${this.isModify ? 'doempmod' : 'doempnew'}`,
+              method: "post",
+              data: this.form
+            });
 
-      if (rs.success == 'true') this.$message({
-        message: '保存成功',
-        type: 'success'
-      })
+            if (rs.success == 'true') this.$message({
+              message: '保存成功',
+              type: 'success'
+            })
 
-      this.$refs.form.resetFields();
-      this.fetchData()
-    },
-    async submit2() {
-      this.dialog2 = false;
+            this.$refs.form.resetFields();
+            this.fetchData()
+          }
+        });
 
-      let rs = await this.$http({
-        url: `/admin/doempforbidden`,
-        method: "post",
-        data: this.form2
-      });
+      },
+      async submit2() {
+        this.$refs.form2.validate(async (valid) => {
+          if (valid) {
+            this.dialog2 = false;
 
-      if (rs.success == 'true') this.$message({
-        message: '保存成功',
-        type: 'success'
-      })
+            let rs = await this.$http({
+              url: `/admin/doempforbidden`,
+              method: "post",
+              data: this.form2
+            });
 
-      this.$refs.form2.resetFields();
-      this.fetchData()
-    },
-    cancel() {
-      this.dialog = false;
-      this.$refs.form.resetFields();
-    },
-    cancel2() {
-      this.dialog2 = false;
-      this.$refs.form2.resetFields();
-    },
-    dispatch(isModify, data) {
-      this.isModify = isModify;
-      this.dialog = true;
-      this.title = isModify ? "编辑员工" : "新增员工";
+            if (rs.success == 'true') this.$message({
+              message: '保存成功',
+              type: 'success'
+            })
 
-      if (this.isModify) {
-        this.getDepInfos(data)
-        this.form.empid = data.empid
-      }
-    },
-    async getDepInfos(data) {
-      let rs = await this.$http({
-        url: `/admin/empdetail?empid=${data.empid}`,
-        method: "get"
-      });
+            this.$refs.form2.resetFields();
+            this.fetchData()
+          }
+        });
 
-      for (let i in this.form) {
-        this.form[i] = rs.data[0][i]
-      }
+      },
+      cancel() {
+        this.dialog = false;
+        this.$refs.form.resetFields();
+      },
+      cancel2() {
+        this.dialog2 = false;
+        this.$refs.form2.resetFields();
+      },
+      dispatch(isModify, data) {
+        this.isModify = isModify;
+        this.dialog = true;
+        this.title = isModify ? "编辑员工" : "新增员工";
+
+        if (this.isModify) {
+          this.getDepInfos(data)
+          this.form.empid = data.empid
+        }
+      },
+      async getDepInfos(data) {
+        let rs = await this.$http({
+          url: `/admin/empdetail?empid=${data.empid}`,
+          method: "get"
+        });
+
+        for (let i in this.form) {
+          this.form[i] = rs.data[0][i]
+        }
+      },
+      handle(flag, id) {
+        if (flag) {
+          this.dialog3 = true
+        } else {
+          this.dialog2 = true;
+          this.form2.empid = id
+        }
+      },
     },
-    handle(flag, id) {
-      if (flag) {
-        this.dialog3 = true
-      } else {
-        this.dialog2 = true;
-        this.form2.empid = id
-      }
-    },
-  },
-};
+  };
 </script>
 
 <style lang="scss" scoped>
-.content-box {
-  & > div {
-    display: flex;
-    .el-input,
-    .el-select,
-    .el-date-editor {
-      width: 20%;
-      margin-right: 30px;
+  .content-box {
+    &>div {
+      display: flex;
+      .el-input,
+      .el-select,
+      .el-date-editor {
+        width: 20%;
+        margin-right: 30px;
+      }
     }
   }
-}
 </style>

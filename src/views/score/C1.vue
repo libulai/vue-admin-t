@@ -47,80 +47,85 @@
 </template>
 
 <script>
-import { getList } from "@/api/table";
+  import { getList } from "@/api/table";
 
-export default {
-  data() {
-    return {
-      pageSize: 15,
-      pageTotal: 0,
-      pageIndex: 1,
-      list: null,
-      listLoading: true,
-      dialog1: false,
-      form: {
-        scorea: '',
-        scorec: '',
-        id: ''
+  export default {
+    data() {
+      return {
+        pageSize: 15,
+        pageTotal: 0,
+        pageIndex: 1,
+        list: null,
+        listLoading: true,
+        dialog1: false,
+        form: {
+          scorea: '',
+          scorec: '',
+          id: ''
+        },
+        rules3: {
+          scorec: [
+            { type: 'number', required: true, message: "必须是数值", trigger: "blur" }
+          ]
+        }
+      };
+    },
+    created() {
+      this.fetchData();
+    },
+    methods: {
+      async fetchData() {
+        this.listLoading = true;
+        let rs = await this.$http({
+          url: `/admin/productkldictionarylist?forbidden=-1&page.pageIndex=${this.pageIndex}`,
+          method: 'get'
+        });
+
+        this.list = rs.data;
+        this.pageTotal = rs.total;
+        this.listLoading = false;
       },
-      rules3: {
-        score: [
-          { required: true, message: "必须是数值", trigger: "blur" }
-        ]
+      async getDepInfos(data) {
+        let rs = await this.$http({
+          url: `/admin/productkldictionarydetail?id=${data.id}`,
+          method: "get"
+        });
+
+        this.form.scorec = rs.data[0].scorec
+        this.form.scorea = rs.data[0].scorea
+      },
+      dispatch(data) {
+        this.dialog1 = true;
+        this.getDepInfos(data)
+        this.form.id = data.id
+      },
+      cancel() {
+        this.dialog1 = false;
+        this.$refs.form.resetFields()
+      },
+      async submit() {
+        this.$refs.form.validate(async (valid) => {
+          if (valid) {
+            this.dialog1 = false;
+            let rs = await this.$http({
+              url: `/admin/doproductkldictionaryscoremod`,
+              method: "post",
+              data: this.form
+            });
+
+            if (rs.success == 'true') this.$message({
+              message: '保存成功',
+              type: 'success'
+            })
+
+            this.$refs.form.resetFields();
+            this.fetchData()
+          }
+        });
+
       }
-    };
-  },
-  created() {
-    this.fetchData();
-  },
-  methods: {
-    async fetchData() {
-      this.listLoading = true;
-      let rs = await this.$http({
-        url: `/admin/productkldictionarylist?forbidden=-1&page.pageIndex=${this.pageIndex}`,
-        method: 'get'
-      });
-
-      this.list = rs.data;
-      this.pageTotal = rs.total;
-      this.listLoading = false;
     },
-    async getDepInfos(data) {
-      let rs = await this.$http({
-        url: `/admin/productkldictionarydetail?id=${data.id}`,
-        method: "get"
-      });
-
-      this.form.scorec = rs.data[0].scorec
-      this.form.scorea = rs.data[0].scorea
-    },
-    dispatch(data) {
-      this.dialog1 = true;
-      this.getDepInfos(data)
-      this.form.id = data.id
-    },
-    cancel() {
-      this.dialog1 = false;
-      this.$refs.form.resetFields()
-    },
-    async submit() {
-      this.dialog1 = false;
-      let rs = await this.$http({
-        url: `/admin/doproductkldictionaryscoremod`,
-        method: "post",
-        data: this.form
-      });
-
-      if (rs.success == 'true') this.$message({
-        message: '保存成功',
-        type: 'success'
-      })
-
-      this.$refs.form.resetFields();
-      this.fetchData()
-    }
-  },
-};
+  };
 </script>
 
 <style lang="scss" scoped>

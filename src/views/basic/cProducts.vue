@@ -38,14 +38,15 @@
         </el-table>
 
         <div class="pagination">
-          <el-pagination background @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page.sync="pageIndex" :page-size="pageSize" layout="prev, pager, next, jumper" :total="pageTotal"></el-pagination>
+          <el-pagination background @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page.sync="pageIndex"
+            :page-size="pageSize" layout="prev, pager, next, jumper" :total="pageTotal"></el-pagination>
         </div>
       </div>
     </div>
 
     <el-dialog :title="title" :visible.sync="dialog" class="dialog" :close-on-click-modal="false" @closed="clearForm">
       <el-form :model="form" :rules="rules" ref="form" label-width="100px" class="dialog-form">
-        <el-form-item label="名称">
+        <el-form-item label="名称" prop="productid">
           <!-- <el-select v-model="form.productid" placeholder="请选择（可搜索）" filterable>
             <el-option v-for="item in products" :key="item.id" :label="item.productname" :value="item.id" @click.native="changeVal(item)"></el-option>
           </el-select> -->
@@ -53,7 +54,7 @@
             <el-button slot="append" @click="dialog2Open">请选择</el-button>
           </el-input>
         </el-form-item>
-        <el-form-item label="规格">
+        <el-form-item label="规格" prop="specs">
           <el-input v-model="productInfo.specs" disabled placeholder="自动解析"></el-input>
         </el-form-item>
         <el-form-item label="序号" prop="productnum">
@@ -82,7 +83,8 @@
           </el-table-column>
         </el-table>
         <div class="pagination">
-          <el-pagination background @size-change="handleSizeChange" @current-change="handleCurrentChange2" :current-page.sync="pageIndex2" :page-size="pageSize" layout="prev, pager, next" :total="pageTotal2"></el-pagination>
+          <el-pagination background @size-change="handleSizeChange" @current-change="handleCurrentChange2" :current-page.sync="pageIndex2"
+            :page-size="pageSize" layout="prev, pager, next" :total="pageTotal2"></el-pagination>
         </div>
       </div>
       <!-- <span slot="footer" class="dialog-footer">
@@ -93,174 +95,178 @@
 </template>
 
 <script>
-export default {
-  name: "Dep",
-  data() {
-    return {
-      pageSize: 15,
-      pageTotal: 0,
-      pageIndex: 1,
-      pageIndex2: 1,
-      pageTotal2: 0,
-      products: [],
-      dialog2: false,
-      productInfo: {},
-      isModify: false,
-      form: {
-        productnum: "",
-        productdesc: "",
-        forbidden: 0,
-        productid: ""
+  export default {
+    name: "Dep",
+    data() {
+      return {
+        pageSize: 15,
+        pageTotal: 0,
+        pageIndex: 1,
+        pageIndex2: 1,
+        pageTotal2: 0,
+        products: [],
+        dialog2: false,
+        productInfo: {},
+        isModify: false,
+        form: {
+          productnum: "",
+          productdesc: "",
+          forbidden: 0,
+          productid: ""
+        },
+        list: null,
+        list2: null,
+        listLoading: true,
+        listLoading2: true,
+        dialog: false,
+        title: "",
+        rules: {
+          productid: [
+            { required: true, message: "请选择物料", trigger: "blur" },
+          ],
+          productnum: [
+            { required: true, message: "请输入序列号", trigger: "blur" },
+          ],
+        },
+      };
+    },
+    watch: {
+      pageIndex: {
+        handler: function (index) {
+          if (index) this.fetchData(index);
+        }
+      }
+    },
+    created() {
+      this.fetchData();
+    },
+    methods: {
+      async fetchData() {
+        this.listLoading = true;
+        let rs = await this.$http({
+          url: `/admin/productkldictionarylist?forbidden=-1&page.pageIndex=${this.pageIndex}`,
+          method: 'get'
+        });
+
+        this.list = rs.data;
+        this.pageTotal = rs.total;
+        this.listLoading = false;
       },
-      list: null,
-      list2: null,
-      listLoading: true,
-      listLoading2: true,
-      dialog: false,
-      title: "",
-      rules: {
-        deptcode: [
-          { required: true, message: "请输入部门编号", trigger: "blur" },
-        ],
-        deptname: [
-          { required: true, message: "请输入部门名称", trigger: "blur" },
-        ],
+      handleSizeChange(val) {
       },
-    };
-  },
-  watch: {
-    pageIndex: {
-      handler: function (index) {
-        if (index) this.fetchData(index);
+      handleCurrentChange(val) {
+        this.pageIndex = val;
+      },
+      handleCurrentChange2(val) {
+        this.pageIndex2 = val;
+      },
+      changeVal(data) {
+        this.productInfo = data
+      },
+      async dialog2Open() {
+        this.dialog2 = true
+        this.listLoading2 = true;
+        let rs = await this.$http({
+          url: `/admin/productkllist`,
+          method: 'get'
+        });
+
+        this.list2 = rs.data;
+        this.pageTotal2 = rs.total;
+        this.listLoading2 = false;
+      },
+      selectItem(val) {
+        if (!val) return
+        this.dialog2 = false
+        this.form.productid = val.id
+        this.productInfo.productname = val.productname
+        this.productInfo.specs = val.specs
+      },
+      async submit() {
+        this.$refs.form.validate(async (valid) => {
+          if (valid) {
+            this.dialog = false;
+            let rs = await this.$http({
+              url: `/admin/${this.isModify ? 'doproductkldictionarymod' : 'doproductkldictionarynew'}`,
+              method: "post",
+              data: this.form
+            });
+
+            if (rs.success == 'true') this.$message({
+              message: '保存成功',
+              type: 'success'
+            })
+
+            this.$refs.form.resetFields();
+            this.productInfo = {}
+            this.fetchData()
+          }
+        });
+      },
+      cancel() {
+        this.dialog = false;
+        this.$refs.form.resetFields();
+        this.productInfo = {}
+      },
+      clearForm() {
+        this.$refs.form.resetFields();
+        this.productInfo = {}
+      },
+      dispatch(isModify, data) {
+        this.isModify = isModify;
+        this.dialog = true;
+        this.title = isModify ? "编辑物料" : "添加物料";
+
+        if (this.isModify) {
+          this.getDepInfos(data)
+          this.form.id = data.id
+        }
+
+        this.initProducts()
+      },
+      async initProducts() {
+        let rs = await this.$http({
+          url: `/admin/productkllist`,
+          method: 'get'
+        });
+
+        this.products = rs.data
+      },
+      async getDepInfos(data) {
+        let rs = await this.$http({
+          url: `/admin/productkldictionarydetail?id=${data.id}`,
+          method: "get"
+        });
+
+        for (let i in this.form) {
+          this.form[i] = rs.data[0][i]
+        }
+
+        this.productInfo = {
+          productname: rs.data[0].productname,
+          specs: rs.data[0].specs
+        }
       }
-    }
-  },
-  created() {
-    this.fetchData();
-  },
-  methods: {
-    async fetchData() {
-      this.listLoading = true;
-      let rs = await this.$http({
-        url: `/admin/productkldictionarylist?forbidden=-1&page.pageIndex=${this.pageIndex}`,
-        method: 'get'
-      });
-
-      this.list = rs.data;
-      this.pageTotal = rs.total;
-      this.listLoading = false;
     },
-    handleSizeChange(val) {
-    },
-    handleCurrentChange(val) {
-      this.pageIndex = val;
-    },
-    handleCurrentChange2(val) {
-      this.pageIndex2 = val;
-    },
-    changeVal(data) {
-      this.productInfo = data
-    },
-    async dialog2Open() {
-      this.dialog2 = true
-      this.listLoading2 = true;
-      let rs = await this.$http({
-        url: `/admin/productkllist`,
-        method: 'get'
-      });
-
-      this.list2 = rs.data;
-      this.pageTotal2 = rs.total;
-      this.listLoading2 = false;
-    },
-    selectItem(val) {
-      if (!val) return
-      this.dialog2 = false
-      this.form.productid = val.id
-      this.productInfo.productname = val.productname
-      this.productInfo.specs = val.specs
-    },
-    async submit() {
-      this.dialog = false;
-      let rs = await this.$http({
-        url: `/admin/${this.isModify ? 'doproductkldictionarymod' : 'doproductkldictionarynew'}`,
-        method: "post",
-        data: this.form
-      });
-
-      if (rs.success == 'true') this.$message({
-        message: '保存成功',
-        type: 'success'
-      })
-
-      this.$refs.form.resetFields();
-      this.productInfo = {}
-      this.fetchData()
-    },
-    cancel() {
-      this.dialog = false;
-      this.$refs.form.resetFields();
-      this.productInfo = {}
-    },
-    clearForm() {
-      this.$refs.form.resetFields();
-      this.productInfo = {}
-    },
-    dispatch(isModify, data) {
-      this.isModify = isModify;
-      this.dialog = true;
-      this.title = isModify ? "编辑物料" : "添加物料";
-
-      if (this.isModify) {
-        this.getDepInfos(data)
-        this.form.id = data.id
-      }
-
-      this.initProducts()
-    },
-    async initProducts() {
-      let rs = await this.$http({
-        url: `/admin/productkllist`,
-        method: 'get'
-      });
-
-      this.products = rs.data
-    },
-    async getDepInfos(data) {
-      let rs = await this.$http({
-        url: `/admin/productkldictionarydetail?id=${data.id}`,
-        method: "get"
-      });
-
-      for (let i in this.form) {
-        this.form[i] = rs.data[0][i]
-      }
-
-      this.productInfo = {
-        productname: rs.data[0].productname,
-        specs: rs.data[0].specs
-      }
-    }
-  },
-};
+  };
 </script>
 
 <style lang="scss" scoped>
-.content-box {
-  & > div {
-    display: flex;
-    .el-input,
-    .el-select,
-    .el-date-editor {
-      width: 20%;
-      margin-right: 30px;
+  .content-box {
+    &>div {
+      display: flex;
+      .el-input,
+      .el-select,
+      .el-date-editor {
+        width: 20%;
+        margin-right: 30px;
+      }
     }
   }
-}
 
-::v-deep .dialog2 {
-  .el-dialog {
-    width: 400px !important;
+  ::v-deep .dialog2 {
+    .el-dialog {
+      width: 400px !important;
+    }
   }
-}
 </style>

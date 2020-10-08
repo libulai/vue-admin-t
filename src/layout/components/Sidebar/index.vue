@@ -24,8 +24,9 @@
         'sidebar'
       ]),
       routes() {
+        // 切换
         // return this.$store.state.permission.routes
-        return this.$router.options.routes
+        return this.$router.options.routes  
       },
       activeMenu() {
         const route = this.$route

@@ -66,7 +66,8 @@
         </el-table>
 
         <div class="pagination">
-          <el-pagination background @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page.sync="pageIndex" :page-size="pageSize" layout="prev, pager, next, jumper" :total="pageTotal"></el-pagination>
+          <el-pagination background @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page.sync="pageIndex"
+            :page-size="pageSize" layout="prev, pager, next, jumper" :total="pageTotal"></el-pagination>
         </div>
       </div>
     </div>
@@ -127,154 +128,171 @@
 </template>
 
 <script>
-export default {
-  name: "Plot",
-  data() {
-    return {
-      pageSize: 15,
-      pageTotal: 0,
-      pageIndex: 1,
-      areas: [],
-      search: {
-        commnuityname: '',
-        formalname: '',
-        areaid: ''
-      },
-      selected: '',
-      form: {
-        communityname: '',
-        mnemonic: '',
-        areaid: '',
-        deliverdate: '',
-        totalhouseholds: '',
-        pthouseholds: '',
-        gzhouseholds: '',
-        yzhouseholds: '',
-        forbidden: 0,
-        distributor: '',
-        communitytype: '',
-        formalname: '',
-        bcsx: ''
-      },
-      list: null,
-      listLoading: true,
-      dialog: false,
-      title: "",
-      rules: {
-        account: [
-          { required: true, message: "请输入当前密码", trigger: "blur" },
-        ],
-        password: [
-          { required: true, message: "请输入新密码", trigger: "blur" },
-          {
-            min: 6,
-            max: 16,
-            message: "长度在 6 到 16 个字符",
-            trigger: "blur",
-          },
-        ],
-      },
-    };
-  },
-  watch: {
-    pageIndex(index) {
-      if (index) this.fetchData(index);
+  export default {
+    name: "Plot",
+    data() {
+      return {
+        pageSize: 15,
+        pageTotal: 0,
+        pageIndex: 1,
+        areas: [],
+        search: {
+          commnuityname: '',
+          formalname: '',
+          areaid: ''
+        },
+        selected: '',
+        form: {
+          communityname: '',
+          mnemonic: '',
+          areaid: '',
+          deliverdate: '',
+          totalhouseholds: '',
+          pthouseholds: '',
+          gzhouseholds: '',
+          yzhouseholds: '',
+          forbidden: 0,
+          distributor: '',
+          communitytype: '',
+          formalname: '',
+          bcsx: ''
+        },
+        list: null,
+        listLoading: true,
+        dialog: false,
+        title: "",
+        rules: {
+          communityname: [
+            { required: true, message: "请输入小区名", trigger: "blur" },
+          ],
+          areaid: [
+            { required: true, message: "请选择区域", trigger: "blur" },
+          ],
+          totalhouseholds: [
+            { required: true, message: "请输入总户数", trigger: "blur" },
+          ],
+          pthouseholds: [
+            { required: true, message: "请输入服务户数", trigger: "blur" },
+          ],
+          gzhouseholds: [
+            { required: true, message: "请输入工装户数", trigger: "blur" },
+          ],
+          yzhouseholds: [
+            { required: true, message: "请输入已装户数", trigger: "blur" },
+          ],
+          mnemonic: [
+            { required: true, message: "请输入助记码", trigger: "blur" },
+          ],
+          deliverdate: [
+            { required: true, message: "请选择交房时间", trigger: "blur" },
+          ],
+        },
+      };
     },
-  },
-  created() {
-    this.fetchData();
-    this.initDeps();
-  },
-  methods: {
-    async initDeps() {
-      let rs = await this.$http({
-        url: `/admin/arealist`,
-        method: 'get'
-      });
+    watch: {
+      pageIndex(index) {
+        if (index) this.fetchData(index);
+      },
+    },
+    created() {
+      this.fetchData();
+      this.initDeps();
+    },
+    methods: {
+      async initDeps() {
+        let rs = await this.$http({
+          url: `/admin/arealist`,
+          method: 'get'
+        });
 
-      this.areas = rs.data
-    },
-    async fetchData() {
-      this.listLoading = true;
-      let rs = await this.$http({
-        url: `/admin/communitylist?commnuityname=${this.search.commnuityname}&formalname=${this.search.formalname}&areaid=${this.search.areaid}&page.pageIndex=${this.pageIndex}`,
-        method: "get"
-      });
+        this.areas = rs.data
+      },
+      async fetchData() {
+        this.listLoading = true;
+        let rs = await this.$http({
+          url: `/admin/communitylist?commnuityname=${this.search.commnuityname}&formalname=${this.search.formalname}&areaid=${this.search.areaid}&page.pageIndex=${this.pageIndex}`,
+          method: "get"
+        });
 
-      this.list = rs.data;
-      this.pageTotal = rs.total;
-      this.listLoading = false;
-    },
-    handleSizeChange(val) {
-    },
-    handleCurrentChange(val) {
-      this.pageIndex = val;
-    },
-    reset() {
-      this.search = {
-        commnuityname: '',
-        formalname: '',
-        areaid: ''
+        this.list = rs.data;
+        this.pageTotal = rs.total;
+        this.listLoading = false;
+      },
+      handleSizeChange(val) {
+      },
+      handleCurrentChange(val) {
+        this.pageIndex = val;
+      },
+      reset() {
+        this.search = {
+          commnuityname: '',
+          formalname: '',
+          areaid: ''
+        }
+      },
+      clearForm(n = '') {
+        this.$refs[`form${n}`].resetFields();
+      },
+      async submit() {
+        this.$refs.form.validate(async (valid) => {
+          if (valid) {
+            this.dialog = false;
+
+            let rs = await this.$http({
+              url: `/admin/${this.isModify ? 'docommunitymod' : 'docommunitynew'}`,
+              method: "post",
+              data: this.form
+            });
+
+            if (rs.success == 'true') this.$message({
+              message: '保存成功',
+              type: 'success'
+            })
+
+            this.$refs.form.resetFields();
+            this.fetchData()
+          }
+        });
+
+      },
+      cancel() {
+        this.dialog = false;
+        this.$refs.form.resetFields();
+      },
+      dispatch(isModify, data) {
+        this.isModify = isModify;
+        this.dialog = true;
+        this.title = isModify ? "编辑小区" : "新增小区";
+
+        if (this.isModify) {
+          this.getDepInfos(data)
+          this.form.communityid = data.communityid
+        }
+      },
+      async getDepInfos(data) {
+        let rs = await this.$http({
+          url: `/admin/communitydetail?communityid=${data.communityid}`,
+          method: "get"
+        });
+
+        for (let i in this.form) {
+          this.form[i] = rs.data[0][i]
+        }
       }
     },
-    clearForm(n = '') {
-      this.$refs[`form${n}`].resetFields();
-    },
-    async submit() {
-      this.dialog = false;
-
-      let rs = await this.$http({
-        url: `/admin/${this.isModify ? 'docommunitymod' : 'docommunitynew'}`,
-        method: "post",
-        data: this.form
-      });
-
-      if (rs.success == 'true') this.$message({
-        message: '保存成功',
-        type: 'success'
-      })
-
-      this.$refs.form.resetFields();
-      this.fetchData()
-    },
-    cancel() {
-      this.dialog = false;
-      this.$refs.form.resetFields();
-    },
-    dispatch(isModify, data) {
-      this.isModify = isModify;
-      this.dialog = true;
-      this.title = isModify ? "编辑员工" : "新增员工";
-
-      if (this.isModify) {
-        this.getDepInfos(data)
-        this.form.communityid = data.communityid
-      }
-    },
-    async getDepInfos(data) {
-      let rs = await this.$http({
-        url: `/admin/communitydetail?communityid=${data.communityid}`,
-        method: "get"
-      });
-
-      for (let i in this.form) {
-        this.form[i] = rs.data[0][i]
-      }
-    }
-  },
-};
+  };
 </script>
 
 <style lang="scss" scoped>
-.content-box {
-  & > div {
-    display: flex;
-    .el-input,
-    .el-select,
-    .el-date-editor {
-      width: 20%;
-      margin-right: 30px;
+  .content-box {
+    &>div {
+      display: flex;
+      .el-input,
+      .el-select,
+      .el-date-editor {
+        width: 20%;
+        margin-right: 30px;
+      }
     }
   }
-}
 </style>

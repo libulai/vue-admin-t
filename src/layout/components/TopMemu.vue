@@ -12,9 +12,9 @@
       </el-dropdown>
 
       <div class="search">
-        <el-input placeholder="请输入关键字..." v-model="search">
-          <el-button slot="append" icon="el-icon-search"></el-button>
-        </el-input>
+        <el-autocomplete placeholder="请输入菜单关键字..." v-model="search" clearable :fetch-suggestions="querySearch" @select="handleSelect">
+          <el-button slot="append" icon="el-icon-right" @click="goto"></el-button>
+        </el-autocomplete>
       </div>
     </div>
 
@@ -39,7 +39,7 @@
             {{user.rolename}}
             <i class="el-icon-arrow-down el-icon--right"></i>
           </span>
-          <el-dropdown-menu slot="dropdown">
+          <el-dropdown-menu slot="dropdown" id="role">
             <el-dropdown-item v-for="item in role" :key="item.roleid" @click.native="shifitRole(item)">{{item.rolename}}</el-dropdown-item>
           </el-dropdown-menu>
         </el-dropdown>
@@ -128,9 +128,27 @@
   export default {
     name: "TopMemu",
     computed: {},
+    watch: {
+      '$store.state.permission.routes': function (val) {
+        let toLlist = []
+        val.forEach(i => {
+          if (i.children) {
+            i.children.forEach(j => {
+              toLlist.push({
+                value: j.meta.title,
+                address: j.name
+              })
+            })
+          }
+        })
+        this.restaurants = toLlist
+      }
+    },
     data() {
       return {
         search: "",
+        currentMenu: '',
+        restaurants: [],
         dialog3: false,
         dialog2: false,
         dialog1: false,
@@ -193,6 +211,12 @@
       }
     },
     methods: {
+      handleSelect(item) {
+        this.currentMenu = item.address
+      },
+      goto() {
+        this.$router.push({ 'name': this.currentMenu })
+      },
       personInfo(command) {
         this[command] = true;
 
@@ -215,14 +239,14 @@
           return
         }
 
-        // let rs = await this.$http({
-        //   url: `/admin/doresetpasswd`,
-        //   method: "post",
-        //   data: {
-        //     userid: this.$store.state.user.userid,
-        //     passwd: this.ruleForm2.newp
-        //   }
-        // })
+        let rs = await this.$http({
+          url: `/admin/domodifypasswd`,
+          method: "post",
+          data: {
+            userid: this.$store.state.user.userid,
+            passwd: this.ruleForm2.newp
+          }
+        })
 
         if (rs.success == 'true') this.$message({
           message: '保存成功',
@@ -311,6 +335,17 @@
 
         // this.compcony = rs.data;
         this.$store.dispatch("user/changeUserinfo", rs);
+      },
+      querySearch(queryString, cb) {
+        var restaurants = this.restaurants;
+        var results = queryString ? restaurants.filter(this.createFilter(queryString)) : restaurants;
+        // 调用 callback 返回建议列表的数据
+        cb(results);
+      },
+      createFilter(queryString) {
+        return (restaurant) => {
+          return (restaurant.value.toLowerCase().includes(queryString.toLowerCase()));
+        };
       }
     },
     async created() {
@@ -322,6 +357,20 @@
 
       // 角色列表
       this.initAdmin()
+
+      // let to = this.$store.state.permission.routes
+      // let toLlist = []
+      // to.forEach(i => {
+      //   if (i.children) {
+      //     i.children.forEach(j => {
+      //       toLlist.push({
+      //         value: j.meta.title,
+      //         address: j.name
+      //       })
+      //     })
+      //   }
+      // })
+      // this.restaurants = toLlist
     },
   };
 </script>
@@ -410,5 +459,10 @@
     .el-dialog {
       width: 650px !important;
     }
+  }
+
+  .el-dropdown-menu {
+    max-height: 450px !important;
+    overflow: auto;
   }
 </style>

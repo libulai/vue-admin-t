@@ -74,8 +74,8 @@
     data() {
       return {
         isModify: false,
-        arrangeuserid1:[],
-        arrangeuserid2:[],
+        arrangeuserid1: [],
+        arrangeuserid2: [],
         form: {
           areaname: "",
           arrangeuserid1: "",
@@ -89,17 +89,14 @@
         dialog: false,
         title: "",
         rules: {
-          account: [
-            { required: true, message: "请输入当前密码", trigger: "blur" },
+          areaname: [
+            { required: true, message: "请输入区域名称", trigger: "blur" },
           ],
-          password: [
-            { required: true, message: "请输入新密码", trigger: "blur" },
-            {
-              min: 6,
-              max: 16,
-              message: "长度在 6 到 16 个字符",
-              trigger: "blur",
-            },
+          arrangeuserid1: [
+            { required: true, message: "请选择主管", trigger: "blur" },
+          ],
+          arrangeuserid2: [
+            { required: true, message: "请选择主管", trigger: "blur" },
           ],
         },
       };
@@ -119,20 +116,24 @@
         this.listLoading = false;
       },
       async submit() {
-        this.dialog = false;
-        let rs = await this.$http({
-          url: `/admin/doareasave`,
-          method: "post",
-          data: this.form
+        this.$refs.form.validate(async (valid) => {
+          if (valid) {
+            this.dialog = false;
+            let rs = await this.$http({
+              url: `/admin/doareasave`,
+              method: "post",
+              data: this.form
+            });
+
+            if (rs.success == 'true') this.$message({
+              message: '保存成功',
+              type: 'success'
+            })
+
+            this.$refs.form.resetFields();
+            this.fetchData()
+          }
         });
-
-        if (rs.success == 'true') this.$message({
-          message: '保存成功',
-          type: 'success'
-        })
-
-        this.$refs.form.resetFields();
-        this.fetchData()
       },
       clearForm() {
         this.$refs.form.resetFields();

@@ -36,7 +36,7 @@
           </el-table-column>
           <el-table-column align="center" prop="created_at" label="菜单图标">
             <template slot-scope="scope">
-              <span>{{ scope.row.menuicon }}</span>
+              <span>{{ scope.row.menuicon ? scope.row.menuicon: '/' }}</span>
             </template>
           </el-table-column>
           <el-table-column align="center" prop="created_at" label="菜单url">
@@ -55,14 +55,20 @@
 
     <el-dialog :title="title" :visible.sync="dialog" class="dialog" :close-on-click-modal="false" width="1000px" @closed="clearForm">
       <el-form :model="form" :rules="rules" ref="form" label-width="100px" class="dialog-form">
-        <el-form-item label="菜单名称" prop="rolename">
-          <el-input v-model="form.rolename" placeholder="请输入"></el-input>
+        <el-form-item label="菜单名称" prop="menuname">
+          <el-input v-model="form.menuname" placeholder="请输入"></el-input>
         </el-form-item>
-        <el-form-item label="上级菜单" prop="rolelevel">
-          <el-input v-model.number="form.rolelevel" placeholder="请输入"></el-input>
+        <el-form-item label="上级菜单" prop="pmenuid" v-if="form.menulevel!=2">
+          <el-select v-model="form.pmenuid" placeholder="请选择">
+            <el-option v-for="item in firstLevels" :key="item.menuid" :label="item.menuname" :value="item.menuid"></el-option>
+          </el-select>
         </el-form-item>
-        <el-form-item label="菜单图标" prop="rolelevel">
-          <i class="icon el-icon-s-help"></i>
+        <el-form-item label="菜单url" prop="menuurl" v-if="form.menulevel!=2">
+          <el-input v-model="form.menuurl" placeholder="请输入"></el-input>
+        </el-form-item>
+        <el-form-item label="菜单图标">
+          <i :class="form.menuicon" class="icon" @click="dialog2Open" v-if="form.menuicon!='el-icon-help'"></i>
+          <i class="icon el-icon-s-help" @click="dialog2Open" v-else></i>
         </el-form-item>
       </el-form>
 
@@ -71,10 +77,19 @@
         <el-button type="primary" @click="submit">保存</el-button>
       </div>
     </el-dialog>
+
+    <el-dialog title="选择图标" :visible.sync="dialog2" width="400px" class="dialog2">
+      <div class="select-dialog">
+        <ul>
+          <li v-for="item in icons" :class="item" @click="selectItem(item)"></li>
+        </ul>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
 <script>
+  import icons from './icons.js'
   export default {
     name: 'Menu',
     data() {
@@ -82,24 +97,27 @@
         search: {
           menu: ""
         },
+        icons: icons,
         first: [],
+        firstLevels: [],
         isModify: false,
+        dialog2: false,
         menus: [],
         buttons: [],
         form: {
           menuname: "",
-          menuicon: '',
-          pmenuid: 0,
+          menuicon: 'el-icon-help',
+          pmenuid: 1,
           menuurl: '',
-          menuinterface: ''
+          // menuinterface: ''
         },
         list: null,
         listLoading: true,
         dialog: false,
         title: '',
         rules: {
-          account: [
-            { required: true, message: "请输入当前密码", trigger: "blur" }
+          menuname: [
+            { required: true, message: "请输入菜单名称", trigger: "blur" }
           ],
           password: [
             { required: true, message: "请输入新密码", trigger: "blur" },
@@ -117,6 +135,14 @@
       },
     },
     methods: {
+      async dialog2Open() {
+        this.dialog2 = true
+      },
+      selectItem(val) {
+        if (!val) return
+        this.dialog2 = false
+        this.form.menuicon = val
+      },
       reset() {
         this.search.menu = ''
       },
@@ -141,6 +167,7 @@
 
         this.list = rs.data;
         this.first = rs.data
+        this.firstLevels = [{ menuid: 1, menuname: '无' }, ...rs.data]
         this.listLoading = false;
       },
       handleSizeChange(val) {
@@ -149,28 +176,38 @@
         this.pageIndex = val;
       },
       async submit() {
-        this.dialog = false;
+        this.$refs.form.validate(async (valid) => {
+          if (valid) {
+            this.dialog = false;
 
-        let rs = await this.$http({
-          url: `/admin/${this.isModify ? 'domenumod' : 'domenunew'}`,
-          method: "post",
-          data: this.form
+            console.log(this.form)
+
+            let rs = await this.$http({
+              url: `/admin/${this.isModify ? 'domenumod' : 'domenunew'}`,
+              method: "post",
+              data: this.form
+            });
+
+            if (rs.success == 'true') this.$message({
+              message: '保存成功',
+              type: 'success'
+            })
+
+            this.$refs.form.resetFields()
+            this.fetchData()
+            this.form.menuicon = 'el-icon-help'
+          }
         });
 
-        if (rs.success == 'true') this.$message({
-          message: '保存成功',
-          type: 'success'
-        })
-
-        this.$refs.form.resetFields()
-        this.fetchData()
       },
       clearForm() {
         this.$refs.form.resetFields();
+        this.form.menuicon = 'el-icon-help'
       },
       cancel() {
         this.dialog = false;
         this.$refs.form.resetFields()
+        this.form.menuicon = 'el-icon-help'
       },
       dispatch(isModify, data) {
         this.dialog = true;
@@ -211,9 +248,32 @@
     }
   }
 
-  .icon{
+  .icon {
     font-size: 60px;
     color: #0b3190;
+    display: block;
+    width: 50px;
+    height: 50px;
     cursor: pointer;
+  }
+
+  ::v-deep .dialog2 {
+    /* .el-dialog {
+      width: 400px !important;
+    } */
+    ul {
+      display: flex;
+      flex-wrap: wrap;
+      li {
+        font-size: 36px;
+        width: 95px;
+        height: 95px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        cursor: pointer;
+        color: #0b3190;
+      }
+    }
   }
 </style>

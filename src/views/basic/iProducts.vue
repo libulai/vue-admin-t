@@ -48,118 +48,123 @@
 </template>
 
 <script>
-export default {
-  name: "Dep",
-  data() {
-    return {
-      pageSize: 15,
-      pageTotal: 0,
-      pageIndex: 1,
-      isModify: false,
-      form: {
-        productname: "",
-        specs: ""
+  export default {
+    name: "Dep",
+    data() {
+      return {
+        pageSize: 15,
+        pageTotal: 0,
+        pageIndex: 1,
+        isModify: false,
+        form: {
+          productname: "",
+          specs: ""
+        },
+        list: null,
+        listLoading: true,
+        dialog: false,
+        title: "",
+        rules: {
+          productname: [
+            { required: true, message: "请输入产品名称", trigger: "blur" },
+          ],
+          specs: [
+            { required: true, message: "请输入规格", trigger: "blur" },
+          ],
+        },
+      };
+    },
+    watch: {
+      pageIndex: {
+        handler: function (index) {
+          if (index) this.fetchData(index);
+        }
+      }
+    },
+    created() {
+      this.fetchData();
+    },
+    methods: {
+      async fetchData() {
+        this.listLoading = true;
+        let rs = await this.$http({
+          url: `/admin/productkllist?page.pageIndex=${this.pageIndex}`,
+          method: 'get'
+        });
+
+        this.list = rs.data;
+        this.pageTotal = rs.total;
+        this.listLoading = false;
       },
-      list: null,
-      listLoading: true,
-      dialog: false,
-      title: "",
-      rules: {
-        deptcode: [
-          { required: true, message: "请输入部门编号", trigger: "blur" },
-        ],
-        deptname: [
-          { required: true, message: "请输入部门名称", trigger: "blur" },
-        ],
+      handleSizeChange(val) {
       },
-    };
-  },
-  watch: {
-    pageIndex: {
-      handler: function (index) {
-        if (index) this.fetchData(index);
-      }
-    }
-  },
-  created() {
-    this.fetchData();
-  },
-  methods: {
-    async fetchData() {
-      this.listLoading = true;
-      let rs = await this.$http({
-        url: `/admin/productkllist?page.pageIndex=${this.pageIndex}`,
-        method: 'get'
-      });
+      handleCurrentChange(val) {
+        this.pageIndex = val;
+      },
+      async submit() {
+        this.$refs.form.validate(async (valid) => {
+          if (valid) {
+            this.dialog = false;
+            let rs = await this.$http({
+              url: `/admin/${this.isModify ? 'doproductklmod' : 'doproductklnew'}`,
+              method: "post",
+              data: this.form
+            });
 
-      this.list = rs.data;
-      this.pageTotal = rs.total;
-      this.listLoading = false;
-    },
-    handleSizeChange(val) {
-    },
-    handleCurrentChange(val) {
-      this.pageIndex = val;
-    },
-    async submit() {
-      this.dialog = false;
-      let rs = await this.$http({
-        url: `/admin/${this.isModify ? 'doproductklmod' : 'doproductklnew'}`,
-        method: "post",
-        data: this.form
-      });
+            if (rs.success == 'true') this.$message({
+              message: '保存成功',
+              type: 'success'
+            })
 
-      if (rs.success=='true') this.$message({
-        message: '保存成功',
-        type: 'success'
-      })
+            this.$refs.form.resetFields();
+            this.fetchData()
+          }
+        });
 
-      this.$refs.form.resetFields();
-      this.fetchData()
-    },
-    cancel() {
-      this.dialog = false;
-      this.$refs.form.resetFields();
-    },
-    clearForm() {
-      this.$refs.form.resetFields();
-    },
-    dispatch(isModify, data) {
-      this.isModify = isModify;
-      this.dialog = true;
-      this.title = isModify ? "编辑物料" : "添加物料";
+      },
+      cancel() {
+        this.dialog = false;
+        this.$refs.form.resetFields();
+      },
+      clearForm() {
+        this.$refs.form.resetFields();
+      },
+      dispatch(isModify, data) {
+        this.isModify = isModify;
+        this.dialog = true;
+        this.title = isModify ? "编辑物料" : "添加物料";
 
-      if (this.isModify) {
-        this.getDepInfos(data)
-        this.form.id = data.id
+        if (this.isModify) {
+          this.getDepInfos(data)
+          this.form.id = data.id
+        }
+      },
+      async getDepInfos(data) {
+        let rs = await this.$http({
+          url: `/admin/productkldetail?id=${data.id}`,
+          method: "get"
+        });
+
+        for (let i in this.form) {
+          this.form[i] = rs.data[0][i]
+        }
+
+        // this.form.deptcode = Number(this.form.deptcode)
       }
     },
-    async getDepInfos(data) {
-      let rs = await this.$http({
-        url: `/admin/productkldetail?id=${data.id}`,
-        method: "get"
-      });
-
-      for (let i in this.form) {
-        this.form[i] = rs.data[0][i]
-      }
-
-      // this.form.deptcode = Number(this.form.deptcode)
-    }
-  },
-};
+  };
 </script>
 
 <style lang="scss" scoped>
-.content-box {
-  & > div {
-    display: flex;
-    .el-input,
-    .el-select,
-    .el-date-editor {
-      width: 20%;
-      margin-right: 30px;
+  .content-box {
+    &>div {
+      display: flex;
+      .el-input,
+      .el-select,
+      .el-date-editor {
+        width: 20%;
+        margin-right: 30px;
+      }
     }
   }
-}
 </style>

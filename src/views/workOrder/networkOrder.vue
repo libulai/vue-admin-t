@@ -55,7 +55,7 @@
           </el-table-column>
           <el-table-column class-name="status-col" label="客户地址" align="center">
             <template slot-scope="scope">
-              {{ scope.row.address }}
+              {{ scope.row.communityname + scope.row.address}}
             </template>
           </el-table-column>
           <el-table-column align="center" prop="created_at" label="服务类型">
@@ -70,7 +70,7 @@
           </el-table-column>
           <el-table-column align="center" prop="created_at" label="操作">
             <template slot-scope="scope">
-              <span class="detail handle" @click="produce()">生成工单</span>
+              <span class="detail handle" @click="produce(scope.row)">生成工单</span>
             </template>
           </el-table-column>
         </el-table>
@@ -156,8 +156,8 @@ export default {
     this.fetchData();
   },
   methods: {
-    produce() {
-
+    produce(data) {
+      this.$router.push({ name: `OrderDetailEdit`, query: { data:JSON.stringify(data), detailType: 3 } })
     },
     handleSelectionChange(val) {
       this.selection = val.map(i => i.chatorderid)

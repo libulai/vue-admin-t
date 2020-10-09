@@ -145,7 +145,7 @@ export default {
   },
   props: ['data', 'type'],
   created() {
-    console.log(this.data)
+    
   },
   methods: {
     async check(flag) {

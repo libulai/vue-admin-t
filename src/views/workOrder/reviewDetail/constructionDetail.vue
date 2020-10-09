@@ -7,15 +7,15 @@
         <div class="list-items">
           <div>
             <span>施工地址</span>
-            <span class="light">上海开发商</span>
+            <span class="light">{{data.communityname + data.address}}</span>
           </div>
           <div>
             <span>施工户型</span>
             <div class="rooms">
-              <span class="light">1 厨</span>
-              <span class="light">1 卫</span>
-              <span class="light">1 阳台</span>
-              <span class="light">1 其他</span>
+              <span class="light">{{data.Receipt20}} 厨</span>
+              <span class="light">{{data.Receipt21}} 卫</span>
+              <span class="light">{{data.Receipt22}} 阳台</span>
+              <span class="light">{{data.Receipt23}} 其他</span>
             </div>
           </div>
         </div>
@@ -29,33 +29,33 @@
         <div class="list-items">
           <div>
             <span>现场联系人</span>
-            <span class="light">无</span>
+            <span class="light">{{data.receipt && data.receipt.receipt44}}</span>
           </div>
           <div>
             <span>联系电话</span>
-            <span class="light">2010-02-02</span>
+            <span class="light">{{data.receipt && data.receipt.receipt45}}</span>
           </div>
         </div>
 
         <div class="list-items" style="margin: 35px 10px">
           <div>
             <span>业主</span>
-            <span class="light">否</span>
+            <span class="light">{{data.ownername}}</span>
           </div>
           <div>
             <span>联系电话</span>
-            <span class="light">2203</span>
+            <span class="light">{{data.ownerphone}}</span>
           </div>
         </div>
 
         <div class="list-items">
           <div>
             <span>项目经理姓名</span>
-            <span class="light">否</span>
+            <span class="light">{{data.receipt && data.receipt.receipt13}}</span>
           </div>
           <div>
             <span>联系电话</span>
-            <span class="light">2203</span>
+            <span class="light">{{data.receipt && data.receipt.receipt14}}</span>
           </div>
         </div>
       </div>
@@ -68,15 +68,15 @@
         <div class="list-items">
           <div>
             <span>排水类型</span>
-            <span class="light">无</span>
+            <span class="light">{{data.receipt && data.receipt.receipt48}}</span>
           </div>
           <div>
             <span>施工类型</span>
-            <span class="light">2010-02-02</span>
+            <span class="light">{{data.sgtype}}</span>
           </div>
           <div>
             <span>是否做二排</span>
-            <span class="light">无</span>
+            <span class="light">{{data.receipt && data.receipt.receipt38}}</span>
           </div>
         </div>
 
@@ -176,7 +176,7 @@
         <div class="list-items">
           <div>
             <span>是否做保护层</span>
-            <span class="light">是</span>
+            <span class="light">{{data.receipt && data.receipt.receipt52}}</span>
           </div>
           <div>
             <span>厨房 1</span>

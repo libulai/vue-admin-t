@@ -4,6 +4,7 @@ import {
 } from '@/router'
 import request from '@/utils/request'
 import Layout from '@/layout'
+import Router from 'vue-router'
 import {
   RouterLinkStub
 } from '@vue/test-utils'
@@ -57,6 +58,25 @@ const mutations = {
   },
   RESET_ROUTERS: async (state, route) => {
     return new Promise(async (resolve, reject) => {
+      let routes = []
+      let settingMenu = [8, 9, 10]
+
+      //首页
+      routes.push({
+        path: '*',
+        component: Layout,
+        redirect: '/home',
+        children: [{
+          path: 'home',
+          name: 'Home',
+          component: () => import('@/views/home/index'),
+          meta: {
+            title: '首页',
+            icon: 'el-icon-s-home'
+          }
+        }]
+      })
+
       try {
         let rs = await request({
           url: `/admin/menurolelist`,
@@ -64,8 +84,8 @@ const mutations = {
         })
 
         let data = rs.data
-        let routes = []
-        let settingMenu = [8, 9, 10]
+
+
         console.log(data)
 
         const ROUTERMAP = {
@@ -77,18 +97,36 @@ const mutations = {
           12: import('@/views/basic/employees'),
           13: import('@/views/basic/area'),
           14: import('@/views/basic/plot'),
-          17: import('@/views/basic/customer')
+          17: import('@/views/basic/customer'),
+
+          421: import('@/views/score/settingA'),
+          422: import('@/views/score/settingC'),
+          423: import('@/views/score/dispatchA'),
+          424: import('@/views/score/dispatchA'),
+
+          413: import('@/views/workOrder/addOrder'),
+          414: import('@/views/workOrder/dispatch'),
+          415: import('@/views/workOrder/review'),
+          416: import('@/views/workOrder/networkOrder'),
+          417: import('@/views/workOrder/orderManger'),
+          418: import('@/views/workOrder/orderDetail'),
+          419: import('@/views/workOrder/qualityOrder'),
         }
+
+
 
         data.forEach(item => {
           let children = item.subMenus
           let childrenArr = []
           let ppath = ''
+
           children.forEach(i => {
-            ppath = '/' + i.menuurl.split('/')[1]
+            if(settingMenu.includes(i.menuid)) ppath = '/setting'
+            else ppath = '/' + i.menuurl.split('/')[1]
+            
             childrenArr.push({
               path: i.menuurl,
-              name: i.menuid,
+              name: i.menuurl,
               component: () => ROUTERMAP[i.menuid],
               meta: {
                 title: i.menuname,
@@ -96,7 +134,7 @@ const mutations = {
               }
             })
           })
-
+          
           routes.push({
             path: ppath,
             component: Layout,
@@ -110,25 +148,10 @@ const mutations = {
           })
         })
 
-        // shouye
-        // routes.push({
-        //   path: '*',
-        //   component: Layout,
-        //   redirect: '/home',
-        //   children: [{
-        //     path: 'home',
-        //     name: 'Home',
-        //     component: () => import('@/views/home/index'),
-        //     meta: {
-        //       title: '首页',
-        //       icon: 'el-icon-s-home'
-        //     }
-        //   }]
-        // })
-
         console.log(routes)
 
         route.options.routes = routes;
+        // route.matcher = new Router({mode: 'hash'}).matcher;
         route.addRoutes(routes)
         state.routes = routes
         resolve()

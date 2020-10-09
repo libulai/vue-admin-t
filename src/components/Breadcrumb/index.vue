@@ -60,7 +60,7 @@
         this.isHome = this.$route.name === 'Home'
       },
       isDashboard(route) {
-        const name = route && route.name;
+        const name = route && String(route.name);
         if (!name) {
           return false;
         }

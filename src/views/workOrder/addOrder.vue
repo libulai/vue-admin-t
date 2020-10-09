@@ -241,7 +241,16 @@ export default {
   },
   methods: {
     initnetworkOrder(query){
+      let data = JSON.parse(query.data)
       
+      for (let i in this.form) {
+        this.form[i] = data[i]
+      }
+
+      this.form.customername = data.chatordercustomername
+      this.form.contacterphone = data.chatordercustomerphone
+      this.form.customertype = data.chatordercustomertype
+      console.log(data)
     },
     async initDic() {
       let rs = await this.$http({

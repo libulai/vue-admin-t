@@ -1,13 +1,19 @@
 import router from './router'
 import store from './store'
-import { Message } from 'element-ui'
+import {
+  Message
+} from 'element-ui'
 import NProgress from 'nprogress' // progress bar
 import 'nprogress/nprogress.css' // progress bar style
-import { getToken } from '@/utils/auth' // get token from cookie
+import {
+  getToken
+} from '@/utils/auth' // get token from cookie
 import getPageTitle from '@/utils/get-page-title'
 import bus from '@/utils/bus'
 
-NProgress.configure({ showSpinner: false }) // NProgress Configuration
+NProgress.configure({
+  showSpinner: false
+}) // NProgress Configuration
 
 const whiteList = ['/login'] // no redirect whitelist
 
@@ -25,12 +31,14 @@ router.beforeEach(async (to, from, next) => {
 
     if (to.path === '/login') {
       // if is logged in, redirect to the home page
-      next({ path: '/' })
+      next({
+        path: '/'
+      })
       NProgress.done()
     } else {
       if (to.query.detailType) {
-          bus.$emit('go', to.query)
-          bus.$emit('detail', to.query)
+        bus.$emit('go', to.query)
+        bus.$emit('detail', to.query)
       }
       // if (store.state.permission.routes.length == 0) {
       //   await store.commit('permission/RESET_ROUTERS', router)
@@ -39,7 +47,10 @@ router.beforeEach(async (to, from, next) => {
       // } else {
       //   next()
       // }
-      await store.commit('permission/RESET_ROUTERS', router)
+      if (!router.options.routes || router.options.routes[0].path=='/login') {
+        await store.commit('permission/RESET_ROUTERS', router)
+      }
+
       next()
       // const hasGetUserInfo = store.getters.name
       // if (hasGetUserInfo) {

@@ -15,7 +15,7 @@
           </div>
           <div>
             <span>开始施工时间</span>
-            <span class="light">墙面施工</span>
+            <span class="light">{{data.processtime}}</span>
           </div>
         </div>
 

@@ -98,6 +98,9 @@ const mutations = {
           13: import('@/views/basic/area'),
           14: import('@/views/basic/plot'),
           17: import('@/views/basic/customer'),
+          425: import('@/views/basic/attribute'),
+          428: import('@/views/basic/iProducts'),
+          429: import('@/views/basic/cProducts'),
 
           421: import('@/views/score/settingA'),
           422: import('@/views/score/settingC'),

@@ -5,7 +5,7 @@
         <div class="content-title">
           <h3>- {{title}}</h3>
           <div>
-            <!-- <el-button type="warning" size="medium" @click="">最近保存</el-button> -->
+            <el-button type="warning" size="medium" @click="">最近保存</el-button>
           </div>
         </div>
         <div class="content-box">
@@ -17,7 +17,7 @@
                     <span style="display: block; width: 240px;color:#999">{{form.ordercode}}</span>
                   </el-form-item>
                   <el-form-item label="联系电话" prop="contacterphone">
-                    <el-input v-model="form.contacterphone" placeholder="请输入"></el-input>
+                    <el-input v-model="form.contacterphone" placeholder="请输入" @blur="sphone(form.contacterphone)"></el-input>
                   </el-form-item>
                   <el-form-item label="预约人" prop="customername">
                     <el-input v-model="form.customername" placeholder="请输入"></el-input>
@@ -121,15 +121,15 @@
               <ul>
                 <li>
                   <span>姓名：</span>
-                  <span>zoo</span>
+                  <span>{{phone.name}}</span>
                 </li>
                 <li>
                   <span>电话号码：</span>
-                  <span>1996217113</span>
+                  <span>{{phone.phone}}</span>
                 </li>
                 <li>
                   <span>积分：</span>
-                  <span>333</span>
+                  <span>{{phone.score}}</span>
                 </li>
                 <li>
                   <span>人员类型：</span>
@@ -177,6 +177,12 @@ export default {
       times: [{ id: 1, value: '上午' }, { id: 2, value: '下午' }, { id: 3, value: '无' }],
       sgtypes: [{ id: '1', value: '墙地施工' }, { id: '2', value: '墙施工' }, { id: '3', value: '地施工' }, { id: '4', value: '同层底面施工' }],
       ystypes: [{ id: '1', value: '面层验收' }, { id: '2', value: '同层排水底层验收' }],
+      phone:{
+        name:"--",
+        phone:'--',
+        score:'--',
+
+      },
       // types: ['施工单', '预约单'],
       // type: '施工单',
       form: {
@@ -240,6 +246,14 @@ export default {
     })
   },
   methods: {
+    async sphone(val){
+      let rs = await this.$http({
+        url: `/admin/getcustomerbyphone?contacterphone=${val}`,
+        method: "get"
+      });
+      
+      console.log(rs)
+    },
     initnetworkOrder(query){
       let data = JSON.parse(query.data)
       

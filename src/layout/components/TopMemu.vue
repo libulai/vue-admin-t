@@ -239,22 +239,26 @@
           return
         }
 
-        let rs = await this.$http({
-          url: `/admin/domodifypasswd`,
-          method: "post",
-          data: {
-            userid: this.$store.state.user.userid,
-            passwd: this.ruleForm2.newp
+        this.$refs.ruleForm2.validate(async (valid) => {
+          if (valid) {
+            let rs = await this.$http({
+              url: `/admin/domodifypasswd`,
+              method: "post",
+              data: {
+                userid: this.$store.state.user.userid,
+                passwd: this.ruleForm2.newp
+              }
+            })
+
+            if (rs.success == 'true') this.$message({
+              message: '保存成功',
+              type: 'success'
+            })
+
+            this.dialog2 = false;
+            this.$refs.ruleForm2.resetFields();
           }
-        })
-
-        if (rs.success == 'true') this.$message({
-          message: '保存成功',
-          type: 'success'
-        })
-
-        this.dialog2 = false;
-        this.$refs.ruleForm2.resetFields();
+        });
       },
       async getUserInfo() {
         let rs = await this.$http({

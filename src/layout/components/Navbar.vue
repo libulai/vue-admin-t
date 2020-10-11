@@ -1,6 +1,6 @@
 <template>
   <div class="navbar">
-    <!-- <hamburger :is-active="sidebar.opened" class="hamburger-container" @toggleClick="toggleSideBar" /> -->
+    <hamburger :is-active="sidebar.opened" class="hamburger-container" @toggleClick="toggleSideBar" />
 
     <breadcrumb class="breadcrumb-container" />
 
@@ -67,8 +67,11 @@ export default {
   margin-left: 11px;
   /* background: #fff; */
   box-shadow: 0 1px 4px rgba(0,21,41,.08);
-  
-  
+  display: inline-flex;
+  width: 100%;
+  .hamburger{
+    color:white;
+  }
 
   .hamburger-container {
     line-height: 46px;

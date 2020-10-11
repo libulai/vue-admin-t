@@ -10,12 +10,35 @@
     </el-breadcrumb>
 
     <!-- home -->
-    <!-- <div v-if="isHome" class="login-info">
+    <div class="login-info">
       <span>上次登录时间为</span>
-      <span>2020-09-09 上午12:00</span>
+      <span>{{logintime}}</span>
       <span>，如有异常，请</span>&nbsp;
-      <span style="font-size:13px;text-decoration: underline;">修改密码</span>
-    </div> -->
+      <span style="font-size:13px;text-decoration: underline;cursor: pointer;" @click="dialog2=true">修改密码</span>
+    </div>
+
+    <!-- 修改密码 -->
+    <el-dialog title="密码修改" :visible.sync="dialog2">
+      <el-form :model="ruleForm2" :rules="rules2" ref="ruleForm2" label-width="100px" class="dialog2-ruleForm">
+        <el-form-item label="当前密码" prop="oldp">
+          <el-input v-model="ruleForm2.oldp" type="password" placeholder="请输入当前密码"></el-input>
+        </el-form-item>
+
+        <el-form-item label="新密码" prop="newp">
+          <el-input v-model="ruleForm2.newp" type="password" placeholder="请输入新密码"></el-input>
+        </el-form-item>
+
+        <el-form-item label="确认新密码" prop="newp2">
+          <el-input v-model="ruleForm2.newp2" type="password" placeholder="请再输入新密码"></el-input>
+        </el-form-item>
+      </el-form>
+
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="dialog2 = false">取 消</el-button>
+        <el-button type="primary" @click="modifyPassword">确 定</el-button>
+      </div>
+    </el-dialog>
+
   </div>
 
 </template>
@@ -27,8 +50,51 @@
     data() {
       return {
         levelList: null,
-        isHome: false
+        isHome: true,
+        dialog2: false,
+        ruleForm2: {
+          oldp: "",
+          newp: "",
+          newp2: "",
+        },
+        rules2: {
+          oldp: [
+            { required: true, message: "请输入当前密码", trigger: "blur" },
+            {
+              validator: (rule, value, callback) => {
+                if (localStorage.getItem('q') == value) {
+                  callback()
+                } else {
+                  callback(new Error('密码错误'));
+                }
+              }, trigger: 'blur'
+            },
+          ],
+          newp: [
+            { required: true, message: "请输入新密码", trigger: "blur" },
+            {
+              min: 6,
+              max: 16,
+              message: "长度在 6 到 16 个字符",
+              trigger: "blur",
+            },
+          ],
+          newp2: [
+            { required: true, message: "请输入新密码", trigger: "blur" },
+            {
+              min: 6,
+              max: 16,
+              message: "长度在 6 到 16 个字符",
+              trigger: "blur",
+            },
+          ],
+        },
       };
+    },
+    computed: {
+      logintime() {
+        return this.$store.state.user.logintime;
+      }
     },
     watch: {
       $route() {
@@ -39,6 +105,37 @@
       this.getBreadcrumb();
     },
     methods: {
+      async modifyPassword() {
+        let form = this.ruleForm2
+        if (form.newp !== form.newp2) {
+          this.$message({
+            message: '新密码不一致',
+            type: 'error'
+          })
+          return
+        }
+
+        this.$refs.ruleForm2.validate(async (valid) => {
+          if (valid) {
+            let rs = await this.$http({
+              url: `/admin/domodifypasswd`,
+              method: "post",
+              data: {
+                userid: this.$store.state.user.userid,
+                passwd: this.ruleForm2.newp
+              }
+            })
+
+            if (rs.success == 'true') this.$message({
+              message: '保存成功',
+              type: 'success'
+            })
+
+            this.dialog2 = false;
+            this.$refs.ruleForm2.resetFields();
+          }
+        });
+      },
       getBreadcrumb() {
         // only show routes with meta.title
         let matched = this.$route.matched.filter(
@@ -112,8 +209,8 @@
 
     .login-info {
       color: #fff;
-      font-size: 11px;
-      margin-right: 20px;
+      font-size: 12px;
+      margin-right: 33px;
     }
   }
 </style>

@@ -174,7 +174,6 @@ export default {
       this.list = rs.data;
       this.pageTotal = rs.total;
       this.listLoading = false;
-      console.log(this.list)
     },
     handleSizeChange(val) {
       console.log(`每页 ${val} 条`);

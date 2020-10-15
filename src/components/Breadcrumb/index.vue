@@ -93,7 +93,7 @@
     },
     computed: {
       logintime() {
-        return this.$store.state.user.logintime;
+        return window.localStorage.getItem('logintime')
       }
     },
     watch: {

@@ -157,7 +157,7 @@ export default {
   },
   methods: {
     produce(data) {
-      this.$router.push({ name: `OrderDetailEdit`, query: { data:JSON.stringify(data), detailType: 3 } })
+      this.$router.push({ name: `NetworkEdit`, query: { data:JSON.stringify(data), detailType: 3 } })
     },
     handleSelectionChange(val) {
       this.selection = val.map(i => i.chatorderid)

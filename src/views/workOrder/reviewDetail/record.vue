@@ -84,8 +84,9 @@ export default {
   },
   methods: {
     async init() {
+      let id = this.$route.query.id
       let rs = await this.$http({
-        url: `/kl/klordermateriallist?orderid=${this.data.orderid}`,
+        url: `/kl/klordermateriallist?orderid=${id}`,
         method: "get"
       });
 

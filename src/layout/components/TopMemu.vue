@@ -123,350 +123,356 @@
 </template>
 
 <script>
-  // import { mapGetters } from "vuex";
+// import { mapGetters } from "vuex";
+import bus from '@/utils/bus'
 
-  export default {
-    name: "TopMemu",
-    computed: {},
-    watch: {
-      '$store.state.permission.routes': function (val) {
-        let toLlist = []
-        val.forEach(i => {
-          if (i.children) {
-            i.children.forEach(j => {
-              toLlist.push({
-                value: j.meta.title,
-                address: j.name
-              })
+export default {
+  name: "TopMemu",
+  computed: {},
+  watch: {
+    '$store.state.permission.routes': function (val) {
+      let toLlist = []
+      val.forEach(i => {
+        if (i.children) {
+          i.children.forEach(j => {
+            toLlist.push({
+              value: j.meta.title,
+              address: j.name
             })
-          }
-        })
-        this.restaurants = toLlist
+          })
+        }
+      })
+      this.restaurants = toLlist
+    }
+  },
+  data() {
+    return {
+      search: "",
+      currentMenu: '',
+      restaurants: [],
+      dialog3: false,
+      dialog2: false,
+      dialog1: false,
+      logo1: require("@/assets/pic/bussines.png"),
+      logo2: require("@/assets/pic/admin.png"),
+      header: require("@/assets/pic/touxiang.png"),
+      compcony: [],
+      role: [],
+      userinfo: {
+        empname: '',
+        mobilephone: '',
+        company: {},
+        role: ''
+      },
+      ruleForm2: {
+        oldp: "",
+        newp: "",
+        newp2: "",
+      },
+      rules2: {
+        oldp: [
+          { required: true, message: "请输入当前密码", trigger: "blur" },
+          {
+            validator: (rule, value, callback) => {
+              if (localStorage.getItem('q') == value) {
+                callback()
+              } else {
+                callback(new Error('密码错误'));
+              }
+            }, trigger: 'blur'
+          },
+        ],
+        newp: [
+          { required: true, message: "请输入新密码", trigger: "blur" },
+          {
+            min: 6,
+            max: 16,
+            message: "长度在 6 到 16 个字符",
+            trigger: "blur",
+          },
+        ],
+        newp2: [
+          { required: true, message: "请输入新密码", trigger: "blur" },
+          {
+            min: 6,
+            max: 16,
+            message: "长度在 6 到 16 个字符",
+            trigger: "blur",
+          },
+        ],
+      },
+    };
+  },
+  computed: {
+    company() {
+      return this.$store.state.user.company.compName;
+    },
+    user() {
+      return this.$store.state.user.user;
+    },
+    roleObj() {
+      return JSON.parse(window.localStorage.getItem('role'))
+    }
+  },
+  methods: {
+    handleSelect(item) {
+      this.currentMenu = item.address
+    },
+    goto() {
+      this.$router.push({ 'name': this.currentMenu })
+    },
+    personInfo(command) {
+      this[command] = true;
+
+      if (command == 'dialog1') {
+        this.getUserInfo()
       }
     },
-    data() {
-      return {
-        search: "",
-        currentMenu: '',
-        restaurants: [],
-        dialog3: false,
-        dialog2: false,
-        dialog1: false,
-        logo1: require("@/assets/pic/bussines.png"),
-        logo2: require("@/assets/pic/admin.png"),
-        header: require("@/assets/pic/demo.png"),
-        compcony: [],
-        role: [],
-        userinfo: {
-          empname: '',
-          mobilephone: '',
-          company: {},
-          role: ''
+    async loginOut() {
+      this.dialog3 = false;
+      await this.$store.dispatch("user/logout");
+      this.$router.push(`/login?redirect=${this.$route.fullPath}`);
+    },
+    async modifyPassword() {
+      let form = this.ruleForm2
+      if (form.newp !== form.newp2) {
+        this.$message({
+          message: '新密码不一致',
+          type: 'error'
+        })
+        return
+      }
+
+      this.$refs.ruleForm2.validate(async (valid) => {
+        if (valid) {
+          let rs = await this.$http({
+            url: `/admin/domodifypasswd`,
+            method: "post",
+            data: {
+              userid: this.$store.state.user.userid,
+              passwd: this.ruleForm2.newp
+            }
+          })
+
+          if (rs.success == 'true') this.$message({
+            message: '保存成功',
+            type: 'success'
+          })
+
+          this.dialog2 = false;
+          this.$refs.ruleForm2.resetFields();
+        }
+      });
+    },
+    async getUserInfo() {
+      let rs = await this.$http({
+        url: `/admin/userdetail?userid=${this.user.userid}`,
+        method: "get"
+      });
+
+      let rss = await this.$http({
+        url: `/admin/empdetail?empid=${rs.data[0].empid}`,
+        method: "get"
+      });
+
+      Object.assign(this.userinfo, rss.data[0])
+    },
+    async modifyInfo() {
+      this.dialog1 = false;
+      let rs = await this.$http({
+        url: `/admin/companyuserlist`,
+        method: "post",
+        data: {
+          userid: "",
         },
-        ruleForm2: {
-          oldp: "",
-          newp: "",
-          newp2: "",
+      });
+
+      this.$refs.ruleForm1.resetFields();
+    },
+    reset() {
+      this.dialog1 = false;
+      this.$refs.ruleForm1.resetFields();
+    },
+    async shifitComp(obj) {
+      let rs = await this.$http({
+        url: `/admin/shiftcompany?shiftComid=${obj.comid}`,
+        method: "get",
+      });
+
+      this.$store.dispatch("user/changeCompany", obj);
+
+      location.reload()
+      this.$router.push('/home')
+    },
+    async shifitRole(obj) {
+      let rs = await this.$http({
+        url: `/admin/shiftrole?shiftRoleid=${obj.roleid}`,
+        method: "get",
+      });
+
+      this.$store.dispatch("user/changeRole", obj);
+
+      location.reload()
+      this.$router.push('/home')
+    },
+    async initCompany() {
+      let rs = await this.$http({
+        url: `/admin/companyuserlist`,
+        method: "post",
+        data: {
+          userid: "",
         },
-        rules2: {
-          oldp: [
-            { required: true, message: "请输入当前密码", trigger: "blur" },
-            {
-              validator: (rule, value, callback) => {
-                if (localStorage.getItem('q') == value) {
-                  callback()
-                } else {
-                  callback(new Error('密码错误'));
-                }
-              }, trigger: 'blur'
-            },
-          ],
-          newp: [
-            { required: true, message: "请输入新密码", trigger: "blur" },
-            {
-              min: 6,
-              max: 16,
-              message: "长度在 6 到 16 个字符",
-              trigger: "blur",
-            },
-          ],
-          newp2: [
-            { required: true, message: "请输入新密码", trigger: "blur" },
-            {
-              min: 6,
-              max: 16,
-              message: "长度在 6 到 16 个字符",
-              trigger: "blur",
-            },
-          ],
-        },
+      });
+
+      this.compcony = rs.data;
+      this.$store.dispatch("user/changeCompany", rs.data[0]);
+    },
+    async initAdmin() {
+      let rs = await this.$http({
+        url: `/admin/roleuserlist`,
+        method: "get"
+      });
+
+      this.role = rs.data;
+    },
+    async initUserInfo() {
+      let rs = await this.$http({
+        url: `/admin/getcurrentuser`,
+        method: "get"
+      });
+
+      // this.compcony = rs.data;
+      this.$store.dispatch("user/changeUserinfo", rs);
+    },
+    querySearch(queryString, cb) {
+      var restaurants = this.restaurants;
+      var results = queryString ? restaurants.filter(this.createFilter(queryString)) : restaurants;
+      // 调用 callback 返回建议列表的数据
+      cb(results);
+    },
+    createFilter(queryString) {
+      return (restaurant) => {
+        return (restaurant.value.toLowerCase().includes(queryString.toLowerCase()));
       };
     },
-    computed: {
-      company() {
-        return this.$store.state.user.company.compName;
-      },
-      user() {
-        return this.$store.state.user.user;
-      }
-    },
-    methods: {
-      handleSelect(item) {
-        this.currentMenu = item.address
-      },
-      goto() {
-        this.$router.push({ 'name': this.currentMenu })
-      },
-      personInfo(command) {
-        this[command] = true;
+    async initRole() {
+      let rs = await this.$http({
+        url: `/admin/shiftrole?shiftRoleid=${this.roleObj.roleid}`,
+        method: "get",
+      });
 
-        if (command == 'dialog1') {
-          this.getUserInfo()
-        }
-      },
-      async loginOut() {
-        this.dialog3 = false;
-        await this.$store.dispatch("user/logout");
-        this.$router.push(`/login?redirect=${this.$route.fullPath}`);
-      },
-      async modifyPassword() {
-        let form = this.ruleForm2
-        if (form.newp !== form.newp2) {
-          this.$message({
-            message: '新密码不一致',
-            type: 'error'
-          })
-          return
-        }
+      this.user.rolename = this.roleObj.rolename
 
-        this.$refs.ruleForm2.validate(async (valid) => {
-          if (valid) {
-            let rs = await this.$http({
-              url: `/admin/domodifypasswd`,
-              method: "post",
-              data: {
-                userid: this.$store.state.user.userid,
-                passwd: this.ruleForm2.newp
-              }
-            })
+      // this.$store.dispatch("user/changeRole", obj);
 
-            if (rs.success == 'true') this.$message({
-              message: '保存成功',
-              type: 'success'
-            })
+      location.reload()
+    }
+  },
+  async created() {
+    // 用户信息
+    this.initUserInfo();
 
-            this.dialog2 = false;
-            this.$refs.ruleForm2.resetFields();
-          }
-        });
-      },
-      async getUserInfo() {
-        let rs = await this.$http({
-          url: `/admin/userdetail?userid=${this.user.userid}`,
-          method: "get"
-        });
+    // 公司列表
+    this.initCompany();
 
-        let rss = await this.$http({
-          url: `/admin/empdetail?empid=${rs.data[0].empid}`,
-          method: "get"
-        });
+    // 角色列表
+    this.initAdmin()
 
-        Object.assign(this.userinfo, rss.data[0])
-      },
-      async modifyInfo() {
-        this.dialog1 = false;
-        let rs = await this.$http({
-          url: `/admin/companyuserlist`,
-          method: "post",
-          data: {
-            userid: "",
-          },
-        });
-
-        this.$refs.ruleForm1.resetFields();
-      },
-      reset() {
-        this.dialog1 = false;
-        this.$refs.ruleForm1.resetFields();
-      },
-      async shifitComp(obj) {
-        let rs = await this.$http({
-          url: `/admin/shiftcompany?shiftComid=${obj.comid}`,
-          method: "get",
-        });
-
-        this.$store.dispatch("user/changeCompany", obj);
-
-        location.reload()
-        this.$router.push('/home')
-      },
-      async shifitRole(obj) {
-        let rs = await this.$http({
-          url: `/admin/shiftrole?shiftRoleid=${obj.roleid}`,
-          method: "get",
-        });
-
-        this.$store.dispatch("user/changeRole", obj);
-
-        location.reload()
-        this.$router.push('/home')
-      },
-      async initCompany() {
-        let rs = await this.$http({
-          url: `/admin/companyuserlist`,
-          method: "post",
-          data: {
-            userid: "",
-          },
-        });
-
-        this.compcony = rs.data;
-        this.$store.dispatch("user/changeCompany", rs.data[0]);
-      },
-      async initAdmin() {
-        let rs = await this.$http({
-          url: `/admin/roleuserlist`,
-          method: "get"
-        });
-
-        this.role = rs.data;
-      },
-      async initUserInfo() {
-        let rs = await this.$http({
-          url: `/admin/getcurrentuser`,
-          method: "get"
-        });
-
-        // this.compcony = rs.data;
-        this.$store.dispatch("user/changeUserinfo", rs);
-      },
-      querySearch(queryString, cb) {
-        var restaurants = this.restaurants;
-        var results = queryString ? restaurants.filter(this.createFilter(queryString)) : restaurants;
-        // 调用 callback 返回建议列表的数据
-        cb(results);
-      },
-      createFilter(queryString) {
-        return (restaurant) => {
-          return (restaurant.value.toLowerCase().includes(queryString.toLowerCase()));
-        };
-      }
-    },
-    async created() {
-      // 用户信息
-      this.initUserInfo();
-
-      // 公司列表
-      this.initCompany();
-
-      // 角色列表
-      this.initAdmin()
-
-      // let to = this.$store.state.permission.routes
-      // let toLlist = []
-      // to.forEach(i => {
-      //   if (i.children) {
-      //     i.children.forEach(j => {
-      //       toLlist.push({
-      //         value: j.meta.title,
-      //         address: j.name
-      //       })
-      //     })
-      //   }
-      // })
-      // this.restaurants = toLlist
-    },
-  };
+    bus.$on("login",()=>{
+      this.initRole()
+    })
+  },
+};
 </script>
 
 <style lang="scss">
-  .dialog3-ruleForm .el-form-item__label {
-    padding-right: 50px !important;
-  }
+.dialog3-ruleForm .el-form-item__label {
+  padding-right: 50px !important;
+}
 
-  .top-bar {
-    height: 85px;
-    display: flex;
-    align-items: center;
+.top-bar {
+  height: 85px;
+  display: flex;
+  align-items: center;
+  background: #0b3190;
+  border-bottom: 1px solid #3e4ea0;
+  justify-content: space-between;
+  padding: 0 20px;
+}
+
+.search {
+  margin-left: 25px;
+  width: 300px;
+  .el-input-group__append {
+    border: none;
+    background: #546eb1 !important;
+    color: #fff;
+  }
+}
+
+.dropdown {
+  width: 200px;
+  height: 200px;
+}
+
+.left {
+  display: flex;
+  .el-dropdown .el-button {
     background: #0b3190;
-    border-bottom: 1px solid #3e4ea0;
-    justify-content: space-between;
-    padding: 0 20px;
+    color: #fff;
+    width: 120px;
   }
+}
 
-  .search {
-    margin-left: 25px;
-    width: 300px;
-    .el-input-group__append {
-      border: none;
-      background: #546eb1 !important;
-      color: #fff;
-    }
+.head-pic {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-right: 7px;
+  img {
+    width: 140%;
   }
+}
 
-  .dropdown {
-    width: 200px;
-    height: 200px;
+.right {
+  display: flex;
+  .drop2 {
+    margin: 0 60px;
   }
-
-  .left {
+  .el-dropdown {
+    color: #fff !important;
+  }
+  & > div {
+    cursor: pointer;
     display: flex;
-    .el-dropdown .el-button {
-      background: #0b3190;
-      color: #fff;
-      width: 120px;
-    }
-  }
-
-  .head-pic {
-    width: 42px;
-    height: 42px;
-    border-radius: 50%;
-    overflow: hidden;
-    display: flex;
-    justify-content: center;
     align-items: center;
-    margin-right: 7px;
-    img {
-      width: 140%;
-    }
   }
+}
 
-  .right {
-    display: flex;
-    .drop2 {
-      margin: 0 60px;
-    }
-    .el-dropdown {
-      color: #fff !important;
-    }
-    &>div {
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-    }
-  }
-
-  .el-form {
-    padding: 0 130px 0 70px;
-  }
+.el-form {
+  padding: 0 130px 0 70px;
+}
 </style>
 
 <style lang="scss" scoped>
-  ::v-deep .dialog1 {
-    .el-dialog {
-      width: 450px !important;
-    }
+::v-deep .dialog1 {
+  .el-dialog {
+    width: 450px !important;
   }
+}
 
-  ::v-deep .dialog3 {
-    .el-dialog {
-      width: 650px !important;
-    }
+::v-deep .dialog3 {
+  .el-dialog {
+    width: 650px !important;
   }
+}
 
-  .el-dropdown-menu {
-    max-height: 450px !important;
-    overflow: auto;
-  }
+.el-dropdown-menu {
+  max-height: 450px !important;
+  overflow: auto;
+}
 </style>

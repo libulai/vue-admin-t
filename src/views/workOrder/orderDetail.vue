@@ -181,7 +181,7 @@ export default {
       })
     },
     edit(id) {
-      this.$router.push({ name: `OrderDetailEdit`, query: { id, detailType: 5 } })
+      this.$router.push({ name: `OrderEdit` })
     },
     // detail(id, ttype) {
     //   this.$router.push({ name: `OrderMangerDetail`, query: { id, detailType: 4} })

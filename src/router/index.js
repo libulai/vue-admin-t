@@ -136,6 +136,13 @@ export let constantRoutes = [
         component: () => import('@/views/workOrder/addOrder'),
         meta: { title: '工单信息编辑', icon: '', activeMenu: '/order/manage' }
       },
+      {
+        path: 'networkEdit',
+        name: 'NetworkEdit',
+        hidden: true,
+        component: () => import('@/views/workOrder/addOrder'),
+        meta: { title: '网络预约单生成', icon: '', activeMenu: '/order/network' }
+      },
       // {
       //   path: 'orderDetail',
       //   name: 'OrderDetail',
@@ -143,10 +150,10 @@ export let constantRoutes = [
       //   meta: { title: '工单详情单', icon: '' }
       // },
       {
-        path: 'orderDetailEdit',
-        name: 'OrderDetailEdit',
+        path: 'orderEdit',
+        name: 'OrderEdit',
         hidden: true,
-        component: () => import('@/views/workOrder/addOrder'),
+        component: () => import('@/views/workOrder/editOrder'),
         meta: { title: '工单详情单编辑', icon: '', activeMenu: '/order/detail' }
       },
       // {

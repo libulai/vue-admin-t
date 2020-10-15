@@ -12,6 +12,8 @@ import {
   resetRouter
 } from '@/router'
 
+var storage = window.localStorage;
+
 const getDefaultState = () => {
   return {
     token: getToken(),
@@ -43,10 +45,16 @@ const mutations = {
   RESET_STATE: (state) => {
     Object.assign(state, getDefaultState())
   },
-  SET_TOKEN: (state, { token, password, logintime }) => {
+  SET_TOKEN: (state, {
+    token,
+    password,
+    logintime
+  }) => {
     state.token = token
     state.password = password
     state.logintime = logintime
+
+    storage.setItem("logintime", logintime);
   },
   SET_NAME: (state, name) => {
     state.name = name
@@ -64,6 +72,8 @@ const mutations = {
     state.role = {
       roleid: data.roleid
     }
+
+    storage.setItem("role", JSON.stringify(data));
   },
   SET_User: (state, data) => {
     state.user = {

@@ -19,7 +19,6 @@
               <span class="light">{{data.Receipt23}} 其他</span>
             </div>
           </div>
-
         </div>
 
         <div class="list-items" style="margin: 35px 10px 0 10px">
@@ -29,7 +28,7 @@
           </div>
           <div>
             <span>是否满足验收条件</span>
-            <span class="light">南京托乐嘉</span>
+            <span class="light">{{data.completestatus}}</span>
           </div>
         </div>
       </div>
@@ -37,7 +36,7 @@
 
     <!-- 联系人信息 -->
     <div class="basic-info">
-      <h4>联系人信息</h4>
+      <h4>联系方式</h4>
       <div>
         <div class="list-items">
           <div>
@@ -147,15 +146,15 @@
         <div class="list-items">
           <div>
             <span>施工工艺</span>
-            <span class="light">无</span>
+            <span class="light">{{data.sgtype}}</span>
           </div>
           <div>
             <span>验收工艺</span>
-            <span class="light">2010-02-02</span>
+            <span class="light">{{data.ystype}}</span>
           </div>
           <div>
             <span>验收详情单备注</span>
-            <span class="light">无</span>
+            <span class="light">{{data.orderdesc}}</span>
           </div>
         </div>
       </div>
@@ -201,6 +200,10 @@
           </div>
           <div>
             <span>其他 2</span>
+            <span class="light">2203</span>
+          </div>
+           <div>
+            <span>总面积</span>
             <span class="light">2203</span>
           </div>
         </div>
@@ -256,6 +259,10 @@
         </div>
 
         <div class="list-items" style="margin: 35px 10px 0 10px">
+          <div>
+            <span>总面积</span>
+            <span class="light">2203</span>
+          </div>
           <div>
             <span>施工确认单备注</span>
             <span class="light">2203</span>

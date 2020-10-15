@@ -15,6 +15,12 @@
           <el-tab-pane label="验收详情单" name="fourth" v-if="type!=1 && type!=4">
             <confirm :data="data" :type="type"/>
           </el-tab-pane>
+          <el-tab-pane label="售后详情单" name="sixth" v-if="type!=1 && type!=4">
+            <confirm :data="data" :type="type"/>
+          </el-tab-pane>
+          <el-tab-pane label="维修详情单" name="seventh" v-if="type!=1 && type!=4">
+            <confirm :data="data" :type="type"/>
+          </el-tab-pane>
           <el-tab-pane label="核销记录" name="fifth" v-if="type==4 || type==2 || type==6">
             <record :data="data" :type="type"/>
           </el-tab-pane>
@@ -51,6 +57,7 @@ export default {
       loading: false,
       firstLoad: true,
       activeName: 'first',
+      ttype:0, // 工单类型
       type: 1, // 1分派  2复核  3网络预约单  4工单信息管理  6质保卡 
       data: {}
     };
@@ -72,12 +79,20 @@ export default {
       this.type = data.detailType
       this.loading = true
 
+      // let rs = await this.$http({
+      //   url: `/kl/klorderdetailforreceipt?orderid=${data.id}`,
+      //   method: "get"
+      // });
+
       let rs = await this.$http({
-        url: `/kl/klorderdetailforreceipt?orderid=${data.id}`,
+        url: `/kl/klorderreceipt?orderid=${data.id}`,
         method: "get"
       });
 
+      console.log(rs,'****')
+      // this.ttype = rs.data[0].
       this.data = rs.data[0]
+      debugger
       this.loading = false
     },
     handleClick(tab, event) {

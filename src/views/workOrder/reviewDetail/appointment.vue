@@ -66,17 +66,17 @@
             <span>预约时间</span>
             <span class="light">{{data.reservedate}}</span>
           </div>
-          <div>
+          <!-- <div>
             <span>现场照片</span>
             <span class="light">-</span>
+          </div> -->
+          <div v-if="data.pttype==292 || data.pttype=='施工单'">
+            <span>是否需要挡水台</span>
+            <span class="light">{{data.dst}}</span>
           </div>
         </div>
 
         <div class="list-items" style="margin: 35px 10px">
-          <div v-if="data.pttype==292">
-            <span>是否需要挡水台</span>
-            <span class="light">{{data.dst}}</span>
-          </div>
           <div>
             <span>备注</span>
             <span class="light">{{data.orderdesc}}</span>
@@ -145,7 +145,7 @@ export default {
   },
   props: ['data', 'type'],
   created() {
-    
+
   },
   methods: {
     async check(flag) {

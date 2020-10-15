@@ -38,7 +38,7 @@
           </el-table-column>
           <el-table-column align="center" prop="created_at" label="操作">
             <template slot-scope="scope">
-              <span class="detail handle" @click="dispatch(true, scope.row)">编辑</span>
+              <span class="detail handle" @click="dispatch(true, scope.row)">编辑</span> 
             </template>
           </el-table-column>
         </el-table>
@@ -125,9 +125,9 @@
           rolename: [
             { required: true, message: "请输入角色名称", trigger: "blur" }
           ],
-          buttonids: [
-            { required: true, message: "请选择权限按钮", trigger: "blur" }
-          ]
+          // buttonids: [
+          //   { required: true, message: "请选择权限按钮", trigger: "blur" }
+          // ]
         }
       };
     },

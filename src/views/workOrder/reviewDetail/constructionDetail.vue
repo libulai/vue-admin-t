@@ -83,11 +83,11 @@
         <div class="list-items" style="margin: 35px 10px 0 10px">
           <div>
             <span>施工工艺</span>
-            <span class="light">否</span>
+            <span class="light">{{data.sgtype}}</span>
           </div>
           <div>
             <span>施工详情单备注</span>
-            <span class="light">2203</span>
+            <span class="light">{{data.orderdesc}}</span>
           </div>
         </div>
       </div>
@@ -166,11 +166,15 @@
             <span>其他 2</span>
             <span class="light">2203</span>
           </div>
+          <div>
+            <span>总面积</span>
+            <span class="light">2203</span>
+          </div>
         </div>
       </div>
     </div>
 
-    <div class="basic-info">
+    <!-- <div class="basic-info">
       <h4>保护层</h4>
       <div>
         <div class="list-items">
@@ -218,7 +222,7 @@
           </div>
         </div>
       </div>
-    </div>
+    </div> -->
 
     <div class="basic-info">
       <h4>实际物料使用量</h4>

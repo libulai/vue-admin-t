@@ -12,10 +12,10 @@
           <div>
             <span>施工户型</span>
             <div class="rooms">
-              <span class="light">{{data.Receipt20}} 厨</span>
-              <span class="light">{{data.Receipt21}} 卫</span>
-              <span class="light">{{data.Receipt22}} 阳台</span>
-              <span class="light">{{data.Receipt23}} 其他</span>
+              <span class="light">{{data.receipt20}} 厨</span>
+              <span class="light">{{data.receipt21}} 卫</span>
+              <span class="light">{{data.receipt22}} 阳台</span>
+              <span class="light">{{data.receipt23}} 其他</span>
             </div>
           </div>
         </div>
@@ -71,8 +71,8 @@
             <span class="light">{{data.receipt && data.receipt.receipt48}}</span>
           </div>
           <div>
-            <span>施工类型</span>
-            <span class="light">{{data.sgtype}}</span>
+            <span>施工属性</span>
+            <span class="light">{{data.receipt && data.receipt.receipt49}}</span>
           </div>
           <div>
             <span>是否做二排</span>
@@ -83,7 +83,7 @@
         <div class="list-items" style="margin: 35px 10px 0 10px">
           <div>
             <span>施工工艺</span>
-            <span class="light">{{data.sgtype}}</span>
+            <span class="light">{{sgtype(data.sgtype)}}</span>
           </div>
           <div>
             <span>施工详情单备注</span>
@@ -248,73 +248,88 @@
 </template>
 
 <script>
-  export default {
-    data() {
-      return {
-        bg1: require('@/assets/pic/demo.png'),
-        list1: [require('@/assets/pic/demo.png')]
-      };
-    },
-    props: ['data', 'type'],
-    created() {
+export default {
+  data() {
+    return {
+      bg1: require('@/assets/pic/demo.png'),
+      list1: [require('@/assets/pic/demo.png')]
+    };
+  },
+  props: ['data', 'type'],
+  created() {
 
-    },
-    methods: {
+  },
+  computed: {
+    sgtype(val) {
+      return function (val) {
+        let S_MAP = {
+          1: '隔层墙地施工',
+          2: '墙施工',
+          3: '地施工',
+          4: '同层底面施工',
+          5: '同层墙地施工'
+        }
 
-    },
-  };
+        return S_MAP[Number(val)]
+      }
+    }
+  },
+  methods: {
+
+  },
+};
 </script>
 
 <style lang="scss" scoped>
-  .appointment {
-    h4 {
-      font-size: 15px;
-      margin: 10px 0 20px 0;
-    }
-    .list-items {
+.appointment {
+  h4 {
+    font-size: 15px;
+    margin: 10px 0 20px 0;
+  }
+  .list-items {
+    display: flex;
+    margin-left: 10px;
+    & > div {
       display: flex;
-      margin-left: 10px;
-      &>div {
-        display: flex;
-        flex-direction: column;
-        width: 270px;
-        font-size: 14px;
-      }
-      .light {
-        color: #999;
-        margin-top: 7px;
-      }
+      flex-direction: column;
+      width: 270px;
+      font-size: 14px;
     }
-    .list-pic {
+    .light {
+      color: #999;
+      margin-top: 7px;
+    }
+  }
+  .list-pic {
+    display: flex;
+    .el-image {
+      width: 200px !important;
+      height: 140px !important;
+    }
+    & > div {
+      margin-right: 10px;
       display: flex;
-      .el-image {
-        width: 200px !important;
-        height: 140px !important;
-      }
-      &>div {
-        margin-right: 10px;
-        display: flex;
-        justify-content: center;
-        flex-direction: column;
-        align-items: center;
-        font-size: 14px;
-        p {
-          margin-top: 5px;
-        }
-      }
-    }
-    .rooms {
-      width: 500px;
-      span {
-        width: 100px;
-        display: inline-flex;
+      justify-content: center;
+      flex-direction: column;
+      align-items: center;
+      font-size: 14px;
+      p {
+        margin-top: 5px;
       }
     }
   }
+  .rooms {
+    width: 500px;
+    span {
+      width: 100px;
+      display: inline-flex;
+    }
+  }
+}
 
-  .basic-info {
-    border-bottom: 1px solid #f1f1f1;
-    padding-bottom: 30px;
-    margin-bottom: 30px;
-  }
+.basic-info {
+  border-bottom: 1px solid #f1f1f1;
+  padding-bottom: 30px;
+  margin-bottom: 30px;
+}
 </style>

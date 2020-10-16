@@ -13,10 +13,10 @@
           <div>
             <span>验收户型</span>
             <div class="rooms">
-              <span class="light">{{data.Receipt20}} 厨</span>
-              <span class="light">{{data.Receipt21}} 卫</span>
-              <span class="light">{{data.Receipt22}} 阳台</span>
-              <span class="light">{{data.Receipt23}} 其他</span>
+              <span class="light">{{data.receipt20}} 厨</span>
+              <span class="light">{{data.receipt21}} 卫</span>
+              <span class="light">{{data.receipt22}} 阳台</span>
+              <span class="light">{{data.receipt23}} 其他</span>
             </div>
           </div>
         </div>

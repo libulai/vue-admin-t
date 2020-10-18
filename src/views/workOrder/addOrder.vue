@@ -36,7 +36,7 @@
                   <el-form-item label="小区名称" prop="communityname">
                     <el-input v-model="form.communityname" placeholder="请输入"></el-input>
                   </el-form-item>
-                  <el-form-item label="楼号-门牌号" prop="address">
+                  <el-form-item label="地址-门牌号" prop="address">
                     <el-input v-model="form.address" placeholder="请输入"></el-input>
                   </el-form-item>
                   <el-form-item label="区域" prop="areaid">

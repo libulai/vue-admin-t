@@ -15,7 +15,7 @@
           </div>
           <div>
             <span>预约类型</span>
-            <span class="light">{{pttypee(data.pttype)}}</span>
+            <span class="light">{{data.pttype}}</span>
           </div>
         </div>
 
@@ -42,7 +42,7 @@
             <span class="light">{{data.communityname}}</span>
           </div>
           <div>
-            <span>楼号-门牌号</span>
+            <span>地址-门牌号</span>
             <span class="light">{{data.address}}</span>
           </div>
           <div v-if="data.pttype==293 || data.pttype==292">

@@ -37,7 +37,7 @@
             <span class="light">上海开发商</span>
           </div>
           <div>
-            <span>楼号-门牌号</span>
+            <span>地址-门牌号</span>
             <span class="light">2203</span>
           </div>
           <div>

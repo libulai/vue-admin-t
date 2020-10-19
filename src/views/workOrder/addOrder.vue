@@ -48,7 +48,7 @@
                 <div>
                   <el-form-item label="服务类型" prop="pttype">
                     <el-select v-model="form.pttype" placeholder="请选择">
-                      <el-option v-for="item in pttype" :key="item.dicid" :label="item.dicvalue" :value="item.dicid"></el-option>
+                      <el-option v-for="item in pttype" :key="item.dicid" :label="item.dicvalue" :value="item.dicvalue"></el-option>
                     </el-select>
                   </el-form-item>
                   <el-form-item label="预约上门日期" prop="reservedate">
@@ -79,14 +79,14 @@
                 </div>
                 <div class="select">
 
-                  <el-form-item label="施工类型" prop="sgtype" v-show="form.pttype==292">
+                  <el-form-item label="施工类型" prop="sgtype" v-show="form.pttype=='施工单'">
                     <el-select v-model="form.sgtype" placeholder="请选择">
-                      <el-option v-for="item in sgtypes" :key="item.id" :label="item.value" :value="item.id"></el-option>
+                      <el-option v-for="item in sgtypes" :key="item" :label="item" :value="item"></el-option>
                     </el-select>
                   </el-form-item>
-                  <el-form-item label="验收类型" prop="ystype" v-show="form.pttype==293">
+                  <el-form-item label="验收类型" prop="ystype" v-show="form.pttype=='外部验收单'">
                     <el-select v-model="form.ystype" placeholder="请选择">
-                      <el-option v-for="item in ystypes" :key="item.id" :label="item.value" :value="item.id"></el-option>
+                      <el-option v-for="item in ystypes" :key="item" :label="item" :value="item"></el-option>
                     </el-select>
                   </el-form-item>
                   <el-form-item label="户型" class="other" prop="Receipt20">
@@ -97,7 +97,7 @@
                   </el-form-item>
                 </div>
                 <div>
-                  <el-form-item label="挡水台" prop="dst" v-if="form.pttype==292">
+                  <el-form-item label="挡水台" prop="dst" v-if="form.pttype=='施工单'">
                     <el-radio v-model="form.dst" label="是">是</el-radio>
                     <el-radio v-model="form.dst" label="否">否</el-radio>
                   </el-form-item>
@@ -176,8 +176,10 @@ export default {
       areas: [],
       pttype: [],
       times: [{ id: 1, value: '上午' }, { id: 2, value: '下午' }, { id: 3, value: '无' }],
-      sgtypes: [{ id: '1', value: '墙地施工' }, { id: '2', value: '墙施工' }, { id: '3', value: '地施工' }, { id: '4', value: '同层底面施工' }],
-      ystypes: [{ id: '1', value: '面层验收' }, { id: '2', value: '同层排水底层验收' }],
+      // sgtypes: [{ id: '1', value: '墙地施工' }, { id: '2', value: '墙施工' }, { id: '3', value: '地施工' }, { id: '4', value: '同层底面施工' }],
+      sgtypes: ['墙地施工', '墙施工', '地施工', '同层底面施工'],
+      // ystypes: [{ id: '1', value: '面层验收' }, { id: '2', value: '同层排水底层验收' }],
+      ystypes: ['面层验收', '同层排水底层验收'],
       phone: {
         contacter: "--",
         contacterphone: '--',
@@ -313,6 +315,8 @@ export default {
         method: "get"
       });
 
+      console.log(rs.data,'&&^^')
+
       this.pttype = rs.data.map(i => {
         return {
           dicvalue: i.dicvalue,
@@ -435,7 +439,7 @@ export default {
     padding: 13px 17px;
     border-radius: 4px;
     border: 1px solid #e6e6e6;
-    height: 350px;
+    height: 380px;
     ul {
       margin-top: 15px;
       li {

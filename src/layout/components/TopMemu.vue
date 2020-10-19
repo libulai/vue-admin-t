@@ -378,9 +378,10 @@ export default {
     // 角色列表
     this.initAdmin()
 
-    bus.$on("login",()=>{
-      this.initRole()
-    })
+    // 初始化切换角色
+    // bus.$on("login",()=>{
+    //   this.initRole()
+    // })
   },
 };
 </script>

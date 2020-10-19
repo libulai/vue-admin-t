@@ -63,7 +63,7 @@ const mutations = {
 
       //首页
       routes.push({
-        path: '*',
+        path: '/',
         component: Layout,
         redirect: '/home',
         children: [{
@@ -105,7 +105,7 @@ const mutations = {
           421: import('@/views/score/settingA'),
           422: import('@/views/score/settingC'),
           423: import('@/views/score/dispatchA'),
-          424: import('@/views/score/dispatchA'),
+          424: import('@/views/score/dispatchC'),
 
           413: import('@/views/workOrder/addOrder'),
           414: import('@/views/workOrder/dispatch'),
@@ -124,20 +124,35 @@ const mutations = {
           let ppath = ''
 
           children.forEach(i => {
-            if(settingMenu.includes(i.menuid)) ppath = '/setting'
+            if (settingMenu.includes(i.menuid)) ppath = '/setting'
             else ppath = '/' + i.menuurl.split('/')[1]
-            
+
             childrenArr.push({
               path: i.menuurl,
               name: i.menuurl,
+              // name: '33',
               component: () => ROUTERMAP[i.menuid],
               meta: {
                 title: i.menuname,
                 icon: ''
               }
             })
+
+            // 添加工单详情单编辑
+            // if (i.menuid == 418) {
+            //   childrenArr.push({
+            //     path: 'orderEdit',
+            //     name: 'OrderEdit',
+            //     hidden: true,
+            //     component: () => import('@/views/workOrder/editOrder'),
+            //     meta: {
+            //       title: '工单详情单编辑',
+            //       icon: ''
+            //     }
+            //   })
+            // }
           })
-          
+
           routes.push({
             path: ppath,
             component: Layout,

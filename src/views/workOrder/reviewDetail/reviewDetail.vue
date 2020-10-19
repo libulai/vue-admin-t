@@ -9,20 +9,20 @@
           <el-tab-pane label="工单状态" name="second" v-if="type!=1 && type!=4">
             <order-state :data="data" :type="type"/>
           </el-tab-pane>
-          <el-tab-pane label="施工详情单" name="third" v-if="type!=1 && type!=4 && ttype=='施工单'">
-            <construction-detail :data="data" :type="type"/>
+          <el-tab-pane label="施工详情单" name="third" v-if="type!=1 && type!=4 && (ttype=='施工单' || ttype==292)">
+            <construction-detail :data="data" :type="type" :recepits="recepits"/>
           </el-tab-pane>
-          <el-tab-pane label="验收详情单" name="fourth" v-if="type!=1 && type!=4 && ttype=='施工单'">
-            <confirm :data="data" :type="type"/>
+          <el-tab-pane label="验收详情单" name="fourth" v-if="type!=1 && type!=4 && (ttype=='外部验收单' || ttype==293)">
+            <confirm :data="data" :type="type" :recepits="recepits"/>
           </el-tab-pane>
-           <el-tab-pane label="售后详情单" name="sixth" v-if="type!=1 && type!=4 && ttype=='施工单'">
-            <confirm :data="data" :type="type"/>
+           <el-tab-pane label="售后详情单" name="sixth" v-if="type!=1 && type!=4 && (ttype=='售后检查单' || ttype==294)">
+            <confirm :data="data" :type="type" :recepits="recepits"/>
           </el-tab-pane>
-          <el-tab-pane label="维修详情单" name="seventh" v-if="type!=1 && type!=4 && ttype=='施工单'">
-            <confirm :data="data" :type="type"/>
+          <el-tab-pane label="维修详情单" name="seventh" v-if="type!=1 && type!=4 && (ttype=='售后处理单' || ttype==295)">
+            <confirm :data="data" :type="type" :recepits="recepits"/>
           </el-tab-pane>
           <el-tab-pane label="核销记录" name="fifth" v-if="type==4 || type==2 || type==6">
-            <record :data="data" :type="type"/>
+            <record :data="data" :type="type" :recepits="recepits"/>
           </el-tab-pane>
         </el-tabs>
 
@@ -59,7 +59,8 @@ export default {
       activeName: 'first',
       ttype:'', // 工单类型
       type: 1, // 1分派  2复核  3网络预约单  4工单信息管理  6质保卡 
-      data: {}
+      data: {},
+      recepits:{}
     };
   },
   created() {
@@ -85,14 +86,15 @@ export default {
       });
 
       this.ttype = rs.data[0].pttype
-
-      // let rs = await this.$http({
-      //   url: `/kl/klorderreceipt?orderid=${data.id}`,
-      //   method: "get"
-      // });
-
-      console.log(rs,'****')
       this.data = rs.data[0]
+
+      rs = await this.$http({
+        url: `/kl/klorderreceipt?orderid=${data.id}`,
+        method: "get",
+      });
+
+      this.recepits = rs.data[0]
+
       this.loading = false
     },
     handleClick(tab, event) {

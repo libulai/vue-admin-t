@@ -8,15 +8,15 @@
         <div class="list-items">
           <div>
             <span>验收地址</span>
-            <span class="light">{{data.communityname + data.address}}</span>
+            <span class="light">{{data.address}}</span>
           </div>
           <div>
             <span>验收户型</span>
             <div class="rooms">
-              <span class="light">{{data.receipt20}} 厨</span>
-              <span class="light">{{data.receipt21}} 卫</span>
-              <span class="light">{{data.receipt22}} 阳台</span>
-              <span class="light">{{data.receipt23}} 其他</span>
+              <span class="light">{{data.Receipt20}} 厨</span>
+              <span class="light">{{data.Receipt21}} 卫</span>
+              <span class="light">{{data.Receipt22}} 阳台</span>
+              <span class="light">{{data.Receipt23}} 其他</span>
             </div>
           </div>
         </div>
@@ -28,7 +28,7 @@
           </div>
           <div>
             <span>是否满足验收条件</span>
-            <span class="light">{{data.completestatus}}</span>
+            <span class="light">{{completestatus(data.completestatus)}}</span>
           </div>
         </div>
       </div>
@@ -133,9 +133,9 @@
             <span>排水类型</span>
             <span class="light">{{data.receipt && data.receipt.receipt48}}</span>
           </div>
-          <div>
+          <div v-show="recepits.receipt48=='同层排水'">
             <span>施工属性</span>
-            <span class="light">{{data.ystype}}</span>
+            <span class="light">{{recepits.receipt49}}</span>
           </div>
           <div>
             <span>是否需要二次排水</span>
@@ -163,48 +163,14 @@
     <div class="basic-info">
       <h4>验收信息</h4>
       <div>
-        <div class="list-items">
-          <div>
-            <span>厨房 1</span>
-            <span class="light">无</span>
+        <div class="list-items items-pad">
+          <div v-for="i in recepits.klOrderReceiptAreas">
+            <span>{{areaName(i)}}</span>
+            <span class="light">{{i.area}}</span>
           </div>
           <div>
-            <span>厨房 2</span>
-            <span class="light">2010-02-02</span>
-          </div>
-          <div>
-            <span>卫生间 1</span>
-            <span class="light">无</span>
-          </div>
-        </div>
-
-        <div class="list-items" style="margin: 35px 10px">
-          <div>
-            <span>卫生间 2</span>
-            <span class="light">否</span>
-          </div>
-          <div>
-            <span>阳台 1</span>
-            <span class="light">2203</span>
-          </div>
-          <div>
-            <span>阳台 2</span>
-            <span class="light">2203</span>
-          </div>
-        </div>
-
-        <div class="list-items" style="margin: 35px 10px 0 10px">
-          <div>
-            <span>其他 1</span>
-            <span class="light">否</span>
-          </div>
-          <div>
-            <span>其他 2</span>
-            <span class="light">2203</span>
-          </div>
-           <div>
             <span>总面积</span>
-            <span class="light">2203</span>
+            <span class="light">{{recepits.receipt51}}</span>
           </div>
         </div>
       </div>
@@ -216,56 +182,22 @@
         <div class="list-items">
           <div>
             <span>是否做保护层</span>
-            <span class="light">是</span>
+            <span class="light">{{recepits.receipt52}}</span>
+          </div>
+          <div v-for="i in recepits.klOrderReceiptAreaPs" :key="i.type">
+            <span>{{areaName(i)}}</span>
+            <span class="light">{{i.area}}</span>
           </div>
           <div>
-            <span>厨房 1</span>
-            <span class="light">无</span>
-          </div>
-          <div>
-            <span>厨房 2</span>
-            <span class="light">2010-02-02</span>
-          </div>
-        </div>
-
-        <div class="list-items" style="margin: 35px 10px">
-          <div>
-            <span>卫生间 1</span>
-            <span class="light">无</span>
-          </div>
-          <div>
-            <span>卫生间 2</span>
-            <span class="light">否</span>
-          </div>
-          <div>
-            <span>阳台 1</span>
-            <span class="light">2203</span>
-          </div>
-        </div>
-
-        <div class="list-items" style="margin: 35px 10px">
-          <div>
-            <span>阳台 2</span>
-            <span class="light">2203</span>
-          </div>
-          <div>
-            <span>其他 1</span>
-            <span class="light">否</span>
-          </div>
-          <div>
-            <span>其他 2</span>
-            <span class="light">2203</span>
+            <span>总面积</span>
+            <span class="light">{{recepits.receipt55}}</span>
           </div>
         </div>
 
         <div class="list-items" style="margin: 35px 10px 0 10px">
           <div>
-            <span>总面积</span>
-            <span class="light">2203</span>
-          </div>
-          <div>
-            <span>施工确认单备注</span>
-            <span class="light">2203</span>
+            <span>验收确认单备注</span>
+            <span class="light">{{recepits.receipt60}}</span>
           </div>
         </div>
       </div>
@@ -281,9 +213,64 @@ export default {
 
     };
   },
-  props: ['data', 'type'],
+  props: ['data', 'type', 'recepits'],
   created() {
 
+  },
+  computed: {
+    completestatus(type) {
+      return function (type) {
+        let TYPE_MAP = {
+          1: '正常完成',
+          2: '改约日期',
+          3: '到场改约日期',
+          4: '电话取消',
+          5: '到场取消',
+          6: '未蓄水',
+          7: '防水层被覆盖',
+          8: '使用咖乐意外产品',
+          9: '施工质量不满足要求',
+          10: '防水层被破坏',
+          11: '其他——填写具体原因',
+        }
+
+        return TYPE_MAP[type]
+      }
+    },
+    sgtype(val) {
+      return function (val) {
+        let S_MAP = {
+          1: '隔层墙地施工',
+          2: '墙施工',
+          3: '地施工',
+          4: '同层底面施工',
+          5: '同层墙地施工'
+        }
+
+        return S_MAP[Number(val)]
+      }
+    },
+    ystype(val) {
+      return function (val) {
+        let S_MAP = {
+          1: '面层验收',
+          2: '同层排水底层验收',
+        }
+
+        return S_MAP[Number(val)]
+      }
+    },
+    areaName(data) {
+      return function (data) {
+        const TYPE_MAP = {
+          1: '厨房',
+          2: '卫生间',
+          3: '阳台',
+          4: '其他'
+        }
+        return TYPE_MAP[data.type] + ' ' + data.pos
+      }
+    },
   },
   methods: {
 

@@ -106,7 +106,8 @@ export default {
             //   return Message.error(data.data)
             // }
 
-            this.$router.push({ path: this.redirect || '/' })
+            // this.$router.push({ path: this.redirect || '/' })
+            this.$router.push({ path: '/' })
             bus.$emit('login')
           }).catch(() => {
             this.loading = false

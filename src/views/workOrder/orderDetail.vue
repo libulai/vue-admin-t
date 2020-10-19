@@ -90,6 +90,8 @@
 
 <script>
 import moment from 'moment'
+import bus from '@/utils/bus'
+
 export default {
   name: 'OrderDetail',
   data() {
@@ -182,6 +184,7 @@ export default {
     },
     edit(id) {
       this.$router.push({ name: `OrderEdit`, query:{id} })
+      // bus.$emit('editOrder', {id})
     },
     // detail(id, ttype) {
     //   this.$router.push({ name: `OrderMangerDetail`, query: { id, detailType: 4} })

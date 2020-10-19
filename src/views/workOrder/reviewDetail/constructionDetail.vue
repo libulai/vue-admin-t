@@ -7,15 +7,15 @@
         <div class="list-items">
           <div>
             <span>施工地址</span>
-            <span class="light">{{data.communityname + data.address}}</span>
+            <span class="light">{{data.address}}</span>
           </div>
           <div>
             <span>施工户型</span>
             <div class="rooms">
-              <span class="light">{{data.receipt20}} 厨</span>
-              <span class="light">{{data.receipt21}} 卫</span>
-              <span class="light">{{data.receipt22}} 阳台</span>
-              <span class="light">{{data.receipt23}} 其他</span>
+              <span class="light">{{data.Receipt20}} 厨</span>
+              <span class="light">{{data.Receipt21}} 卫</span>
+              <span class="light">{{data.Receipt22}} 阳台</span>
+              <span class="light">{{data.Receipt23}} 其他</span>
             </div>
           </div>
         </div>
@@ -83,7 +83,7 @@
         <div class="list-items" style="margin: 35px 10px 0 10px">
           <div>
             <span>施工工艺</span>
-            <span class="light">{{sgtype(data.sgtype)}}</span>
+            <span class="light">{{data.sgtype}}</span>
           </div>
           <div>
             <span>施工详情单备注</span>
@@ -127,118 +127,31 @@
     <div class="basic-info">
       <h4>安装信息</h4>
       <div>
-        <div class="list-items">
-          <div>
-            <span>厨房 1</span>
-            <span class="light">无</span>
-          </div>
-          <div>
-            <span>厨房 2</span>
-            <span class="light">2010-02-02</span>
-          </div>
-          <div>
-            <span>卫生间 1</span>
-            <span class="light">无</span>
-          </div>
-        </div>
-
-        <div class="list-items" style="margin: 35px 10px">
-          <div>
-            <span>卫生间 2</span>
-            <span class="light">否</span>
-          </div>
-          <div>
-            <span>阳台 1</span>
-            <span class="light">2203</span>
-          </div>
-          <div>
-            <span>阳台 2</span>
-            <span class="light">2203</span>
-          </div>
-        </div>
-
-        <div class="list-items" style="margin: 35px 10px 0 10px">
-          <div>
-            <span>其他 1</span>
-            <span class="light">否</span>
-          </div>
-          <div>
-            <span>其他 2</span>
-            <span class="light">2203</span>
+        <div class="list-items items-pad">
+          <div v-for="i in recepits.klOrderReceiptAreas">
+            <span>{{areaName(i)}}</span>
+            <span class="light">{{i.area}}</span>
           </div>
           <div>
             <span>总面积</span>
-            <span class="light">2203</span>
+            <span class="light">{{recepits.receipt51}}</span>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- <div class="basic-info">
-      <h4>保护层</h4>
-      <div>
-        <div class="list-items">
-          <div>
-            <span>是否做保护层</span>
-            <span class="light">{{data.receipt && data.receipt.receipt52}}</span>
-          </div>
-          <div>
-            <span>厨房 1</span>
-            <span class="light">无</span>
-          </div>
-          <div>
-            <span>厨房 2</span>
-            <span class="light">2010-02-02</span>
-          </div>
-        </div>
-
-        <div class="list-items" style="margin: 35px 10px">
-          <div>
-            <span>卫生间 1</span>
-            <span class="light">无</span>
-          </div>
-          <div>
-            <span>卫生间 2</span>
-            <span class="light">否</span>
-          </div>
-          <div>
-            <span>阳台 1</span>
-            <span class="light">2203</span>
-          </div>
-        </div>
-
-        <div class="list-items" style="margin: 35px 10px 0 10px">
-          <div>
-            <span>阳台 2</span>
-            <span class="light">2203</span>
-          </div>
-          <div>
-            <span>其他 1</span>
-            <span class="light">否</span>
-          </div>
-          <div>
-            <span>其他 2</span>
-            <span class="light">2203</span>
-          </div>
-        </div>
-      </div>
-    </div> -->
-
     <div class="basic-info">
       <h4>实际物料使用量</h4>
       <div>
         <div class="list-items">
-          <div>
-            <span>物料 1</span>
-            <span class="light">2 桶/组</span>
+          <div v-for="i in products" :key="i.comproductid">
+            <span>{{product(i)}}</span>
+            <span class="light">{{i.num}} 桶/组</span>
           </div>
-          <div>
-            <span>物料 2</span>
-            <span class="light">2 桶/组</span>
-          </div>
+         
           <div>
             <span>施工确认单备注</span>
-            <span class="light">2010-02-02</span>
+            <span class="light">{{recepits.receipt60}}</span>
           </div>
         </div>
       </div>
@@ -252,12 +165,13 @@ export default {
   data() {
     return {
       bg1: require('@/assets/pic/demo.png'),
-      list1: [require('@/assets/pic/demo.png')]
+      list1: [require('@/assets/pic/demo.png')],
+      products:[]
     };
   },
-  props: ['data', 'type'],
+  props: ['data', 'type', 'recepits'],
   created() {
-
+    this.init3()
   },
   computed: {
     sgtype(val) {
@@ -272,10 +186,33 @@ export default {
 
         return S_MAP[Number(val)]
       }
+    },
+    areaName(data) {
+      return function (data) {
+        const TYPE_MAP = {
+          1: '厨房',
+          2: '卫生间',
+          3: '阳台',
+          4: '其他'
+        }
+        return TYPE_MAP[data.type] + ' ' + data.pos
+      }
+    },
+    product(data) {
+      return function (data) {
+        return data.productname + ' ' + data.specs
+      }
     }
   },
   methods: {
+    async init3() {
+      let rs = await this.$http({
+        url: `/kl/klorderproductlist?orderid=${this.data.orderid}`,
+        method: "get",
+      });
 
+      this.products = rs.data
+    },
   },
 };
 </script>
@@ -331,5 +268,14 @@ export default {
   border-bottom: 1px solid #f1f1f1;
   padding-bottom: 30px;
   margin-bottom: 30px;
+}
+
+.items-pad {
+  width: 811px;
+  display: flex;
+  flex-wrap: wrap;
+  & > div {
+    margin-bottom: 15px;
+  }
 }
 </style>

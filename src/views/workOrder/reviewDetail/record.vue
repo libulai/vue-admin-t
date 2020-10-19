@@ -7,31 +7,31 @@
       <div>
         <div class="list-items">
           <div>
-            <span>联系人A</span>
-            <span class="light">无</span>
+            <span>联系人 A</span>
+            <span class="light">{{recepits.receipt56}}</span>
           </div>
-          <div>
+          <!-- <div>
             <span>联系方式A</span>
             <span class="light">2010-02-02</span>
-          </div>
+          </div> -->
           <div>
             <span>A积分</span>
-            <span class="light">无</span>
+            <span class="light">{{recepits.receipt58}}</span>
           </div>
         </div>
 
         <div class="list-items" style="margin: 35px 10px">
           <div>
-            <span>联系人B</span>
-            <span class="light">否</span>
+            <span>联系人 C</span>
+            <span class="light">{{recepits.receipt57}}</span>
           </div>
-          <div>
+          <!-- <div>
             <span>联系方式B</span>
             <span class="light">2203</span>
-          </div>
+          </div> -->
           <div>
-            <span>B积分</span>
-            <span class="light">2203</span>
+            <span>C积分</span>
+            <span class="light">{{recepits.receipt59}}</span>
           </div>
         </div>
 
@@ -42,22 +42,22 @@
           </div>
           <div>
             <span>数量</span>
-            <span class="light">2203</span>
+            <span class="light"></span>
           </div>
           <div>
             <span>核销类型</span>
-            <span class="light">2203</span>
+            <span class="light"></span>
           </div>
         </div>
 
         <div class="list-items">
           <div>
             <span>质保卡号</span>
-            <span class="light">无</span>
+            <span class="light">{{recepits.receipt8}}</span>
           </div>
           <div>
             <span>质保时间</span>
-            <span class="light">2010-02-02</span>
+            <span class="light"></span>
           </div>
         </div>
       </div>
@@ -73,7 +73,7 @@ export default {
       goods:{}
     };
   },
-  props: ['data', 'type'],
+  props: ['data', 'type', 'recepits'],
   watch:{
     data(val){
       this.init()

@@ -3,7 +3,7 @@ import request from '@/utils/request'
 export function login({username, password}) {
   // export function login(data) {
   return request({
-    url: `/weixingservice/login?usercode=${username}&passwd=${password}`,
+    url: `/login?usercode=${username}&passwd=${password}`,
     method: 'get'
   })
 
@@ -24,7 +24,7 @@ export function getInfo(token) {
 
 export function logout() {
   return request({
-    url: `/weixingservice/loginout`,
+    url: `/loginout`,
     method: 'get'
   })
 }

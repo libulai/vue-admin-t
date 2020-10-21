@@ -442,7 +442,7 @@ export default {
 .right {
   display: flex;
   .drop2 {
-    margin: 0 60px;
+    margin: 0 50px;
   }
   .el-dropdown {
     color: #fff !important;

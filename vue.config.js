@@ -24,7 +24,8 @@ module.exports = {
    * In most cases please use '/' !!!
    * Detail: https://cli.vuejs.org/config/#publicpath
    */
-  publicPath: '/',
+  publicPath: './',
+  // publicPath: '/',
   outputDir: 'dist',
   assetsDir: 'static',
   lintOnSave: false,
@@ -36,12 +37,12 @@ module.exports = {
       warnings: false,
       errors: true
     },
-    before: require('./mock/mock-server.js'),
+    // before: require('./mock/mock-server.js'),
     proxy: {
       "/weixingservice": {
         // target: "http://47.99.60.102:9080", // 目标代理接口地址
         target: "http://192.168.202.91:8082", // 目标代理接口地址
-        secure: false,
+        // secure: false,
         changeOrigin: true, // 开启代理，在本地创建一个虚拟服务端
         // ws: true, // 是否启用websockets
         // http://oaxc.weixing.cn:9080/weixingservice/admin/menusub?menuid=

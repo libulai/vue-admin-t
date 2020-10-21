@@ -10,8 +10,8 @@
             <span class="light">{{data.fwpzhname}}</span>
           </div>
           <div>
-            <span>客户类型</span>
-            <span class="light">{{data.customertype}}</span>
+            <span>装饰公司</span>
+            <span class="light">-</span>
           </div>
           <div>
             <span>预约类型</span>
@@ -30,10 +30,10 @@
             </div>
           </div>
 
-          <!-- <div>
+          <div>
             <span>预估施工面积</span>
             <span class="light">- m²</span>
-          </div> -->
+          </div>
         </div>
 
         <div class="list-items">
@@ -49,7 +49,7 @@
             <span>施工类型</span>
             <span class="light">{{data.sgtype}}</span>
           </div>
-          <div v-if="data.pttype=='外部验收单'">
+           <div v-if="data.pttype=='外部验收单'">
             <span>验收类型</span>
             <span class="light">{{data.ystype}}</span>
           </div>
@@ -63,17 +63,13 @@
       <h4>工程信息</h4>
       <div>
         <div class="list-items">
-          <!-- <div>
+          <div>
             <span>施工物料模板</span>
             <span class="light">-</span>
-          </div> -->
+          </div>
           <div>
             <span>预约时间</span>
             <span class="light">{{data.reservedate}}</span>
-          </div>
-          <div>
-            <span>具体时间</span>
-            <span class="light">{{times(data.reservetime)}}</span>
           </div>
           <!-- <div>
             <span>现场照片</span>
@@ -119,16 +115,6 @@ export default {
     //     return MAP[val]
     //   }
     // },
-    times(type) {
-      return function (type) {
-        let times = {
-          1: "上午",
-          2: "下午",
-          3: '无'
-        }
-        return times[type]
-      }
-    },
     pttypee(val) {
       return function (val) {
         const MAP = {

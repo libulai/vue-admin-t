@@ -62,8 +62,8 @@ export default {
     }
     return {
       loginForm: {
-        username: 'zoo111',
-        password: '111111'
+        username: '',
+        password: ''
       },
       loginRules: {
         username: [{ required: true, trigger: 'blur', message: "请输入用户名", }],
@@ -72,7 +72,7 @@ export default {
       loading: false,
       passwordType: 'password',
       redirect: undefined,
-      title: require('@/assets/pic/loginlogo.png'),
+      title: require('@/assets/pic/logo.png'),
       img: require('@/assets/pic/bg.png')
     }
   },

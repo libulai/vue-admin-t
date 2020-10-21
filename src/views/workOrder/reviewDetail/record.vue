@@ -10,10 +10,10 @@
             <span>联系人 A</span>
             <span class="light">{{recepits.receipt56}}</span>
           </div>
-          <!-- <div>
-            <span>联系方式A</span>
-            <span class="light">2010-02-02</span>
-          </div> -->
+          <div>
+            <span>联系方式 A</span>
+            <span class="light">{{recepits.receipt12}}</span>
+          </div>
           <div>
             <span>A积分</span>
             <span class="light">{{recepits.receipt58}}</span>
@@ -25,28 +25,28 @@
             <span>联系人 C</span>
             <span class="light">{{recepits.receipt57}}</span>
           </div>
-          <!-- <div>
-            <span>联系方式B</span>
-            <span class="light">2203</span>
-          </div> -->
+          <div>
+            <span>联系方式 C</span>
+            <span class="light">{{recepits.receipt50}}</span>
+          </div>
           <div>
             <span>C积分</span>
             <span class="light">{{recepits.receipt59}}</span>
           </div>
         </div>
 
-        <div class="list-items" style="margin: 35px 10px">
+        <div class="list-items" style="margin: 35px 10px" v-for="i in goods">
           <div>
             <span>物料名称</span>
-            <span class="light">{{goods.materialname}}</span>
+            <span class="light">{{i.productname}}</span>
           </div>
           <div>
             <span>数量</span>
-            <span class="light"></span>
+            <span class="light">{{i.num}}</span>
           </div>
           <div>
             <span>核销类型</span>
-            <span class="light"></span>
+            <span class="light">{{i.code?'防伪码核销':'手动核销'}}</span>
           </div>
         </div>
 
@@ -57,7 +57,7 @@
           </div>
           <div>
             <span>质保时间</span>
-            <span class="light"></span>
+            <span class="light">{{ctime(data.completetime)}}</span>
           </div>
         </div>
       </div>
@@ -67,16 +67,27 @@
 </template>
 
 <script>
+import moment from 'moment'
+
 export default {
   data() {
     return {
-      goods:{}
+      goods: []
     };
   },
   props: ['data', 'type', 'recepits'],
-  watch:{
-    data(val){
+  watch: {
+    data(val) {
       this.init()
+    }
+  },
+  computed: {
+    ctime(data) {
+      return function (data) {
+        console.log(data)
+        if (data) return moment(data).add(5, 'years').calendar()
+        else return ''
+      }
     }
   },
   created() {
@@ -86,11 +97,11 @@ export default {
     async init() {
       let id = this.$route.query.id
       let rs = await this.$http({
-        url: `/kl/klordermateriallist?orderid=${id}`,
+        url: `/kl/klorderproductlist?orderid=${id}`,
         method: "get"
       });
 
-      this.goods = rs[0]
+      this.goods = rs.data
     }
   },
 };

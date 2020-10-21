@@ -6,7 +6,7 @@
           <el-tab-pane label="预约信息" name="first">
             <appointment :data="data" :type="type" />
           </el-tab-pane>
-          <el-tab-pane label="工单状态" name="second" v-if="type!=1 && type!=4">
+          <el-tab-pane label="工单日志" name="second" v-if="type!=1 && type!=4">
             <order-state :data="data" :type="type"/>
           </el-tab-pane>
           <el-tab-pane label="施工详情单" name="third" v-if="type!=1 && type!=4 && (ttype=='施工单' || ttype==292)">

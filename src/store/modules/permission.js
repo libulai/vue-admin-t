@@ -124,6 +124,7 @@ const mutations = {
           let ppath = ''
 
           children.forEach(i => {
+            if(!i.menuurl) i.menuurl = '/errorPath'
             if (settingMenu.includes(i.menuid)) ppath = '/setting'
             else ppath = '/' + i.menuurl.split('/')[1]
 

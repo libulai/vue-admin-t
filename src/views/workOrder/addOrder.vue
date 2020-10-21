@@ -102,12 +102,12 @@
                     <el-radio v-model="form.dst" label="否">否</el-radio>
                   </el-form-item>
                 </div>
-                <div>
+                <!-- <div>
                   <el-form-item label="服务范围" prop="pressurerangeflag">
                     <el-radio v-model="form.pressurerangeflag" :label="0">范围之内</el-radio>
                     <el-radio v-model="form.pressurerangeflag" :label="1">范围之外</el-radio>
                   </el-form-item>
-                </div>
+                </div> -->
                 <div class="bz">
                   <el-form-item label="备注" prop='orderdesc'>
                     <el-input type="textarea" :autosize="{ minRows: 6, maxRows: 10}" placeholder="请输入内容" v-model="form.orderdesc"></el-input>
@@ -439,7 +439,7 @@ export default {
     padding: 13px 17px;
     border-radius: 4px;
     border: 1px solid #e6e6e6;
-    height: 380px;
+    height: 360px;
     ul {
       margin-top: 15px;
       li {

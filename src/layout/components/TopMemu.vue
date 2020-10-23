@@ -7,7 +7,9 @@
           <i class="el-icon-arrow-down el-icon--right"></i>
         </el-button>
         <el-dropdown-menu slot="dropdown" class="dropdown">
-          <div></div>
+          <div class="qr">
+            <img :src="qr" alt="">
+          </div>
         </el-dropdown-menu>
       </el-dropdown>
 
@@ -155,6 +157,7 @@ export default {
       dialog1: false,
       logo1: require("@/assets/pic/bussines.png"),
       logo2: require("@/assets/pic/admin.png"),
+      qr: require("@/assets/pic/qrcode.png"),
       header: require("@/assets/pic/touxiang.png"),
       compcony: [],
       role: [],
@@ -475,5 +478,17 @@ export default {
 .el-dropdown-menu {
   max-height: 450px !important;
   overflow: auto;
+}
+
+.qr{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  width: 100%;
+  img{
+    width: 85%;
+    // height: 100%;
+  }
 }
 </style>

@@ -85,8 +85,8 @@ const mutations = {
 
         let data = rs.data
 
-
-        console.log(data)
+        // console.log(data)
+        // console.log(process.env.NODE_ENV)
 
         const ROUTERMAP = {
           8: import('@/views/setting/role'),
@@ -100,7 +100,6 @@ const mutations = {
           17: import('@/views/basic/customer'),
           425: import('@/views/basic/attribute'),
           428: import('@/views/basic/iProducts'),
-          429: import('@/views/basic/cProducts'),
 
           421: import('@/views/score/settingA'),
           422: import('@/views/score/settingC'),
@@ -115,8 +114,10 @@ const mutations = {
           418: import('@/views/workOrder/orderDetail'),
           419: import('@/views/workOrder/qualityOrder'),
         }
-
-
+        
+        // 429: import('@/views/basic/cProducts'), // 开发环境
+        // 430: import('@/views/basic/cProducts'), // 生产环境
+        ROUTERMAP[process.env.NODE_ENV==="development"?429:430] = import('@/views/basic/cProducts')
 
         data.forEach(item => {
           let children = item.subMenus

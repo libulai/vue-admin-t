@@ -9,9 +9,11 @@
             <i class="el-icon-arrow-down el-icon--right"></i>
           </el-button>
           <el-dropdown-menu slot="dropdown">
-            <el-dropdown-item command="1">昨日</el-dropdown-item>
+            <el-dropdown-item command="1">明日</el-dropdown-item>
             <el-dropdown-item command="2">今日</el-dropdown-item>
-            <el-dropdown-item command="3">近7日</el-dropdown-item>
+            <el-dropdown-item command="3">昨日</el-dropdown-item>
+            <el-dropdown-item command="4">近7天</el-dropdown-item>
+            <el-dropdown-item command="5">近30天</el-dropdown-item>
           </el-dropdown-menu>
         </el-dropdown>
       </div>
@@ -58,7 +60,7 @@
       </div>
       <div class="content-wrap">
         <div class="content-title">
-          <h3>- 昨日新增通路</h3>
+          <h3>- {{statuss}}新增通路</h3>
         </div>
         <div class="table overflow">
           <div class="tr tr-t">
@@ -96,7 +98,7 @@ export default {
   computed: {
     ...mapGetters(["name"]),
     statuss() {
-      return { 1: '昨日', 2: '今日', 3: '近7天' }[this.status]
+      return { 1: '明日', 2: '今日', 3: '昨日', 4: "近7日", 5: "近30日" }[this.status]
     }
   },
   created() {

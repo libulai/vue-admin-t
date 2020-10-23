@@ -76,9 +76,9 @@
 
     <el-dialog :title="title" :visible.sync="dialog" class="dialog" :close-on-click-modal="false" @closed="clearForm">
       <el-form :model="form" :rules="rules" ref="form" label-width="100px" class="dialog-form">
-        <el-form-item label="公司">
+        <!-- <el-form-item label="公司">
           <span class="text">上海分公司</span>
-        </el-form-item>
+        </el-form-item> -->
         <el-form-item label="部门" prop="deptid">
           <el-select v-model="form.deptid" placeholder="请选择">
             <el-option v-for="item in deps" :key="item.deptid" :label="item.deptname" :value="item.deptid"></el-option>
@@ -131,9 +131,9 @@
 
     <el-dialog :title="title2" :visible.sync="dialog2" class="dialog" :close-on-click-modal="false" @closed="clearForm(2)">
       <el-form :model="form2" :rules="rules2" ref="form2" label-width="100px" class="dialog-form">
-        <el-form-item label="公司">
+        <!-- <el-form-item label="公司">
           <span class="text">上海分公司</span>
-        </el-form-item>
+        </el-form-item> -->
         <!-- <el-form-item label="姓名">
           <span class="text">zoo</span>
         </el-form-item> -->

@@ -27,8 +27,8 @@
         </el-tabs>
 
         <div class="back">
-          <el-button type="warning" size="medium" @click="produce('294')" v-if="data.pttype==292 && type==4">生成售后单</el-button>
-          <el-button type="warning" size="medium" @click="produce('295')" v-if="data.pttype==292 && type==4">生成维修单</el-button>
+          <el-button type="warning" size="medium" @click="produce('施工单')" v-if="data.pttype=='施工单' && type==4">生成售后单</el-button>
+          <el-button type="warning" size="medium" @click="produce('施工单')" v-if="data.pttype=='施工单' && type==4">生成维修单</el-button>
           <el-button class=" defalut-btn" size="medium" @click="back" icon="el-icon-back">返回</el-button>
         </div>
       </div>
@@ -75,6 +75,7 @@ export default {
   },
   methods: {
     async initData(data) {
+      debugger
       // if (!this.firstLoad) return
       // this.firstLoad = false
       this.type = data.detailType

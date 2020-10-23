@@ -36,9 +36,9 @@
 
     <el-dialog :title="title" :visible.sync="dialog" class="dialog" :close-on-click-modal="false" @closed="clearForm">
       <el-form :model="form" :rules="rules" ref="form" label-width="100px" class="dialog-form">
-        <el-form-item label="公司">
+        <!-- <el-form-item label="公司">
           <span class="text">上海分公司</span>
-        </el-form-item>
+        </el-form-item> -->
         <el-form-item label="部门编号" prop="deptcode">
           <el-input v-model="form.deptcode" placeholder="请输入"></el-input>
         </el-form-item>

@@ -78,13 +78,12 @@
                   </el-form-item>
                 </div>
                 <div class="select">
-
-                  <el-form-item label="施工类型" prop="sgtype" v-show="form.pttype=='施工单'">
+                  <el-form-item label="施工类型" prop="sgtype" v-if="form.pttype=='施工单'">
                     <el-select v-model="form.sgtype" placeholder="请选择">
                       <el-option v-for="item in sgtypes" :key="item" :label="item" :value="item"></el-option>
                     </el-select>
                   </el-form-item>
-                  <el-form-item label="验收类型" prop="ystype" v-show="form.pttype=='外部验收单'">
+                  <el-form-item label="验收类型" prop="ystype" v-if="form.pttype=='外部验收单'">
                     <el-select v-model="form.ystype" placeholder="请选择">
                       <el-option v-for="item in ystypes" :key="item" :label="item" :value="item"></el-option>
                     </el-select>
@@ -95,6 +94,9 @@
                     <el-input v-model.number="form.Receipt22" placeholder="数字"></el-input>阳台
                     <el-input v-model.number="form.Receipt23" placeholder="数字"></el-input>其他
                   </el-form-item>
+                  <!-- <el-form-item label="&nbps" class="other" prop="Receipt20">
+                    <el-input v-model.number="form.Receipt21" placeholder="数字"></el-input>卫
+                  </el-form-item> -->
                 </div>
                 <div>
                   <el-form-item label="挡水台" prop="dst" v-if="form.pttype=='施工单'">
@@ -205,10 +207,10 @@ export default {
         pressurerangeflag: 0,
         customertype: '业主',
         orderdesc: '',
-        Receipt20: '',
-        Receipt21: '',
-        Receipt22: '',
-        Receipt23: '',
+        Receipt20: '0',
+        Receipt21: '0',
+        Receipt22: '0',
+        Receipt23: '0',
         areaid: '',
         dst: '是',
         pttype: '',
@@ -218,12 +220,35 @@ export default {
         sgtype: ''
       },
       rules: {
-        deptcode: [
-          { required: true, message: "请输入部门编号", trigger: "blur" },
-          { type: 'number', message: '请输入数字' }
+        contacterphone: [
+          { required: true, message: "请输入联系电话", trigger: "blur" },
         ],
-        deptname: [
-          { required: true, message: "请输入部门名称", trigger: "blur" },
+        customername: [
+          { required: true, message: "请输入预约人", trigger: "blur" },
+        ],
+        communityname: [
+          { required: true, message: "请输入小区名称", trigger: "blur" },
+        ],
+        address: [
+          { required: true, message: "请输入地址-门牌号", trigger: "blur" },
+        ],
+        areaid: [
+          { required: true, message: "请选择区域", trigger: "blur" },
+        ],
+        pttype: [
+          { required: true, message: "请选择服务类型", trigger: "blur" },
+        ],
+        reservedate: [
+          { required: true, message: "请选择预约上门日期", trigger: "blur" },
+        ],
+        reservetime: [
+          { required: true, message: "请选择具体时间", trigger: "blur" },
+        ],
+        sgtype: [
+          { required: true, message: "请选择施工类型", trigger: "blur" },
+        ],
+        ystype: [
+          { required: true, message: "请选择验收类型", trigger: "blur" },
         ],
       },
     };
@@ -315,7 +340,7 @@ export default {
         method: "get"
       });
 
-      console.log(rs.data,'&&^^')
+      console.log(rs.data, '&&^^')
 
       this.pttype = rs.data.map(i => {
         return {
@@ -371,22 +396,27 @@ export default {
       this.phone = {}
     },
     async save() {
-      let url = 'doklordersave'
-      if (this.$route.query.detailType == 4) url = 'doklordermod'
+      this.$refs.form.validate(async (valid) => {
+        if (valid) {
+          let url = 'doklordersave'
+          if (this.$route.query.detailType == 4) url = 'doklordermod'
 
-      let rs = await this.$http({
-        url: `/kl/${url}`,
-        method: "post",
-        data: this.form
+          let rs = await this.$http({
+            url: `/kl/${url}`,
+            method: "post",
+            data: this.form
+          });
+
+          if (rs.success == 'true') {
+            if (!this.right) this.$router.go(-1)
+            else this.$router.push('/order/manage')
+            this.$message({
+              message: '保存成功',
+              type: 'success'
+            })
+          }
+        }
       });
-
-      if (rs.success == 'true') {
-        if (!this.right) this.$router.go(-1)
-        this.$message({
-          message: '保存成功',
-          type: 'success'
-        })
-      }
     }
   },
   beforeDestroy() {

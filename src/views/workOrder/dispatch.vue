@@ -74,7 +74,7 @@
           </el-table-column>
           <el-table-column align="center" prop="created_at" label="服务类型">
             <template slot-scope="scope">
-              <span>{{ pttypee(scope.row.pttype) }}</span>
+              <span>{{ scope.row.pttype }}</span>
             </template>
           </el-table-column>
           <el-table-column align="center" prop="created_at" label="状态">

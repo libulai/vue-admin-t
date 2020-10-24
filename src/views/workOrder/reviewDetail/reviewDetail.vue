@@ -75,7 +75,6 @@ export default {
   },
   methods: {
     async initData(data) {
-      debugger
       // if (!this.firstLoad) return
       // this.firstLoad = false
       this.type = data.detailType

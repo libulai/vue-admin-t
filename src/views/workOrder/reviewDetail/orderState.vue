@@ -28,8 +28,6 @@
 </template>
 
 <script>
-  import { getList } from "@/api/table";
-
   export default {
     data() {
       return {
@@ -42,11 +40,7 @@
     },
     methods: {
       fetchData() {
-        this.listLoading = true;
-        getList().then((response) => {
-          this.list = response.data.items;
-          this.listLoading = false;
-        });
+       
       }
     },
   };

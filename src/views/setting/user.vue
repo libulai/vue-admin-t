@@ -61,7 +61,7 @@
         <el-form-item label="登陆账号" prop="usercode">
           <el-input v-model="form.usercode" placeholder="请输入用户登录账号"></el-input>
         </el-form-item>
-        <el-form-item label="登陆密码" prop="passwd">
+        <el-form-item label="登陆密码" prop="passwd" v-if="!isModify">
           <el-input v-model="form.passwd" placeholder="请输入用户登录密码"></el-input>
         </el-form-item>
         <el-form-item label="用户姓名" prop="username">

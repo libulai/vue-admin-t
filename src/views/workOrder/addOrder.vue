@@ -465,7 +465,7 @@ export default {
   .right {
     display: flex;
     flex-direction: column;
-    width: 300px !important;
+    width: 270px !important;
     padding: 13px 17px;
     border-radius: 4px;
     border: 1px solid #e6e6e6;

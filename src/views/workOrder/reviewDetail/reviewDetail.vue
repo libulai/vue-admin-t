@@ -6,9 +6,9 @@
           <el-tab-pane label="预约信息" name="first">
             <appointment :data="data" :type="type" />
           </el-tab-pane>
-          <el-tab-pane label="工单日志" name="second" v-if="type!=1 && type!=4">
+          <!-- <el-tab-pane label="工单日志" name="second" v-if="type!=1 && type!=4">
             <order-state :data="data" :type="type"/>
-          </el-tab-pane>
+          </el-tab-pane> -->
           <el-tab-pane label="施工详情单" name="third" v-if="type!=1 && type!=4 && (ttype=='施工单' || ttype==292)">
             <construction-detail :data="data" :type="type" :recepits="recepits"/>
           </el-tab-pane>
@@ -29,7 +29,7 @@
         <div class="back">
           <el-button type="warning" size="medium" @click="produce('施工单')" v-if="data.pttype=='施工单' && type==4">生成售后单</el-button>
           <el-button type="warning" size="medium" @click="produce('施工单')" v-if="data.pttype=='施工单' && type==4">生成维修单</el-button>
-          <el-button class=" defalut-btn" size="medium" @click="back" icon="el-icon-back">返回</el-button>
+          <el-button class="defalut-btn" size="medium" @click="back" icon="el-icon-back">返回</el-button>
         </div>
       </div>
     </div>

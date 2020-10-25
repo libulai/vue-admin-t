@@ -154,6 +154,7 @@
           </div>
 
           <div style="margin-top:20px;">
+            <el-button class="com-btn" @click="back" v-if="!right">取消</el-button>
             <el-button type="primary" class="com-btn" @click="save">保存</el-button>
             <el-button type="info" class="com-btn" @click="reset" v-if="right">重置</el-button>
           </div>
@@ -164,372 +165,375 @@
 </template>
 
 <script>
-import bus from '@/utils/bus'
-import moment from 'moment'
+  import bus from '@/utils/bus'
+  import moment from 'moment'
 
-export default {
-  name: 'AddOrder',
-  data() {
-    return {
-      right: false,
-      loading: false,
-      firstLoad: true,
-      title: '',
-      areas: [],
-      pttype: [],
-      times: [{ id: 1, value: '上午' }, { id: 2, value: '下午' }, { id: 3, value: '无' }],
-      // sgtypes: [{ id: '1', value: '墙地施工' }, { id: '2', value: '墙施工' }, { id: '3', value: '地施工' }, { id: '4', value: '同层底面施工' }],
-      sgtypes: ['墙地施工', '墙施工', '地施工', '同层底面施工'],
-      // ystypes: [{ id: '1', value: '面层验收' }, { id: '2', value: '同层排水底层验收' }],
-      ystypes: ['面层验收', '同层排水底层验收'],
-      phone: {
-        contacter: "--",
-        contacterphone: '--',
-        totalscore: '--',
-        customertype: '--',
-        coopdec: '--',
-        coopdealer: '--',
-        pthistorydesc: '--'
-      },
-      // types: ['施工单', '预约单'],
-      // type: '施工单',
-      form: {
-        ordercode: '',
-        communityname: '',
-        address: '',
-        ownername: '',
-        ownerphone: '',
-        contacterphone: '',
-        customername: '',
-        reservedate: '',
-        reservetime: '',
-        fwpzhname: '',
-        pressurerangeflag: 0,
-        customertype: '业主',
-        orderdesc: '',
-        Receipt20: '0',
-        Receipt21: '0',
-        Receipt22: '0',
-        Receipt23: '0',
-        areaid: '',
-        dst: '是',
-        pttype: '',
-        fwpzhstatus: 0,
-        fwpzhisnormal: '',
-        ystype: '',
-        sgtype: ''
-      },
-      rules: {
-        contacterphone: [
-          { required: true, message: "请输入联系电话", trigger: "blur" },
-        ],
-        customername: [
-          { required: true, message: "请输入预约人", trigger: "blur" },
-        ],
-        communityname: [
-          { required: true, message: "请输入小区名称", trigger: "blur" },
-        ],
-        address: [
-          { required: true, message: "请输入地址-门牌号", trigger: "blur" },
-        ],
-        areaid: [
-          { required: true, message: "请选择区域", trigger: "blur" },
-        ],
-        pttype: [
-          { required: true, message: "请选择服务类型", trigger: "blur" },
-        ],
-        reservedate: [
-          { required: true, message: "请选择预约上门日期", trigger: "blur" },
-        ],
-        reservetime: [
-          { required: true, message: "请选择具体时间", trigger: "blur" },
-        ],
-        sgtype: [
-          { required: true, message: "请选择施工类型", trigger: "blur" },
-        ],
-        ystype: [
-          { required: true, message: "请选择验收类型", trigger: "blur" },
-        ],
-      },
-    };
-  },
-  created() {
-    this.getOrderId()
-    this.initAras()
-    this.initDic()
+  export default {
+    name: 'AddOrder',
+    data() {
+      return {
+        right: false,
+        loading: false,
+        firstLoad: true,
+        title: '',
+        areas: [],
+        pttype: [],
+        times: [{ id: 1, value: '上午' }, { id: 2, value: '下午' }, { id: 3, value: '无' }],
+        // sgtypes: [{ id: '1', value: '墙地施工' }, { id: '2', value: '墙施工' }, { id: '3', value: '地施工' }, { id: '4', value: '同层底面施工' }],
+        sgtypes: ['墙地施工', '墙施工', '地施工', '同层底面施工'],
+        // ystypes: [{ id: '1', value: '面层验收' }, { id: '2', value: '同层排水底层验收' }],
+        ystypes: ['面层验收', '同层排水底层验收'],
+        phone: {
+          contacter: "--",
+          contacterphone: '--',
+          totalscore: '--',
+          customertype: '--',
+          coopdec: '--',
+          coopdealer: '--',
+          pthistorydesc: '--'
+        },
+        // types: ['施工单', '预约单'],
+        // type: '施工单',
+        form: {
+          ordercode: '',
+          communityname: '',
+          address: '',
+          ownername: '',
+          ownerphone: '',
+          contacterphone: '',
+          customername: '',
+          reservedate: '',
+          reservetime: '',
+          fwpzhname: '',
+          pressurerangeflag: 0,
+          customertype: '业主',
+          orderdesc: '',
+          Receipt20: '0',
+          Receipt21: '0',
+          Receipt22: '0',
+          Receipt23: '0',
+          areaid: '',
+          dst: '是',
+          pttype: '',
+          fwpzhstatus: 0,
+          fwpzhisnormal: '',
+          ystype: '',
+          sgtype: ''
+        },
+        rules: {
+          contacterphone: [
+            { required: true, message: "请输入联系电话", trigger: "blur" },
+          ],
+          customername: [
+            { required: true, message: "请输入预约人", trigger: "blur" },
+          ],
+          communityname: [
+            { required: true, message: "请输入小区名称", trigger: "blur" },
+          ],
+          address: [
+            { required: true, message: "请输入地址-门牌号", trigger: "blur" },
+          ],
+          areaid: [
+            { required: true, message: "请选择区域", trigger: "blur" },
+          ],
+          pttype: [
+            { required: true, message: "请选择服务类型", trigger: "blur" },
+          ],
+          reservedate: [
+            { required: true, message: "请选择预约上门日期", trigger: "blur" },
+          ],
+          reservetime: [
+            { required: true, message: "请选择具体时间", trigger: "blur" },
+          ],
+          sgtype: [
+            { required: true, message: "请选择施工类型", trigger: "blur" },
+          ],
+          ystype: [
+            { required: true, message: "请选择验收类型", trigger: "blur" },
+          ],
+        },
+      };
+    },
+    created() {
+      this.getOrderId()
+      this.initAras()
+      this.initDic()
 
-    let query = this.$route.query
-    if (!query.detailType) {
-      this.right = true
-      this.title = '新建工单'
-    } else {
-      if (query.detailType == 3) {
-        this.initnetworkOrder(query)
-        this.title = '网络预约单生成'
+      let query = this.$route.query
+      if (!query.detailType) {
+        this.right = true
+        this.title = '新建工单'
       } else {
-        this.getOrderDetail(query)
-        this.title = '编辑工单'
-      }
-    }
-
-    bus.$on('detail', rs => {
-      this.getOrderDetail(rs)
-    })
-  },
-  methods: {
-    async currentSave() {
-      this.loading = true;
-      let tom = moment().add(50, 'days').format('YYYY-MM-DD')
-      let yes = moment().add(-50, 'days').format('YYYY-MM-DD')
-      let search = {
-        startDate: yes,
-        endDate: tom,
-        address: '',
-        ordercode: '',
-        areaid: undefined,
-        pttype: '',
-        status: undefined,
-        trackusername: '',
-        rqbj: '',
-        completestatus: undefined
-      }
-
-      let rs = await this.$http({
-        url: `/kl/klorderlist`,
-        method: "post",
-        data: { ...search, pageIndex: 1 }
-      });
-
-      if (rs.data.length > 0) {
-        this.getOrderDetail({ id: rs.data[0].orderid })
-        this.sphone(rs.data[0].customerphone)
-      }
-
-      this.loading = false;
-    },
-    async sphone(val) {
-      if (!this.right) return
-      let rs = await this.$http({
-        url: `/admin/getcustomerbyphone?contacterphone=${val}`,
-        method: "get"
-      });
-
-      if (rs.data.length && rs.data.length > 0) {
-        this.phone = rs.data[0]
-      } else {
-        this.phone = {}
-      }
-
-      // console.log(rs)
-    },
-    initnetworkOrder(query) {
-      let data = JSON.parse(query.data)
-
-      for (let i in this.form) {
-        if (typeof data[i] !== 'undefined') this.form[i] = data[i]
-      }
-
-      this.form.customername = data.chatordercustomername
-      this.form.contacterphone = data.chatordercustomerphone
-      this.form.customertype = data.chatordercustomertype
-      console.log(data)
-    },
-    async initDic() {
-      let rs = await this.$http({
-        url: `/admin/dictionarylist?dictype=40`,
-        method: "get"
-      });
-
-      console.log(rs.data, '&&^^')
-
-      this.pttype = rs.data.map(i => {
-        return {
-          dicvalue: i.dicvalue,
-          dicid: String(i.dicid)
+        if (query.detailType == 3) {
+          this.initnetworkOrder(query)
+          this.title = '网络预约单生成'
+        } else {
+          this.getOrderDetail(query)
+          this.title = '编辑工单'
         }
+      }
+
+      bus.$on('detail', rs => {
+        this.getOrderDetail(rs)
       })
     },
-    async getOrderDetail(query) {
-      // if(!this.$store.state.permission.tabshift) return
-
-      this.loading = true
-      let rs = await this.$http({
-        url: `/kl/klorderdetail?orderid=${query.id}`,
-        method: "get",
-      });
-
-      this.loading = false
-      // this.$store.state.permission.tabshift = false
-
-      for (let i in this.form) {
-        this.form[i] = rs.data[0][i]
-      }
-
-      let customer = rs.data[0].customer
-      this.form.orderid = rs.data[0].orderid
-      this.form.contacterphone = customer.contacterphone
-      this.form.customername = customer.customername
-      this.form.customertype = customer.customertype
-    },
-    async getOrderId() {
-      let rs = await this.$http({
-        url: `/kl/getklordercode`,
-        method: "get",
-      });
-
-      this.form.ordercode = rs.data
-    },
-    async initAras() {
-      let rs = await this.$http({
-        url: `/admin/arealist`,
-        method: 'get'
-      });
-
-      this.areas = rs.data
-    },
-    reset() {
-      this.$refs.form.resetFields();
-      this.form.Receipt20 = ''
-      this.form.Receipt21 = ''
-      this.form.Receipt22 = ''
-      this.form.Receipt23 = ''
-      this.phone = {}
-    },
-    async save() {
-      this.$refs.form.validate(async (valid) => {
-        if (valid) {
-          let url = 'doklordersave'
-          if (this.$route.query.detailType == 4) url = 'doklordermod'
-
-          let rs = await this.$http({
-            url: `/kl/${url}`,
-            method: "post",
-            data: this.form
-          });
-
-          if (rs.success == 'true') {
-            if (!this.right) this.$router.go(-1)
-            else this.$router.push('/order/manage')
-            this.$message({
-              message: '保存成功',
-              type: 'success'
-            })
-          }
+    methods: {
+      back() {
+        this.$router.push(`/order/${this.$route.query.detailType==3?'network':'manage'}`)
+      },
+      async currentSave() {
+        this.loading = true;
+        let tom = moment().add(50, 'days').format('YYYY-MM-DD')
+        let yes = moment().add(-50, 'days').format('YYYY-MM-DD')
+        let search = {
+          startDate: yes,
+          endDate: tom,
+          address: '',
+          ordercode: '',
+          areaid: undefined,
+          pttype: '',
+          status: undefined,
+          trackusername: '',
+          rqbj: '',
+          completestatus: undefined
         }
-      });
+
+        let rs = await this.$http({
+          url: `/kl/klorderlist`,
+          method: "post",
+          data: { ...search, pageIndex: 1 }
+        });
+
+        if (rs.data.length > 0) {
+          this.getOrderDetail({ id: rs.data[0].orderid })
+          this.sphone(rs.data[0].customerphone)
+        }
+
+        this.loading = false;
+      },
+      async sphone(val) {
+        if (!this.right) return
+        let rs = await this.$http({
+          url: `/admin/getcustomerbyphone?contacterphone=${val}`,
+          method: "get"
+        });
+
+        if (rs.data.length && rs.data.length > 0) {
+          this.phone = rs.data[0]
+        } else {
+          this.phone = {}
+        }
+
+        // console.log(rs)
+      },
+      initnetworkOrder(query) {
+        let data = JSON.parse(query.data)
+
+        for (let i in this.form) {
+          if (typeof data[i] !== 'undefined') this.form[i] = data[i]
+        }
+
+        this.form.customername = data.chatordercustomername
+        this.form.contacterphone = data.chatordercustomerphone
+        this.form.customertype = data.chatordercustomertype
+        console.log(data)
+      },
+      async initDic() {
+        let rs = await this.$http({
+          url: `/admin/dictionarylist?dictype=40`,
+          method: "get"
+        });
+
+        console.log(rs.data, '&&^^')
+
+        this.pttype = rs.data.map(i => {
+          return {
+            dicvalue: i.dicvalue,
+            dicid: String(i.dicid)
+          }
+        })
+      },
+      async getOrderDetail(query) {
+        // if(!this.$store.state.permission.tabshift) return
+
+        this.loading = true
+        let rs = await this.$http({
+          url: `/kl/klorderdetail?orderid=${query.id}`,
+          method: "get",
+        });
+
+        this.loading = false
+        // this.$store.state.permission.tabshift = false
+
+        for (let i in this.form) {
+          this.form[i] = rs.data[0][i]
+        }
+
+        let customer = rs.data[0].customer
+        this.form.orderid = rs.data[0].orderid
+        this.form.contacterphone = customer.contacterphone
+        this.form.customername = customer.customername
+        this.form.customertype = customer.customertype
+      },
+      async getOrderId() {
+        let rs = await this.$http({
+          url: `/kl/getklordercode`,
+          method: "get",
+        });
+
+        this.form.ordercode = rs.data
+      },
+      async initAras() {
+        let rs = await this.$http({
+          url: `/admin/arealist`,
+          method: 'get'
+        });
+
+        this.areas = rs.data
+      },
+      reset() {
+        this.$refs.form.resetFields();
+        this.form.Receipt20 = ''
+        this.form.Receipt21 = ''
+        this.form.Receipt22 = ''
+        this.form.Receipt23 = ''
+        this.phone = {}
+      },
+      async save() {
+        this.$refs.form.validate(async (valid) => {
+          if (valid) {
+            let url = 'doklordersave'
+            if (this.$route.query.detailType == 4) url = 'doklordermod'
+
+            let rs = await this.$http({
+              url: `/kl/${url}`,
+              method: "post",
+              data: this.form
+            });
+
+            if (rs.success == 'true') {
+              if (!this.right) this.$router.go(-1)
+              else this.$router.push('/order/manage')
+              this.$message({
+                message: '保存成功',
+                type: 'success'
+              })
+            }
+          }
+        });
+      }
+    },
+    beforeDestroy() {
+      bus.$off('detail');//组件销毁时关闭监听
     }
-  },
-  beforeDestroy() {
-    bus.$off('detail');//组件销毁时关闭监听
-  }
-};
+  };
 </script>
 
 <style lang="scss" scoped>
-.content-box {
-  & > div {
-    display: flex;
-    .el-input,
-    .el-select,
-    .el-date-editor {
-      width: 18%;
-      margin-right: 30px;
+  .content-box {
+    &>div {
+      display: flex;
+      .el-input,
+      .el-select,
+      .el-date-editor {
+        width: 18%;
+        margin-right: 30px;
+      }
+    }
+
+    ::v-deep {
+      .el-form-item__label {
+        padding-right: 80px;
+      }
+      .el-form {
+        padding: 0 50px !important;
+      }
+      .el-form-item {
+        margin-bottom: 12px;
+      }
+      .el-input {
+        // width: 280px !important;
+      }
+      .el-form-item__label {
+        padding: 0 0 0 0 !important;
+      }
     }
   }
 
-  ::v-deep {
-    .el-form-item__label {
-      padding-right: 80px;
-    }
-    .el-form {
-      padding: 0 50px !important;
-    }
-    .el-form-item {
-      margin-bottom: 12px;
-    }
-    .el-input {
-      // width: 280px !important;
-    }
-    .el-form-item__label {
-      padding: 0 0 0 0 !important;
-    }
-  }
-}
-
-.content {
-  display: flex;
-  justify-content: space-between;
-  .left {
-    width: auto !important;
-  }
-  .right {
+  .content {
     display: flex;
-    flex-direction: column;
-    width: 270px !important;
-    padding: 13px 17px;
-    border-radius: 4px;
-    border: 1px solid #e6e6e6;
-    height: 360px;
-    ul {
-      margin-top: 15px;
-      li {
-        font-size: 14px;
-        color: #999;
-        border-radius: 4px;
-        padding: 10px 17px 10px 17px;
-        background: #ecf1ff;
-        margin-bottom: 10px;
-        span:first-child {
-          display: inline-block;
-          color: #444;
-          width: 120px;
+    justify-content: space-between;
+    .left {
+      width: auto !important;
+    }
+    .right {
+      display: flex;
+      flex-direction: column;
+      width: 270px !important;
+      padding: 13px 17px;
+      border-radius: 4px;
+      border: 1px solid #e6e6e6;
+      height: 360px;
+      ul {
+        margin-top: 15px;
+        li {
+          font-size: 14px;
+          color: #999;
+          border-radius: 4px;
+          padding: 10px 17px 10px 17px;
+          background: #ecf1ff;
+          margin-bottom: 10px;
+          span:first-child {
+            display: inline-block;
+            color: #444;
+            width: 120px;
+          }
         }
       }
     }
   }
-}
 
-.content-box {
-  .el-form {
-    padding: 0 10px !important;
-  }
-  .el-form-item__content {
-    & > .el-input {
-      width: 210px !important;
+  .content-box {
+    .el-form {
+      padding: 0 10px !important;
     }
-    .el-select {
-      width: 210px !important;
-      & > .el-input {
-        width: 100% !important;
+    .el-form-item__content {
+      &>.el-input {
+        width: 210px !important;
+      }
+      .el-select {
+        width: 210px !important;
+        &>.el-input {
+          width: 100% !important;
+        }
+      }
+    }
+
+    .other {
+      .el-input {
+        width: 65px !important;
+        margin-right: 13px !important;
+        margin-left: 25px;
+      }
+      .el-input:first-child {
+        margin-left: 0px !important;
       }
     }
   }
 
-  .other {
-    .el-input {
-      width: 65px !important;
-      margin-right: 13px !important;
-      margin-left: 25px;
-    }
-    .el-input:first-child {
-      margin-left: 0px !important;
+  el-form {
+    &>div {
+      margin-bottom: 10px;
     }
   }
-}
 
-el-form {
-  & > div {
-    margin-bottom: 10px;
+  .bz {
+    .el-form-item {
+      width: 100%;
+    }
   }
-}
 
-.bz {
-  .el-form-item {
-    width: 100%;
+  .el-input {
+    width: 100% !important;
   }
-}
-
-.el-input {
-  width: 100% !important;
-}
 </style>

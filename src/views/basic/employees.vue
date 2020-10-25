@@ -170,8 +170,8 @@
         pageTotal: 0,
         pageIndex: 1,
         deps: [],
-        attrs: [{ id: 1, val: '服务人员' }, { id: 2, val: '服务主管' }, { id: 3, val: '内情人员' }, { id: 4, val: '分销商' }, { id: 5, val: '业务员' }, { id: 6, val: '装饰公司' }],
-        levels: [{ id: 1, val: '部长' }, { id: 2, val: '主管' }, { id: 3, val: '负责人（产业未下发文件）' }, { id: 4, val: '组长' }, { id: 5, val: '高级技师' }, { id: 6, val: '中级技师' }, { id: 7, val: '初级技师' }, { id: 8, val: '见习技师' }, { id: 9, val: '内勤主管' }, { id: 10, val: '服务内勤' }],
+        attrs: [{ id: 1, val: '服务人员' }, { id: 2, val: '服务主管' }, { id: 3, val: '内勤人员' }, { id: 4, val: '分销商' }, { id: 5, val: '业务员' }, { id: 6, val: '装饰公司' }],
+        levels: [{ id: 1, val: '部长' }, { id: 2, val: '主管' }, { id: 3, val: '负责人（产业未下发文件）' }, { id: 4, val: '组长' }, { id: 5, val: '高级技师' }, { id: 6, val: '中级技师' }, { id: 7, val: '初级技师' }, { id: 8, val: '见习技师' }, { id: 9, val: '内勤主管' }, { id: 10, val: '服务内勤' }, { id: 11, val: '外部技师' }],
         edus: [{ id: 1, val: '初中' }, { id: 2, val: '高中/中专' }, { id: 3, val: '大专' }, { id: 4, val: '本科' }, { id: 5, val: '硕士' }, { id: 6, val: '博士及以上' }, { id: 7, val: '其他' }],
         search: {
           depid: '',

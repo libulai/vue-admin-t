@@ -90,9 +90,14 @@
       </div>
     </el-dialog>
 
-    <el-dialog title="选择员工" :visible.sync="dialog2" width="400px" class="dialog2">
+    <el-dialog title="选择员工" :visible.sync="dialog2" width="400px" :close-on-click-modal="false" class="dialog2" v-if="dialog2" @closed="clearSearch">
       <div class="select-dialog">
-        <el-table v-loading="listLoading2" :data="list2" element-loading-text="Loading" fit highlight-current-row border @current-change="selectItem">
+        <div style="display: flex;margin-bottom: 20px;">
+            <el-input v-model="searchempname" placeholder="姓名" style="margin-right: 20px"></el-input>
+            <el-button type="warning" class="com-btn" @click="dialog2Open">查询</el-button>
+        </div>
+
+        <el-table v-loading="listLoading2" :data="list2" element-loading-text="Loading" fit highlight-current-row border @current-change="selectItem" >
           <el-table-column align="center" label="姓名">
             <template slot-scope="scope">{{ scope.row.empname }}</template>
           </el-table-column>
@@ -117,6 +122,7 @@
         pageIndex2: 1,
         pageTotal2: 0,
         isModify: false,
+        searchempname: '',
         comp: [],
         role: [],
         productInfo: {},
@@ -232,6 +238,9 @@
         this.$refs.form.resetFields();
         this.productInfo.productname = ''
       },
+      clearSearch() {
+        this.searchempname = ''
+      },
       cancel() {
         this.dialog = false;
         this.$refs.form.resetFields()
@@ -242,15 +251,16 @@
         this.title = isModify ? "编辑用户" : "添加用户"
         this.isModify = isModify;
 
+        await this.initComp()
+        await this.initRole()
         if (this.isModify) {
           this.getDepInfos(data)
           this.form.userid = data.userid
-          this.getComp()
+          await this.getComp()
           this.getRole()
         }
 
-        await this.initComp()
-        this.initRole()
+
       },
       async getDepInfos(data) {
         let rs = await this.$http({
@@ -311,7 +321,7 @@
         this.dialog2 = true
         this.listLoading2 = true;
         let rs = await this.$http({
-          url: `/admin/emplist?forbidden=-1&page.pageIndex=${this.pageIndex2}`,
+          url: `/admin/emplist?empname=${this.searchempname}&forbidden=-1&page.pageIndex=${this.pageIndex2}`,
           method: 'get'
         });
 
@@ -346,6 +356,8 @@
         this.dialog2 = false
         this.form.empid = val.empid
         this.productInfo.productname = val.empname
+
+        this.searchempname = ''
       }
     },
   };

@@ -343,7 +343,7 @@ export default {
         url: `/admin/getcurrentuser`,
         method: "get"
       });
-
+      console.log(rs)
       // this.compcony = rs.data;
       this.$store.dispatch("user/changeUserinfo", rs);
     },
@@ -373,7 +373,9 @@ export default {
   },
   async created() {
     // 用户信息
-    this.initUserInfo();
+    setTimeout(() => {
+      this.initUserInfo();
+    }, 50);
 
     // 公司列表
     this.initCompany();

@@ -118,7 +118,7 @@ export default {
         areaid: undefined,
         ownerphone: '',
         contacterphone: '',
-        status: undefined,
+        status: 4,
         trackusername: '',
       },
       form: {

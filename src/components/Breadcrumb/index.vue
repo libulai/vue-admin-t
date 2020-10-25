@@ -10,15 +10,15 @@
     </el-breadcrumb>
 
     <!-- home -->
-    <div class="login-info">
+    <!-- <div class="login-info">
       <span>上次登录时间为</span>
       <span>{{logintime}}</span>
       <span>，如有异常，请</span>&nbsp;
       <span style="font-size:13px;text-decoration: underline;cursor: pointer;" @click="dialog2=true">修改密码</span>
-    </div>
+    </div> -->
 
     <!-- 修改密码 -->
-    <el-dialog title="密码修改" :visible.sync="dialog2">
+    <!-- <el-dialog title="密码修改" :visible.sync="dialog2">
       <el-form :model="ruleForm2" :rules="rules2" ref="ruleForm2" label-width="100px" class="dialog2-ruleForm">
         <el-form-item label="当前密码" prop="oldp">
           <el-input v-model="ruleForm2.oldp" type="password" placeholder="请输入当前密码"></el-input>
@@ -37,7 +37,7 @@
         <el-button @click="dialog2 = false">取 消</el-button>
         <el-button type="primary" @click="modifyPassword">确 定</el-button>
       </div>
-    </el-dialog>
+    </el-dialog> -->
 
   </div>
 

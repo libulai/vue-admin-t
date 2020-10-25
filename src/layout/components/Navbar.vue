@@ -2,7 +2,7 @@
   <div class="navbar">
     <hamburger :is-active="sidebar.opened" class="hamburger-container" @toggleClick="toggleSideBar" />
 
-    <breadcrumb class="breadcrumb-container" />
+    <!-- <breadcrumb class="breadcrumb-container" /> -->
 
     <!-- <div class="right-menu">
       <el-dropdown class="avatar-container" trigger="click">
@@ -61,13 +61,13 @@ export default {
 
 <style lang="scss" scoped>
 .navbar {
-  height: 50px;
-  overflow: hidden;
+  height: 1px;
+  /* overflow: hidden; */
   position: relative;
   margin-left: 11px;
   /* background: #fff; */
   box-shadow: 0 1px 4px rgba(0,21,41,.08);
-  display: inline-flex;
+  display: inline-block;
   width: 100%;
   .hamburger{
     color:white;
@@ -80,7 +80,13 @@ export default {
     cursor: pointer;
     transition: background .3s;
     -webkit-tap-highlight-color:transparent;
-
+    
+    padding: 0px 15px;
+    position: relative;
+    top: -3px;
+    z-index: 1000000;
+    height: 40px;
+    left: -7px;
     &:hover {
       background: rgba(0, 0, 0, .025)
     }

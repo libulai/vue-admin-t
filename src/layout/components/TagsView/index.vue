@@ -202,8 +202,8 @@ export default {
       display: inline-block;
       position: relative;
       cursor: pointer;
-      height: 30px;
-      line-height: 30px;
+      height: 28px;
+      line-height: 28px;
       /* border: 1px solid #d8dce5; */
       color: #495060;
       background: #fff;

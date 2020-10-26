@@ -83,7 +83,7 @@ export default {
     
     padding: 0px 15px;
     position: relative;
-    top: -3px;
+    top: -6px;
     z-index: 1000000;
     height: 40px;
     left: -7px;

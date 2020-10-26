@@ -85,7 +85,7 @@
     name: "Dep",
     data() {
       return {
-        pageSize: 15,
+        pageSize: 10,
         pageTotal: 0,
         pageIndex: 1,
         isModify: false,
@@ -97,7 +97,7 @@
           type: "",
           materialcode: ""
         },
-        types: ['防水普通-通用', '防水普通-柔韧', '防水多次通用', '防水多彩-柔韧', '堵漏宝', '防水辅料', '防水其他', '墙固、地固'],
+        types: ['防水普通-通用', '防水普通-柔韧', '防水多彩-通用', '防水多彩-柔韧', '堵漏宝', '防水辅料', '防水其他', '墙固、地固'],
         attributes: ['主材', '辅材'],
         units: ['桶', '包', '套', '组', '罐', '个', '只'],
         list: null,

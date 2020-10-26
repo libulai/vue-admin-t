@@ -117,7 +117,7 @@ const mutations = {
         
         // 429: import('@/views/basic/cProducts'), // 开发环境
         // 430: import('@/views/basic/cProducts'), // 生产环境
-        ROUTERMAP[process.env.NODE_ENV==="development"?429:430] = import('@/views/basic/cProducts')
+        ROUTERMAP[process.env.NODE_ENV==="development"?430:430] = import('@/views/basic/cProducts')
 
         data.forEach(item => {
           let children = item.subMenus

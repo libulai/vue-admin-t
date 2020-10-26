@@ -132,7 +132,7 @@
     name: "Plot",
     data() {
       return {
-        pageSize: 15,
+        pageSize: 10,
         pageTotal: 0,
         pageIndex: 1,
         areas: [],

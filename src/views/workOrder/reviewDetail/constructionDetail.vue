@@ -148,14 +148,28 @@
             <span>{{product(i)}}</span>
             <span class="light">{{i.num}} 桶/组</span>
           </div>
-         
+
           <div>
             <span>施工确认单备注</span>
             <span class="light">{{recepits.receipt60}}</span>
           </div>
         </div>
       </div>
+    </div>
 
+    <!-- 照片 -->
+    <div class="basic-info">
+      <h4>施工照片</h4>
+      <div>
+        <div class="list-pic">
+          <div v-for="i in pics" :key="i.id">
+            <el-image style="width: 100px; height: 100px" :src="i.picturename" :preview-src-list="[i.picturename]">
+            </el-image>
+            <div class=""></div>
+            <p>{{picType(i.type) + i.pos}}</p>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -164,14 +178,15 @@
 export default {
   data() {
     return {
-      bg1: require('@/assets/pic/demo.png'),
-      list1: [require('@/assets/pic/demo.png')],
-      products:[]
+      products: [],
+      pics: []
     };
   },
   props: ['data', 'type', 'recepits'],
   created() {
     this.init3()
+
+    this.initPic()
   },
   computed: {
     sgtype(val) {
@@ -182,6 +197,18 @@ export default {
           3: '地施工',
           4: '同层底面施工',
           5: '同层墙地施工'
+        }
+
+        return S_MAP[Number(val)]
+      }
+    },
+    picType(val) {
+      return function (val) {
+        let S_MAP = {
+          1: '厨房',
+          2: '卫生间',
+          3: '阳台',
+          4: '其他',
         }
 
         return S_MAP[Number(val)]
@@ -213,6 +240,15 @@ export default {
 
       this.products = rs.data
     },
+    async initPic() {
+      let rs = await this.$http({
+        url: `/kl/klorderreceiptpicture?orderid=${this.data.orderid}`,
+        method: "get",
+      });
+
+      this.pics = rs.data
+      console.log(this.pics)
+    }
   },
 };
 </script>

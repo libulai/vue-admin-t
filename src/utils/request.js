@@ -56,7 +56,7 @@ service.interceptors.response.use(
         location.reload()
       })
     }
-    console.log(res)
+    
     if (res.success === 'false') {
       Message({
         message: res.data,

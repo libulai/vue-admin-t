@@ -203,6 +203,21 @@
       </div>
     </div>
 
+    <!-- 照片 -->
+    <div class="basic-info">
+      <h4>验收照片</h4>
+      <div>
+        <div class="list-pic">
+          <div v-for="i in pics" :key="i.id">
+            <el-image style="width: 100px; height: 100px" :src="i.picturename" :preview-src-list="[i.picturename]">
+            </el-image>
+            <div class=""></div>
+            <p>{{picType(i.type) + i.pos}}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
   </div>
 </template>
 
@@ -210,12 +225,12 @@
 export default {
   data() {
     return {
-
+      pics: []
     };
   },
   props: ['data', 'type', 'recepits'],
   created() {
-
+    this.initPic()
   },
   computed: {
     completestatus(type) {
@@ -235,6 +250,18 @@ export default {
         }
 
         return TYPE_MAP[type]
+      }
+    },
+    picType(val) {
+      return function (val) {
+        let S_MAP = {
+          1: '厨房',
+          2: '卫生间',
+          3: '阳台',
+          4: '其他',
+        }
+
+        return S_MAP[Number(val)]
       }
     },
     sgtype(val) {
@@ -273,7 +300,15 @@ export default {
     },
   },
   methods: {
+    async initPic() {
+      let rs = await this.$http({
+        url: `/kl/klorderreceiptpicture?orderid=${this.data.orderid}`,
+        method: "get",
+      });
 
+      this.pics = rs.data
+      console.log(this.pics)
+    }
   },
 };
 </script>

@@ -11,7 +11,7 @@
           </div>
           <div>
             <span>客户类型</span>
-            <span class="light">{{data.customer.customertype}}</span>
+            <span class="light">{{data.customer?data.customer.customertype: ''}}</span>
           </div>
           <div>
             <span>预约类型</span>
@@ -141,118 +141,118 @@
 </template>
 
 <script>
-  export default {
-    data() {
-      return {
+export default {
+  data() {
+    return {
 
-      };
-    },
-    computed: {
-      // status(val) {
-      //   return function (val) {
-      //     const MAP = {
-      //       1: '已登记', 2: '已派单', 3: '正在服务',
-      //       4: '已完成', 5: '已复核', 6: '已关闭', 22: '时间已确认'
-      //     }
-      //     return MAP[val]
-      //   }
-      // },
-      times(type) {
-        return function (type) {
-          let times = {
-            1: "上午",
-            2: "下午",
-            3: '无'
-          }
-          return times[type]
+    };
+  },
+  computed: {
+    // status(val) {
+    //   return function (val) {
+    //     const MAP = {
+    //       1: '已登记', 2: '已派单', 3: '正在服务',
+    //       4: '已完成', 5: '已复核', 6: '已关闭', 22: '时间已确认'
+    //     }
+    //     return MAP[val]
+    //   }
+    // },
+    times(type) {
+      return function (type) {
+        let times = {
+          1: "上午",
+          2: "下午",
+          3: '无'
         }
-      },
-      pttypee(val) {
-        return function (val) {
-          const MAP = {
-            292: '施工单', 293: '外部验收单', 294: '售后检查单',
-            295: '售后处理单'
-          }
-          return MAP[val]
-        }
-      },
-      types() {
-        try {
-          let ttype = this.data.pttype
-          let type = ttype == 292 ? this.data.sgtype : this.data.ystype
-          let Map = {
-            292: {
-              1: '隔层墙地施工',
-              2: '墙施工',
-              3: '地施工',
-              4: '同层底面施工',
-              5: '同层墙地施工'
-            },
-            293: {
-              1: '面层验收',
-              2: '同层排水底层验收'
-            }
-          }
-
-          return Map[ttype][type] || '-'
-        } catch (error) {
-          return '-'
-        }
+        return times[type]
       }
     },
-    props: ['data', 'type'],
-    created() {
-
-    },
-    methods: {
-      async check(flag) {
-        let rs = await this.$http({
-          url: `/kl/doklordercheck?orderids=${this.data.orderid}&check=${flag}`,
-          method: "get"
-        });
-
-        if (rs.success == 'true') this.$message({
-          message: '保存成功',
-          type: 'success'
-        })
-
-        this.$router.go(-1)
+    pttypee(val) {
+      return function (val) {
+        const MAP = {
+          292: '施工单', 293: '外部验收单', 294: '售后检查单',
+          295: '售后处理单'
+        }
+        return MAP[val]
       }
     },
-  };
+    types() {
+      try {
+        let ttype = this.data.pttype
+        let type = ttype == 292 ? this.data.sgtype : this.data.ystype
+        let Map = {
+          292: {
+            1: '隔层墙地施工',
+            2: '墙施工',
+            3: '地施工',
+            4: '同层底面施工',
+            5: '同层墙地施工'
+          },
+          293: {
+            1: '面层验收',
+            2: '同层排水底层验收'
+          }
+        }
+
+        return Map[ttype][type] || '-'
+      } catch (error) {
+        return '-'
+      }
+    }
+  },
+  props: ['data', 'type'],
+  created() {
+
+  },
+  methods: {
+    async check(flag) {
+      let rs = await this.$http({
+        url: `/kl/doklordercheck?orderids=${this.data.orderid}&check=${flag}`,
+        method: "get"
+      });
+
+      if (rs.success == 'true') this.$message({
+        message: '保存成功',
+        type: 'success'
+      })
+
+      this.$router.go(-1)
+    }
+  },
+};
 </script>
 
 <style lang="scss" scoped>
-  .appointment {
-    h4 {
-      font-size: 15px;
-      margin: 10px 0 20px 0;
-    }
-    .list-items {
+.appointment {
+  h4 {
+    font-size: 15px;
+    margin: 10px 0 20px 0;
+  }
+  .list-items {
+    display: flex;
+    margin-left: 10px;
+    & > div {
       display: flex;
-      margin-left: 10px;
-      &>div {
-        display: flex;
-        flex-direction: column;
-        width: 270px;
-        font-size: 14px;
-      }
-      .light {
-        color: #999;
-        margin-top: 7px;
-      }
+      flex-direction: column;
+      width: 270px;
+      font-size: 14px;
     }
-    .rooms {
-      span {
-        width: 100px;
-        display: inline-flex;
-      }
+    .light {
+      color: #999;
+      margin-top: 7px;
     }
   }
+  .rooms {
+    span {
+      width: 100px;
+      display: inline-flex;
+    }
+  }
+}
 
-  .basic-info {
-    border-bottom: 1px solid #f1f1f1;
-    padding-bottom: 30px;
-    margin-bottom: 30px;
-  }
+.basic-info {
+  border-bottom: 1px solid #f1f1f1;
+  padding-bottom: 30px;
+  margin-bottom: 30px;
+}
 </style>

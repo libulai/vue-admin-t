@@ -69,7 +69,7 @@
           </el-table-column>
           <el-table-column class-name="status-col" label="客户地址" min-width="250" align="center">
             <template slot-scope="scope">
-              {{ scope.row.customer.address }}
+              {{ scope.row.communityname + scope.row.address}}
             </template>
           </el-table-column>
           <el-table-column align="center" prop="created_at" label="服务类型">

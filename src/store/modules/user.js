@@ -16,7 +16,7 @@ var storage = window.localStorage;
 
 const getDefaultState = () => {
   return {
-    token: getToken(),
+    token: '',
     password: '',
     logintime: '',
     // name: '',
@@ -102,13 +102,14 @@ const actions = {
         password: password
       }).then(response => {
         const data = response
+        setToken(data.token)
         // const { data } = response
         commit('SET_TOKEN', {
           token: data.token,
           password,
           logintime: data.logintime
         })
-        setToken(data.token)
+        
         resolve(data)
       }).catch(error => {
         reject(error)

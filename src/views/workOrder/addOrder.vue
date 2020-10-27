@@ -210,7 +210,7 @@
           orderdesc: '',
           Receipt20: 1,
           Receipt21: 1,
-          Receipt22: 0,
+          Receipt22: 1,
           Receipt23: 0,
           areaid: '',
           dst: '是',
@@ -393,10 +393,10 @@
       },
       reset() {
         this.$refs.form.resetFields();
-        this.form.Receipt20 = ''
-        this.form.Receipt21 = ''
-        this.form.Receipt22 = ''
-        this.form.Receipt23 = ''
+        this.form.Receipt20 = 1
+        this.form.Receipt21 = 1
+        this.form.Receipt22 = 1
+        this.form.Receipt23 = 0
         this.phone = {}
       },
       async save() {
@@ -469,7 +469,7 @@
     .right {
       display: flex;
       flex-direction: column;
-      width: 270px !important;
+      width: 260px !important;
       padding: 13px 17px;
       border-radius: 4px;
       border: 1px solid #e6e6e6;
@@ -486,7 +486,7 @@
           span:first-child {
             display: inline-block;
             color: #444;
-            width: 120px;
+            width: 95px;
           }
         }
       }

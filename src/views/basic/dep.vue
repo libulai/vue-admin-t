@@ -72,7 +72,7 @@
           deptcode: "",
           deptname: "",
           forbidden: 0,
-          deptid: ""
+          // deptid: ""
         },
         list: null,
         listLoading: true,

@@ -180,7 +180,7 @@ export default {
       this.dialog2 = true
       this.listLoading2 = true;
       let rs = await this.$http({
-        url: `/admin/productkllist?productname=${this.searchname}&page.pageIndex=${this.pageIndex2}`,
+        url: `/admin/productklnewlist?productname=${this.searchname}&page.pageIndex=${this.pageIndex2}`,
         method: 'get'
       });
 

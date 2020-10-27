@@ -8,11 +8,12 @@
         </div>
 
         <el-form-item prop="username">
+          <input type="password" name="password1"  style="display:none"/>
           <span class="svg-container">
             <!-- <svg-icon icon-class="user" /> -->
             <i class="el-icon-mobile-phone" style="font-size: 18px;" />
           </span>
-          <el-input ref="username" v-model="loginForm.username" placeholder="请输入手机号" name="username" tabindex="1" />
+          <el-input ref="username" v-model="loginForm.username" placeholder="请输入手机号" name="username" tabindex="1" autocomplete="off"/>
         </el-form-item>
 
         <el-form-item prop="password">
@@ -20,7 +21,7 @@
             <!-- <svg-icon icon-class="password" /> -->
             <i class="el-icon-lock" style="font-size: 18px;" />
           </span>
-          <el-input :key="passwordType" ref="password" v-model="loginForm.password" :type="passwordType" placeholder="请输入密码" name="password" tabindex="2" auto-complete="on" @keyup.enter.native="handleLogin" />
+          <el-input :key="passwordType" ref="password" v-model="loginForm.password" :type="passwordType" placeholder="请输入密码" name="password" tabindex="2" auto-complete="on" @keyup.enter.native="handleLogin" autocomplete="off"/>
           <span class="show-pwd" @click="showPwd">
             <svg-icon :icon-class="passwordType === 'password' ? 'eye' : 'eye-open'" />
           </span>
@@ -42,6 +43,7 @@
 import { validUsername } from '@/utils/validate'
 import { Message } from 'element-ui'
 import bus from '@/utils/bus'
+import { removeToken } from '@/utils/auth'
 
 export default {
   name: 'Login',
@@ -83,6 +85,11 @@ export default {
       },
       immediate: true
     }
+  },
+  created() {
+    setTimeout(() => {
+      removeToken()
+    }, 500)
   },
   methods: {
     showPwd() {

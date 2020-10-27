@@ -387,7 +387,7 @@
       // 用户信息
       setTimeout(() => {
         this.initUserInfo();
-      }, 50);
+      }, 500);
 
       // 公司列表
       this.initCompany();

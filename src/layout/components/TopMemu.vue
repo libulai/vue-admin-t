@@ -355,7 +355,7 @@
           url: `/admin/getcurrentuser`,
           method: "get"
         });
-        console.log(rs)
+        // console.log(rs)
         // this.compcony = rs.data;
         this.$store.dispatch("user/changeUserinfo", rs);
       },

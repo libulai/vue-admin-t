@@ -9,6 +9,11 @@
 
       <div>
         <el-table v-loading="listLoading" :data="list" element-loading-text="Loading" fit highlight-current-row>
+          <el-table-column align="center" label="序号">
+            <template slot-scope="scope">
+              <span>{{ scope.row.productnum }}</span>
+            </template>
+          </el-table-column>
           <el-table-column align="center" label="名称">
             <template slot-scope="scope">{{ scope.row.productname }}</template>
           </el-table-column>
@@ -18,11 +23,6 @@
           <el-table-column align="center" label="备注">
             <template slot-scope="scope">
               <span>{{ scope.row.productdesc }}</span>
-            </template>
-          </el-table-column>
-          <el-table-column align="center" label="序号">
-            <template slot-scope="scope">
-              <span>{{ scope.row.productnum }}</span>
             </template>
           </el-table-column>
           <el-table-column align="center" label="状态">

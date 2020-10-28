@@ -154,7 +154,7 @@ export let constantRoutes = [
         name: 'OrderEdit',
         hidden: true,
         component: () => import('@/views/workOrder/editOrder'),
-        meta: { title: '工单详情单编辑', icon: '', activeMenu: '/order/detail' }
+        meta: { title: '工单回执单编辑', icon: '', activeMenu: '/order/detail' }
       },
       // {
       //   path: 'qualityOrder',

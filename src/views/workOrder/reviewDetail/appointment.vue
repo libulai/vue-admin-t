@@ -7,7 +7,7 @@
         <div class="list-items">
           <div>
             <span>经销商名称</span>
-            <span class="light">{{data.fwpzhname}}</span>
+            <span class="light">{{data.fwpzhname || '无'}}</span>
           </div>
           <div>
             <span>客户类型</span>
@@ -64,33 +64,33 @@
         <div class="list-items">
           <div>
             <span>现场联系人</span>
-            <span class="light">{{data.receipt && data.receipt.receipt44}}</span>
+            <span class="light">{{data.receipt && data.receipt.receipt44 || '无'}}</span>
           </div>
           <div>
             <span>联系电话</span>
-            <span class="light">{{data.receipt && data.receipt.receipt45}}</span>
+            <span class="light">{{data.receipt && data.receipt.receipt45 || '无'}}</span>
           </div>
         </div>
 
         <div class="list-items" style="margin: 35px 10px">
           <div>
             <span>业主</span>
-            <span class="light">{{data.ownername}}</span>
+            <span class="light">{{data.ownername || '无'}}</span>
           </div>
           <div>
             <span>联系电话</span>
-            <span class="light">{{data.ownerphone}}</span>
+            <span class="light">{{data.ownerphone || '无'}}</span>
           </div>
         </div>
 
         <div class="list-items">
           <div>
             <span>项目经理姓名</span>
-            <span class="light">{{data.receipt && data.receipt.receipt13}}</span>
+            <span class="light">{{data.receipt && data.receipt.receipt13 || '无'}}</span>
           </div>
           <div>
             <span>联系电话</span>
-            <span class="light">{{data.receipt && data.receipt.receipt14}}</span>
+            <span class="light">{{data.receipt && data.receipt.receipt14 || '无'}}</span>
           </div>
         </div>
       </div>
@@ -107,11 +107,11 @@
           </div> -->
           <div>
             <span>预约时间</span>
-            <span class="light">{{data.reservedate}}</span>
+            <span class="light">{{data.reservedate && data.reservedate.split(' ')[0] || '无'}}</span>
           </div>
           <div>
             <span>具体时间</span>
-            <span class="light">{{times(data.reservetime)}}</span>
+            <span class="light">{{times(data.reservetime) || '无'}}</span>
           </div>
           <!-- <div>
             <span>现场照片</span>
@@ -126,15 +126,15 @@
         <div class="list-items" style="margin: 35px 10px">
           <div>
             <span>备注</span>
-            <span class="light">{{data.orderdesc}}</span>
+            <span class="light">{{data.orderdesc || '无'}}</span>
           </div>
         </div>
       </div>
     </div>
 
     <div v-if="type==2">
-      <el-button type="warning" class="com-btn com-btn" @click="check('是')">复核通过</el-button>
-      <el-button type="info" class="com-btn com-btn" @click="check('否')">复核退回</el-button>
+      <el-button type="warning" class="com-btn com-btn" @click="check('是')" v-if="data.status ==4 && data.pttype=='施工单'">复核通过</el-button>
+      <!-- <el-button type="info" class="com-btn com-btn" @click="check('否')">复核退回</el-button> -->
     </div>
 
   </div>

@@ -43,9 +43,9 @@
               <span>{{ scope.row.area.areaname }}</span>
             </template>
           </el-table-column>
-          <el-table-column align="center" prop="created_at" label="交房时间" width="250">
+          <el-table-column align="center" prop="created_at" label="交房时间">
             <template slot-scope="scope">
-              <span>{{ scope.row.deliverdate || '/' }}</span>
+              <span>{{ scope.row.deliverdate && scope.row.deliverdate.split(' ')[0] }}</span>
             </template>
           </el-table-column>
           <el-table-column align="center" prop="created_at" label="小区类型">

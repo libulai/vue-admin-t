@@ -33,8 +33,8 @@
       <div class="content-title">
         <div>
           <el-button class="com-btn" type="primary" :disabled="btnState" @click="dialog1Click">分派</el-button>
-          <el-button type="warning" class="com-btn" :disabled="btnState" @click='dialog3 = true'>派单</el-button>
-          <el-button type="info" class="com-btn" :disabled="btnState" @click='dialog2 = true'>取消派单</el-button>
+          <el-button type="warning" class="com-btn" :disabled="btnState2" @click='dialog3 = true'>派单</el-button>
+          <el-button type="info" class="com-btn" :disabled="btnState3" @click='dialog2 = true'>取消派单</el-button>
         </div>
 
         <div>
@@ -62,9 +62,9 @@
               <span>{{ scope.row.customer.contacterphone }}</span>
             </template>
           </el-table-column>
-          <el-table-column label="上门时间" align="center" min-width="120">
+          <el-table-column label="上门时间" align="center">
             <template slot-scope="scope">
-              {{ scope.row.reservedate }}
+              {{ scope.row.reservedate && scope.row.reservedate.split(' ')[0]}}
             </template>
           </el-table-column>
           <el-table-column class-name="status-col" label="客户地址" min-width="250" align="center">
@@ -148,6 +148,8 @@
         pageTotal: 0,
         pageIndex: 1,
         btnState: true,
+        btnState2: true,
+        btnState3: true,
         dialog1: false,
         dialog2: false,
         dialog3: false,
@@ -162,7 +164,7 @@
           ordercode: '',
           areaid: '',
           pttype: '',
-          status: '',
+          status: 1,
           trackusername: '',
         },
         form: {
@@ -217,7 +219,7 @@
           ordercode: '',
           areaid: '',
           pttype: '',
-          status: '',
+          status: 1,
           trackusername: '',
         }
       },
@@ -240,6 +242,14 @@
       handleSelectionChange(val) {
         this.selection = val.map(i => i.orderid)
         this.btnState = val.length == 0
+
+        let rs = val.every(item => item.status==1)
+
+        this.btnState2 = !(val.length!=0 && rs)
+
+        rs = val.every(item => item.status==2)
+
+        this.btnState3 = !(val.length!=0 && rs)
       },
       cancel() {
         this.$refs.form.resetFields();

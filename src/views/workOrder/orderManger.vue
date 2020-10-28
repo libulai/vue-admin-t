@@ -53,7 +53,7 @@
           </el-table-column>
           <el-table-column label="施工时间" align="center">
             <template slot-scope="scope">
-              {{ scope.row.processtime }}
+              {{ scope.row.processtime && scope.row.processtime.split(' ')[0] }}
             </template>
           </el-table-column>
           <el-table-column class-name="status-col" label="客户地址" align="center">
@@ -73,7 +73,7 @@
           </el-table-column>
           <el-table-column align="center" prop="created_at" label="操作">
             <template slot-scope="scope">
-              <span class="detail handle" style="margin-right: 10px" @click="detail(scope.row.orderid)">详情</span>
+              <span class="detail handle" style="margin-right: 10px" @click="detail(scope.row.orderid)" v-if="scope.row.status==1 || scope.row.status==4">详情</span>
               <span class="detail handle" @click="edit(scope.row.orderid)">编辑</span>
             </template>
           </el-table-column>

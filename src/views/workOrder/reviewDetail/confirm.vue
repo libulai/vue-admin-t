@@ -8,7 +8,7 @@
         <div class="list-items">
           <div>
             <span>验收地址</span>
-            <span class="light">{{data.address}}</span>
+            <span class="light">{{data.address || '无'}}</span>
           </div>
           <div>
             <span>验收户型</span>
@@ -24,11 +24,11 @@
         <div class="list-items" style="margin: 35px 10px 0 10px">
           <div>
             <span>下次业主是否到场</span>
-            <span class="light">{{data.receipt && data.receipt.receipt11}}</span>
+            <span class="light">{{data.receipt && data.receipt.receipt11 || '无'}}</span>
           </div>
           <div>
             <span>是否满足验收条件</span>
-            <span class="light">{{completestatus(data.completestatus)}}</span>
+            <span class="light">{{completestatus(data.completestatus) || '无'}}</span>
           </div>
         </div>
       </div>
@@ -41,33 +41,33 @@
         <div class="list-items">
           <div>
             <span>现场联系人</span>
-            <span class="light">{{data.receipt && data.receipt.receipt44}}</span>
+            <span class="light">{{data.receipt && data.receipt.receipt44 || '无'}}</span>
           </div>
           <div>
             <span>联系电话</span>
-            <span class="light">{{data.receipt && data.receipt.receipt45}}</span>
+            <span class="light">{{data.receipt && data.receipt.receipt45 || '无'}}</span>
           </div>
         </div>
 
         <div class="list-items" style="margin: 35px 10px">
           <div>
             <span>业主</span>
-            <span class="light">{{data.ownername}}</span>
+            <span class="light">{{data.ownername || '无'}}</span>
           </div>
           <div>
             <span>联系电话</span>
-            <span class="light">{{data.ownerphone}}</span>
+            <span class="light">{{data.ownerphone || '无'}}</span>
           </div>
         </div>
 
         <div class="list-items">
           <div>
             <span>项目经理姓名</span>
-            <span class="light">{{data.receipt && data.receipt.receipt13}}</span>
+            <span class="light">{{data.receipt && data.receipt.receipt13 || '无'}}</span>
           </div>
           <div>
             <span>联系电话</span>
-            <span class="light">{{data.receipt && data.receipt.receipt14}}</span>
+            <span class="light">{{data.receipt && data.receipt.receipt14 || '无'}}</span>
           </div>
         </div>
       </div>
@@ -80,30 +80,30 @@
         <div class="list-items">
           <div>
             <span>服务凭证号</span>
-            <span class="light">{{data.receipt && data.receipt.receipt7}}</span>
+            <span class="light">{{data.receipt && data.receipt.receipt7 || '无'}}</span>
           </div>
           <div>
             <span>经销商</span>
-            <span class="light">{{data.receipt && data.receipt.receipt5}}</span>
+            <span class="light">{{data.receipt && data.receipt.receipt5 || '无'}}</span>
           </div>
           <div>
             <span>经销商电话</span>
-            <span class="light">{{data.receipt && data.receipt.receipt42}}</span>
+            <span class="light">{{data.receipt && data.receipt.receipt42 || '无'}}</span>
           </div>
         </div>
 
         <div class="list-items" style="margin: 35px 10px">
           <div>
             <span>装修公司</span>
-            <span class="light">{{data.receipt && data.receipt.receipt6}}</span>
+            <span class="light">{{data.receipt && data.receipt.receipt6 || '无'}}</span>
           </div>
           <div>
             <span>二级网点</span>
-            <span class="light">{{data.receipt && data.receipt.receipt43}}</span>
+            <span class="light">{{data.receipt && data.receipt.receipt43 || '无'}}</span>
           </div>
           <div>
             <span>购买方式</span>
-            <span class="light">{{data.receipt && data.receipt.receipt4}}</span>
+            <span class="light">{{data.receipt && data.receipt.receipt4 || '无'}}</span>
           </div>
         </div>
       </div>
@@ -116,45 +116,45 @@
         <div class="list-items">
           <div>
             <span>小区情况</span>
-            <span class="light">{{data.receipt && data.receipt.receipt1}}</span>
+            <span class="light">{{data.receipt && data.receipt.receipt1 || '无'}}</span>
           </div>
           <div>
             <span>装修情况</span>
-            <span class="light">{{data.receipt && data.receipt.receipt2}}</span>
+            <span class="light">{{data.receipt && data.receipt.receipt2 || '无'}}</span>
           </div>
           <div>
             <span>房屋类型</span>
-            <span class="light">{{data.receipt && data.receipt.receipt9}}</span>
+            <span class="light">{{data.receipt && data.receipt.receipt9 || '无'}}</span>
           </div>
         </div>
 
         <div class="list-items" style="margin: 35px 10px">
           <div>
             <span>排水类型</span>
-            <span class="light">{{data.receipt && data.receipt.receipt48}}</span>
+            <span class="light">{{data.receipt && data.receipt.receipt48 || '无'}}</span>
           </div>
           <div v-show="recepits.receipt48=='同层排水'">
             <span>施工属性</span>
-            <span class="light">{{recepits.receipt49}}</span>
+            <span class="light">{{recepits.receipt49 || '无'}}</span>
           </div>
           <div>
             <span>是否需要二次排水</span>
-            <span class="light">{{data.receipt && data.receipt.receipt38}}</span>
+            <span class="light">{{data.receipt && data.receipt.receipt38 || '无'}}</span>
           </div>
         </div>
 
         <div class="list-items">
           <div>
             <span>施工工艺</span>
-            <span class="light">{{data.sgtype}}</span>
+            <span class="light">{{data.sgtype || '无'}}</span>
           </div>
           <div>
             <span>验收工艺</span>
-            <span class="light">{{data.ystype}}</span>
+            <span class="light">{{data.ystype || '无'}}</span>
           </div>
           <div>
             <span>验收详情单备注</span>
-            <span class="light">{{data.orderdesc}}</span>
+            <span class="light">{{data.orderdesc || '无'}}</span>
           </div>
         </div>
       </div>
@@ -170,7 +170,7 @@
           </div>
           <div>
             <span>总面积</span>
-            <span class="light">{{recepits.receipt51}}</span>
+            <span class="light">{{recepits.receipt51 || '无'}}</span>
           </div>
         </div>
       </div>
@@ -182,7 +182,7 @@
         <div class="list-items">
           <div>
             <span>是否做保护层</span>
-            <span class="light">{{recepits.receipt52}}</span>
+            <span class="light">{{recepits.receipt52 || '无'}}</span>
           </div>
           <div v-for="i in recepits.klOrderReceiptAreaPs" :key="i.type">
             <span>{{areaName(i)}}</span>
@@ -190,14 +190,14 @@
           </div>
           <div>
             <span>总面积</span>
-            <span class="light">{{recepits.receipt55}}</span>
+            <span class="light">{{recepits.receipt55 || '无'}}</span>
           </div>
         </div>
 
         <div class="list-items" style="margin: 35px 10px 0 10px">
           <div>
             <span>验收确认单备注</span>
-            <span class="light">{{recepits.receipt60}}</span>
+            <span class="light">{{recepits.receipt60 || '无'}}</span>
           </div>
         </div>
       </div>
@@ -212,7 +212,10 @@
             <el-image style="width: 100px; height: 100px" :src="i.picturename" :preview-src-list="[i.picturename]">
             </el-image>
             <div class=""></div>
-            <p>{{picType(i.type) + i.pos}}</p>
+            <p>{{picType(i.type) + i.pos }}</p>
+          </div>
+          <div class="list-items">
+            <span class="light" v-if="pics.length==0">无</span>
           </div>
         </div>
       </div>

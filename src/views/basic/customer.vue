@@ -67,9 +67,9 @@
                 {{ scope.row.cardNum }}
               </template>
             </el-table-column>
-            <el-table-column align="center" label="创建时间" min-width="160">
+            <el-table-column align="center" label="创建时间">
               <template slot-scope="scope">
-                <span>{{ scope.row.createtime }}</span>
+                <span>{{ scope.row.createtime && scope.row.createtime.split(' ')[0] }}</span>
               </template>
             </el-table-column>
             <el-table-column align="center" label="历史贡献A分">

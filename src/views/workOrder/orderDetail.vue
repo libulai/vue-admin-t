@@ -53,7 +53,7 @@
           </el-table-column>
           <el-table-column label="施工时间" align="center">
             <template slot-scope="scope">
-              {{ scope.row.processtime }}
+              {{ scope.row.processtime && scope.row.processtime.split(' ')[0]}}
             </template>
           </el-table-column>
           <el-table-column class-name="status-col" label="客户地址" align="center">

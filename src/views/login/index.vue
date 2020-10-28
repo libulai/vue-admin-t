@@ -105,6 +105,7 @@ export default {
     handleLogin() {
       this.$refs.loginForm.validate(valid => {
         if (valid) {
+          this.$store.commit('tagsView/DEL_ALL_VISITED_VIEWS')
           this.loading = true
           localStorage.setItem('q', this.loginForm.password)
           this.$store.dispatch('user/login', this.loginForm).then((data) => {

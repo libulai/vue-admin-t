@@ -7,7 +7,7 @@
         <div class="list-items">
           <div>
             <span>施工地址</span>
-            <span class="light">{{data.address}}</span>
+            <span class="light">{{data.address || '无'}}</span>
           </div>
           <div>
             <span>施工户型</span>
@@ -29,33 +29,33 @@
         <div class="list-items">
           <div>
             <span>现场联系人</span>
-            <span class="light">{{data.receipt && data.receipt.receipt44}}</span>
+            <span class="light">{{data.receipt && data.receipt.receipt44 || '无'}}</span>
           </div>
           <div>
             <span>联系电话</span>
-            <span class="light">{{data.receipt && data.receipt.receipt45}}</span>
+            <span class="light">{{data.receipt && data.receipt.receipt45 || '无'}}</span>
           </div>
         </div>
 
         <div class="list-items" style="margin: 35px 10px">
           <div>
             <span>业主</span>
-            <span class="light">{{data.ownername}}</span>
+            <span class="light">{{data.ownername || '无'}}</span>
           </div>
           <div>
             <span>联系电话</span>
-            <span class="light">{{data.ownerphone}}</span>
+            <span class="light">{{data.ownerphone || '无'}}</span>
           </div>
         </div>
 
         <div class="list-items">
           <div>
             <span>项目经理姓名</span>
-            <span class="light">{{data.receipt && data.receipt.receipt13}}</span>
+            <span class="light">{{data.receipt && data.receipt.receipt13 || '无'}}</span>
           </div>
           <div>
             <span>联系电话</span>
-            <span class="light">{{data.receipt && data.receipt.receipt14}}</span>
+            <span class="light">{{data.receipt && data.receipt.receipt14 || '无'}}</span>
           </div>
         </div>
       </div>
@@ -68,60 +68,30 @@
         <div class="list-items">
           <div>
             <span>排水类型</span>
-            <span class="light">{{data.receipt && data.receipt.receipt48}}</span>
+            <span class="light">{{data.receipt && data.receipt.receipt48 || '无'}}</span>
           </div>
           <div>
             <span>施工属性</span>
-            <span class="light">{{data.receipt && data.receipt.receipt49}}</span>
+            <span class="light">{{data.receipt && data.receipt.receipt49 || '无'}}</span>
           </div>
           <div>
             <span>是否做二排</span>
-            <span class="light">{{data.receipt && data.receipt.receipt38}}</span>
+            <span class="light">{{data.receipt && data.receipt.receipt38 || '无'}}</span>
           </div>
         </div>
 
         <div class="list-items" style="margin: 35px 10px 0 10px">
           <div>
             <span>施工工艺</span>
-            <span class="light">{{data.sgtype}}</span>
+            <span class="light">{{data.sgtype || '无'}}</span>
           </div>
           <div>
             <span>施工详情单备注</span>
-            <span class="light">{{data.orderdesc}}</span>
+            <span class="light">{{data.orderdesc || '无'}}</span>
           </div>
         </div>
       </div>
     </div>
-
-    <!-- 现场施工照片 -->
-    <!-- <div class="basic-info">
-      <h4>现场施工照片</h4>
-      <div>
-        <div class="list-pic">
-          <div>
-            <el-image style="width: 100px; height: 100px" :src="bg1" :preview-src-list="list1">
-            </el-image>
-            <div class=""></div>
-            <p>卫生间</p>
-          </div>
-          <div>
-            <el-image style="width: 100px; height: 100px" :src="bg1" :preview-src-list="list1">
-            </el-image>
-            <p>厨房</p>
-          </div> 
-          <div>
-            <el-image style="width: 100px; height: 100px" :src="bg1" :preview-src-list="list1">
-            </el-image>
-            <p>流转单</p>
-          </div>
-          <div>
-            <el-image style="width: 100px; height: 100px" :src="bg1" :preview-src-list="list1">
-            </el-image>
-            <p>客户签名</p>
-          </div>
-        </div>
-      </div>
-    </div> -->
 
     <!-- 施工确认信息 -->
     <div class="basic-info">
@@ -134,7 +104,7 @@
           </div>
           <div>
             <span>总面积</span>
-            <span class="light">{{recepits.receipt51}}</span>
+            <span class="light">{{recepits.receipt51 || '无'}}</span>
           </div>
         </div>
       </div>
@@ -151,7 +121,7 @@
 
           <div>
             <span>施工确认单备注</span>
-            <span class="light">{{recepits.receipt60}}</span>
+            <span class="light">{{recepits.receipt60 || '无'}}</span>
           </div>
         </div>
       </div>
@@ -167,6 +137,9 @@
             </el-image>
             <div class=""></div>
             <p>{{picType(i.type) + i.pos}}</p>
+          </div>
+          <div class="list-items">
+            <span class="light" v-if="pics.length==0">无</span>
           </div>
         </div>
       </div>

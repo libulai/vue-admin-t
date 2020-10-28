@@ -68,7 +68,7 @@
 
       <div class="login-info">
         <span>上次登录时间为</span>
-        <span>{{logintime}}</span>
+        <span>{{logintime && logintime.split('.')[0]}}</span>
         <span>，如有异常，请 </span>&nbsp;
         <span style="font-size:13px;text-decoration: underline;cursor: pointer;color: #fff" @click="dialog2=true">修改密码</span>
       </div>

@@ -32,3 +32,21 @@ export function GetRequest(urlStr) {
   }
   return theRequest;
 }
+
+
+export function setLocalStorage(name, value) {
+  let querys = window.localStorage.getItem('query')
+
+  if (querys) querys = JSON.parse(querys)
+  else querys = {}
+ 
+  querys[name] = value
+
+  window.localStorage.setItem('query', JSON.stringify(querys))
+}
+
+
+export function getLocalStorage(name) {
+  let querys = window.localStorage.getItem('query')
+  return querys && JSON.parse(querys)[name]
+}

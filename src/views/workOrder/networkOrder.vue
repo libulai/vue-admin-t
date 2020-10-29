@@ -76,7 +76,8 @@
         </el-table>
 
         <div class="pagination">
-          <el-pagination background @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page.sync="pageIndex" :page-size="pageSize" layout="prev, pager, next, jumper" :total="pageTotal"></el-pagination>
+          <el-pagination background @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page.sync="pageIndex"
+            :page-size="pageSize" layout="prev, pager, next, jumper" :total="pageTotal"></el-pagination>
         </div>
       </div>
     </div>
@@ -100,140 +101,158 @@
 </template>
 
 <script>
-import moment from 'moment'
-export default {
-  name: 'NetworkOrder',
-  data() {
-    let tom = moment().add(1, 'days').format('YYYY-MM-DD')
-    return {
-      pageSize: 10,
-      pageTotal: 0,
-      pageIndex: 1,
-      btnState: true,
-      dialog: false,
-      dialog2: false,
-      selection: [],
-      search: {
-        startDate: tom,
-        endDate: tom,
-        status: 1, //1-制单 2-已登记 3-已作废
+  import moment from 'moment'
+  import { urlQueryChange, GetRequest, setLocalStorage, getLocalStorage } from '../../utils/searchQuery'
+
+  export default {
+    name: 'NetworkOrder',
+    data() {
+      let tom = moment().add(1, 'days').format('YYYY-MM-DD')
+      return {
+        pageSize: 10,
+        pageTotal: 0,
+        pageIndex: 1,
+        btnState: true,
+        dialog: false,
+        dialog2: false,
+        selection: [],
+        search: {
+          startDate: tom,
+          endDate: tom,
+          status: 1, //1-制单 2-已登记 3-已作废
+        },
+        options: [
+          {
+            value: 1,
+            label: "制单",
+          },
+          {
+            value: 2,
+            label: "已登记",
+          },
+          {
+            value: 3,
+            label: "已作废",
+          },
+        ],
+        list: null,
+        listLoading: true,
+      };
+    },
+    watch: {
+      pageIndex(index) {
+        if (index) this.fetchData(index);
       },
-      options: [
-        {
-          value: 1,
-          label: "制单",
-        },
-        {
-          value: 2,
-          label: "已登记",
-        },
-        {
-          value: 3,
-          label: "已作废",
-        },
-      ],
-      list: null,
-      listLoading: true,
-    };
-  },
-  watch: {
-    pageIndex(index) {
-      if (index) this.fetchData(index);
-    },
-  },
-  computed: {
-    status(val) {
-      return function (val) {
-        const MAP = {
-          1: '已登记', 2: '已派单', 3: '正在服务',
-          4: '已完成', 5: '已复核', 6: '已关闭', 22: '时间已确认'
+      search: {
+        deep: true,
+        handler(val) {
+          setLocalStorage('network', val)
         }
-        return MAP[val]
       }
-    }
-  },
-  created() {
-    this.fetchData();
-  },
-  methods: {
-    produce(data) {
-      this.$router.push({ name: `NetworkEdit`, query: { data:JSON.stringify(data), detailType: 3 } })
     },
-    handleSelectionChange(val) {
-      this.selection = val.map(i => i.chatorderid)
-      this.btnState = val.length == 0
+    computed: {
+      status(val) {
+        return function (val) {
+          const MAP = {
+            1: '已登记', 2: '已派单', 3: '正在服务',
+            4: '已完成', 5: '已复核', 6: '已关闭', 22: '时间已确认'
+          }
+          return MAP[val]
+        }
+      }
     },
-    async fetchData() {
-      this.listLoading = true;
-      let rs = await this.$http({
-        url: `kl/klwechatorderlist`,
-        method: "post",
-        data: {...this.search, pageIndex:this.pageIndex}
-      });
-      
-      this.list = rs.data;
-      this.pageTotal = rs.total;
-      this.listLoading = false;
-    },
-    handleSizeChange(val) {
-    },
-    handleCurrentChange(val) {
-      this.pageIndex = val;
-    },
-    async submit() {
-      let rs = await this.$http({
-        url: `/wechat/wechatcancelorder`,
-        params: {
-          chatorderids: this.selection.join(',')
-        },
-        method: "get"
-      });
+    created() {
+      this.querysTransforSearch()
 
-      if (rs.success == 'true') this.$message({
-        message: '保存成功',
-        type: 'success'
-      })
-
-      this.dialog = false
-      this.fetchData()
+      this.fetchData();
     },
-    async submit2() {
-      let rs = await this.$http({
-        url: `/wechat/wechatnocancelorder`,
-        params: {
-          chatorderids: this.selection.join(',')
-        },
-        method: "get"
-      });
+    methods: {
+      querysTransforSearch() {
+        let rs = getLocalStorage('network')
+        if (rs) {
+          for (let i in this.search) {
+            this.search[i] = rs[i]
+          }
+        }
+      },
+      produce(data) {
+        this.$router.push({ name: `NetworkEdit`, query: { data: JSON.stringify(data), detailType: 3 } })
+      },
+      handleSelectionChange(val) {
+        this.selection = val.map(i => i.chatorderid)
+        this.btnState = val.length == 0
+      },
+      async fetchData() {
+        this.listLoading = true;
+        let rs = await this.$http({
+          url: `kl/klwechatorderlist`,
+          method: "post",
+          data: { ...this.search, pageIndex: this.pageIndex }
+        });
 
-      if (rs.success == 'true') this.$message({
-        message: '保存成功',
-        type: 'success'
-      })
+        this.list = rs.data;
+        this.pageTotal = rs.total;
+        this.listLoading = false;
+      },
+      handleSizeChange(val) {
+      },
+      handleCurrentChange(val) {
+        this.pageIndex = val;
+      },
+      async submit() {
+        let rs = await this.$http({
+          url: `/wechat/wechatcancelorder`,
+          params: {
+            chatorderids: this.selection.join(',')
+          },
+          method: "get"
+        });
 
-      this.dialog2 = false
-      this.fetchData()
+        if (rs.success == 'true') this.$message({
+          message: '保存成功',
+          type: 'success'
+        })
+
+        this.dialog = false
+        this.fetchData()
+      },
+      async submit2() {
+        let rs = await this.$http({
+          url: `/wechat/wechatnocancelorder`,
+          params: {
+            chatorderids: this.selection.join(',')
+          },
+          method: "get"
+        });
+
+        if (rs.success == 'true') this.$message({
+          message: '保存成功',
+          type: 'success'
+        })
+
+        this.dialog2 = false
+        this.fetchData()
+      },
     },
-  },
-};
+  };
 </script>
 
 <style lang="scss" scoped>
-.content-box {
-  & > div {
-    display: flex;
-    .el-input,
-    .el-select,
-    .el-date-editor {
-      width: 20%;
-      margin-right: 30px;
+  .content-box {
+    &>div {
+      display: flex;
+      .el-input,
+      .el-select,
+      .el-date-editor {
+        width: 20%;
+        margin-right: 30px;
+      }
     }
   }
-}
 
-::v-deep .dialog {
-  .el-dialog {
-    width: 450px !important;
+  ::v-deep .dialog {
+    .el-dialog {
+      width: 450px !important;
+    }
   }
-}
 </style>

@@ -20,7 +20,7 @@
           <el-date-picker v-model="search.endDate" type="date" placeholder="结束时间" value-format="yyyy-MM-dd">
           </el-date-picker>
           <el-select v-model="search.pttype" placeholder="选择服务类型">
-            <el-option v-for="item in pttype" :key="item.dicid" :label="item.dicvalue" :value="item.dicid">
+            <el-option v-for="item in pttype" :key="item.dicvalue" :label="item.dicvalue" :value="item.dicvalue">
             </el-option>
           </el-select>
           <el-button type="warning" class="com-btn" @click="fetchData">查询</el-button>
@@ -85,7 +85,8 @@
         </el-table>
 
         <div class="pagination">
-          <el-pagination background @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page.sync="pageIndex" :page-size="pageSize" layout="prev, pager, next, jumper" :total="pageTotal"></el-pagination>
+          <el-pagination background @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page.sync="pageIndex"
+            :page-size="pageSize" layout="prev, pager, next, jumper" :total="pageTotal"></el-pagination>
         </div>
       </div>
     </div>
@@ -101,145 +102,162 @@
 </template>
 
 <script>
-import moment from 'moment'
-export default {
-  name: 'QualityOrder',
-  data() {
-    let tom = moment().add(15, 'days').format('YYYY-MM-DD')
-    let yes = moment().add(-15, 'days').format('YYYY-MM-DD')
-    return {
-      pageSize: 10,
-      pageTotal: 0,
-      pageIndex: 1,
-      btnState: true,
-      selection: [],
-      dialog1: false,
-      statuss: [{ id: 1, value: '已登记' }, { id: 2, value: '已派单' }, { id: 3, value: '正在服务' }, { id: 4, value: '已完成' }, { id: 5, value: '已复核' }, { id: 6, value: '已关闭' }, { id: 7, value: '时间已确认' }],
-      pttype: [],
-      tracks: [],
-      search: {
-        startDate: yes,
-        endDate: tom,
-        ordercode: '',
-        pttype: '',
-        ownerphone: '',
-        contacterphone: '',
-        areaid: '',
-        address: '',
-        status: '',
-        trackusername: ''
-      },
-      list: null,
-      listLoading: true,
-    };
-  },
-  watch: {
-    pageIndex(index) {
-      if (index) this.fetchData(index);
-    },
-  },
-  computed: {
-    status(val) {
-      return function (val) {
-        const MAP = {
-          1: '已登记', 2: '已派单', 3: '正在服务',
-          4: '已完成', 5: '已复核', 6: '已关闭', 22: '时间已确认'
-        }
-        return MAP[val]
-      }
-    }
-  },
-  created() {
-    this.fetchData();
-    this.initDic()
-  },
-  methods: {
-    reset() {
+  import moment from 'moment'
+  import { urlQueryChange, GetRequest, setLocalStorage, getLocalStorage } from '../../utils/searchQuery'
+
+  export default {
+    name: 'QualityOrder',
+    data() {
       let tom = moment().add(15, 'days').format('YYYY-MM-DD')
       let yes = moment().add(-15, 'days').format('YYYY-MM-DD')
-      this.search = {
-        startDate: yes,
-        endDate: tom,
-        address: '',
-        ordercode: '',
-        areaid: '',
-        pttype: '',
-        status: '',
-        trackusername: '',
+      return {
+        pageSize: 10,
+        pageTotal: 0,
+        pageIndex: 1,
+        btnState: true,
+        selection: [],
+        dialog1: false,
+        statuss: [{ id: 1, value: '已登记' }, { id: 2, value: '已派单' }, { id: 3, value: '正在服务' }, { id: 4, value: '已完成' }, { id: 5, value: '已复核' }, { id: 6, value: '已关闭' }, { id: 7, value: '时间已确认' }],
+        pttype: [],
+        tracks: [],
+        search: {
+          startDate: yes,
+          endDate: tom,
+          ordercode: '',
+          pttype: '',
+          ownerphone: '',
+          contacterphone: '',
+          areaid: '',
+          address: '',
+          status: '',
+          trackusername: ''
+        },
+        list: null,
+        listLoading: true,
+      };
+    },
+    watch: {
+      pageIndex(index) {
+        if (index) this.fetchData(index);
+      },
+      search: {
+        deep: true,
+        handler(val) {
+          setLocalStorage('zbk', val)
+        }
       }
     },
-    async initDic() {
-      let rs = await this.$http({
-        url: `/admin/dictionarylist?dictype=40`,
-        method: "get"
-      });
-
-      this.pttype = rs.data.map(i => {
-        return {
-          dicvalue: i.dicvalue,
-          dicid: i.dicid
+    computed: {
+      status(val) {
+        return function (val) {
+          const MAP = {
+            1: '已登记', 2: '已派单', 3: '正在服务',
+            4: '已完成', 5: '已复核', 6: '已关闭', 22: '时间已确认'
+          }
+          return MAP[val]
         }
-      })
+      }
     },
-    handleSelectionChange(val) {
-      this.selection = val.map(i => i.orderid)
-      this.btnState = val.length == 0
+    created() {
+      this.querysTransforSearch()
+      this.fetchData();
+      this.initDic()
     },
-    async fetchData() {
-      this.listLoading = true;
-      let rs = await this.$http({
-        url: `/kl/arrangeklorderlist?startDate=${this.search.startDate}&trackusername=${this.search.trackusername}&status=${this.search.status}&pttype=${this.search.pttype}&areaid=${this.search.areaid}&ordercode=${this.search.ordercode}&endDate=${this.search.endDate}&address=${this.search.address}&page.pageIndex=${this.pageIndex}`,
-        method: "get"
-      });
+    methods: {
+      querysTransforSearch() {
+        let rs = getLocalStorage('zbk')
+        if (rs) {
+          for (let i in this.search) {
+            this.search[i] = rs[i]
+          }
+        }
+      },
+      reset() {
+        let tom = moment().add(15, 'days').format('YYYY-MM-DD')
+        let yes = moment().add(-15, 'days').format('YYYY-MM-DD')
+        this.search = {
+          startDate: yes,
+          endDate: tom,
+          address: '',
+          ordercode: '',
+          areaid: '',
+          pttype: '',
+          status: '',
+          trackusername: '',
+        }
+      },
+      async initDic() {
+        let rs = await this.$http({
+          url: `/admin/dictionarylist?dictype=40`,
+          method: "get"
+        });
 
-      this.list = rs.data;
-      this.pageTotal = rs.total;
-      this.listLoading = false;
-    },
-    handleSizeChange(val) {
-      console.log(`每页 ${val} 条`);
-    },
-    handleCurrentChange(val) {
-      this.pageIndex = val;
-    },
-    go(id) {
-      this.$router.push({ name: `QualityOrderDetail`, query: { id, detailType: 6 } })
-    },
-    async submit() {
-      this.dialog1 = false;
+        this.pttype = rs.data.map(i => {
+          return {
+            dicvalue: i.dicvalue,
+            dicid: i.dicid
+          }
+        })
+      },
+      handleSelectionChange(val) {
+        this.selection = val.map(i => i.orderid)
+        this.btnState = val.length == 0
+      },
+      async fetchData() {
+        this.listLoading = true;
+        let rs = await this.$http({
+          url: `/kl/arrangeklorderlist?startDate=${this.search.startDate}&trackusername=${this.search.trackusername}&status=${this.search.status}&pttype=${this.search.pttype}&areaid=${this.search.areaid}&ordercode=${this.search.ordercode}&endDate=${this.search.endDate}&address=${this.search.address}&page.pageIndex=${this.pageIndex}`,
+          method: "get"
+        });
 
-      let rs = await this.$http({
-        url: `/kl/doklorderzbk?orderids=${this.selection.join(',')}`,
-        method: "get"
-      });
+        this.list = rs.data;
+        this.pageTotal = rs.total;
+        this.listLoading = false;
+      },
+      handleSizeChange(val) {
+        console.log(`每页 ${val} 条`);
+      },
+      handleCurrentChange(val) {
+        this.pageIndex = val;
+      },
+      go(id) {
+        this.$router.push({ name: `QualityOrderDetail`, query: { id, detailType: 6 } })
+      },
+      async submit() {
+        this.dialog1 = false;
 
-      if (rs.success == 'true') this.$message({
-        message: '保存成功',
-        type: 'success'
-      })
+        let rs = await this.$http({
+          url: `/kl/doklorderzbk?orderids=${this.selection.join(',')}`,
+          method: "get"
+        });
 
-      this.fetchData()
+        if (rs.success == 'true') this.$message({
+          message: '保存成功',
+          type: 'success'
+        })
+
+        this.fetchData()
+      },
     },
-  },
-};
+  };
 </script>
 
 <style lang="scss" scoped>
-.content-box {
-  & > div {
-    display: flex;
-    .el-input,
-    .el-select,
-    .el-date-editor {
-      width: 20%;
-      margin-right: 30px;
+  .content-box {
+    &>div {
+      display: flex;
+      .el-input,
+      .el-select,
+      .el-date-editor {
+        width: 20%;
+        margin-right: 30px;
+      }
     }
   }
-}
 
-::v-deep .dialog {
-  .el-dialog {
-    width: 450px !important;
+  ::v-deep .dialog {
+    .el-dialog {
+      width: 450px !important;
+    }
   }
-}
 </style>

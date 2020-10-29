@@ -84,7 +84,8 @@
           </el-table>
 
           <div class="pagination">
-            <el-pagination background @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page.sync="pageIndex" :page-size="pageSize" layout="prev, pager, next, jumper" :total="pageTotal"></el-pagination>
+            <el-pagination background @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page.sync="pageIndex"
+              :page-size="pageSize" layout="prev, pager, next, jumper" :total="pageTotal"></el-pagination>
           </div>
         </div>
       </div>
@@ -95,164 +96,173 @@
 </template>
 
 <script>
-import moment from 'moment'
-import { urlQueryChange, GetRequest } from '../../utils/searchQuery'
+  import moment from 'moment'
+  import { urlQueryChange, GetRequest, setLocalStorage, getLocalStorage } from '../../utils/searchQuery'
 
-export default {
-  name: 'Review',
-  data() {
-    let tom = moment().add(15, 'days').format('YYYY-MM-DD')
-    let yes = moment().add(-15, 'days').format('YYYY-MM-DD')
-    return {
-      pageSize: 10,
-      pageTotal: 0,
-      pageIndex: 1,
-      btnState: true,
-      selection: [],
-      statuss: [{ id: 4, value: '未复核' }, { id: 5, value: '已复核' }],
-      pttype: [],
-      tracks: [],
-      search: {
-        startDate: yes,
-        endDate: tom,
-        address: '',
-        ordercode: '',
-        areaid: undefined,
-        ownerphone: '',
-        contacterphone: '',
-        status: 4,
-        trackusername: '',
-      },
-      form: {
-        order: "",
-        plot: "",
-        orderState: "",
-        time: "",
-      },
-      list: null,
-      listLoading: true,
-      reviewPage: true,
-      num: 0
-    };
-  },
-  watch: {
-    pageIndex(index) {
-      if (index) this.fetchData(index);
-    },
-    search: {
-      deep: true,
-      handler(val) {
-        urlQueryChange(val)
-      }
-    }
-  },
-  computed: {
-    status(val) {
-      return function (val) {
-        const MAP = {
-          4: '未复核', 5: '已复核'
-        }
-        return MAP[val]
-      }
-    }
-  },
-  created() {
-    this.initDic()
-
-    if (!window.location.href.includes('?')) urlQueryChange(this.search)
-
-    this.queryTransforSearch()
-
-    this.fetchData();
-  },
-  methods: {
-    queryTransforSearch() {
-      console.log(window.location.href)
-      let querys = GetRequest(window.location.href)
-
-      for (let i in this.search) {
-        if (querys[i] === 'undefined') querys[i] = undefined
-        if (i == 'status') querys[i] = Number(querys[i])
-        this.search[i] = querys[i]
-      }
-    },
-    reset() {
+  export default {
+    name: 'Review',
+    data() {
       let tom = moment().add(15, 'days').format('YYYY-MM-DD')
       let yes = moment().add(-15, 'days').format('YYYY-MM-DD')
-      this.search = {
-        startDate: yes,
-        endDate: tom,
-        address: '',
-        ordercode: '',
-        areaid: undefined,
-        pttype: '',
-        status: 4,
-        trackusername: '',
+      return {
+        pageSize: 10,
+        pageTotal: 0,
+        pageIndex: 1,
+        btnState: true,
+        selection: [],
+        statuss: [{ id: 4, value: '未复核' }, { id: 5, value: '已复核' }],
+        pttype: [],
+        tracks: [],
+        search: {
+          startDate: yes,
+          endDate: tom,
+          address: '',
+          ordercode: '',
+          areaid: undefined,
+          ownerphone: '',
+          contacterphone: '',
+          status: 4,
+          trackusername: '',
+        },
+        form: {
+          order: "",
+          plot: "",
+          orderState: "",
+          time: "",
+        },
+        list: null,
+        listLoading: true,
+        reviewPage: true,
+        num: 0
+      };
+    },
+    watch: {
+      pageIndex(index) {
+        if (index) this.fetchData(index);
+      },
+      search: {
+        deep: true,
+        handler(val) {
+          // urlQueryChange(val)
+          setLocalStorage('review', val)
+        }
       }
     },
-    async initDic() {
-      let rs = await this.$http({
-        url: `/admin/dictionarylist?dictype=40`,
-        method: "get"
-      });
-
-      this.pttype = rs.data.map(i => {
-        return {
-          dicvalue: i.dicvalue,
-          dicid: i.dicid
+    computed: {
+      status(val) {
+        return function (val) {
+          const MAP = {
+            4: '未复核', 5: '已复核'
+          }
+          return MAP[val]
         }
-      })
+      }
     },
-    handleSelectionChange(val) {
-      this.selection = val.map(i => i.orderid)
-      this.btnState = val.length == 0
-    },
-    async fetchData() {
-      this.listLoading = true;
-      let rs = await this.$http({
-        url: `/kl/klorderchecklist`,
-        method: "post",
-        data: { ...this.search, pageIndex: this.pageIndex }
-      });
+    created() {
+      this.initDic()
 
-      this.list = rs.data;
-      this.pageTotal = rs.total;
-      this.listLoading = false;
-    },
-    handleSizeChange(val) {
-      console.log(`每页 ${val} 条`);
-    },
-    handleCurrentChange(val) {
-      this.pageIndex = val;
-    },
-    go(id) {
-      this.$router.push({ name: `ReviewDetail`, query: { id, detailType: 2 } })
-    },
-    async check() {
-      let rs = await this.$http({
-        url: `/kl/doklordercheck?orderids=${this.selection.join(',')}&check=是`,
-        method: "get"
-      });
+      // if (!window.location.href.includes('?')) urlQueryChange(this.search)
 
-      if (rs.success == 'true') this.$message({
-        message: '保存成功',
-        type: 'success'
-      })
-    }
-  },
-};
+      this.querysTransforSearch()
+
+      this.fetchData();
+    },
+    methods: {
+      querysTransforSearch() {
+        let rs = getLocalStorage('review')
+        if (rs) {
+          for (let i in this.search) {
+            this.search[i] = rs[i]
+          }
+        }
+      },
+      // queryTransforSearch() {
+      //   console.log(window.location.href)
+      //   let querys = GetRequest(window.location.href)
+
+      //   for (let i in this.search) {
+      //     if (querys[i] === 'undefined') querys[i] = undefined
+      //     if (i == 'status') querys[i] = Number(querys[i])
+      //     this.search[i] = querys[i]
+      //   }
+      // },
+      reset() {
+        let tom = moment().add(15, 'days').format('YYYY-MM-DD')
+        let yes = moment().add(-15, 'days').format('YYYY-MM-DD')
+        this.search = {
+          startDate: yes,
+          endDate: tom,
+          address: '',
+          ordercode: '',
+          areaid: undefined,
+          pttype: '',
+          status: 4,
+          trackusername: '',
+        }
+      },
+      async initDic() {
+        let rs = await this.$http({
+          url: `/admin/dictionarylist?dictype=40`,
+          method: "get"
+        });
+
+        this.pttype = rs.data.map(i => {
+          return {
+            dicvalue: i.dicvalue,
+            dicid: i.dicid
+          }
+        })
+      },
+      handleSelectionChange(val) {
+        this.selection = val.map(i => i.orderid)
+        this.btnState = val.length == 0
+      },
+      async fetchData() {
+        this.listLoading = true;
+        let rs = await this.$http({
+          url: `/kl/klorderchecklist`,
+          method: "post",
+          data: { ...this.search, pageIndex: this.pageIndex }
+        });
+
+        this.list = rs.data;
+        this.pageTotal = rs.total;
+        this.listLoading = false;
+      },
+      handleSizeChange(val) {
+        console.log(`每页 ${val} 条`);
+      },
+      handleCurrentChange(val) {
+        this.pageIndex = val;
+      },
+      go(id) {
+        this.$router.push({ name: `ReviewDetail`, query: { id, detailType: 2 } })
+      },
+      async check() {
+        let rs = await this.$http({
+          url: `/kl/doklordercheck?orderids=${this.selection.join(',')}&check=是`,
+          method: "get"
+        });
+
+        if (rs.success == 'true') this.$message({
+          message: '保存成功',
+          type: 'success'
+        })
+      }
+    },
+  };
 </script>
 
 <style lang="scss" scoped>
-.content-box {
-  & > div {
-    display: flex;
-    .el-input,
-    .el-select,
-    .el-date-editor {
-      width: 18%;
-      margin-right: 30px;
+  .content-box {
+    &>div {
+      display: flex;
+      .el-input,
+      .el-select,
+      .el-date-editor {
+        width: 18%;
+        margin-right: 30px;
+      }
     }
   }
-}
 </style>

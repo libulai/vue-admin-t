@@ -37,7 +37,8 @@
                     <el-input v-model="form.communityname" placeholder="请输入"></el-input>
                   </el-form-item> -->
                   <el-form-item label="小区名称" prop="communityname">
-                    <el-autocomplete placeholder="请输入" v-model="form.communityname" :fetch-suggestions="querySearch" @select="handleSelect"></el-autocomplete>
+                    <el-autocomplete placeholder="请输入" v-model="form.communityname" :trigger-on-focus="false" :fetch-suggestions="querySearch"
+                      @select="handleSelect"></el-autocomplete>
                   </el-form-item>
 
                   <el-form-item label="地址-门牌号" prop="address">
@@ -182,7 +183,7 @@
         title: '',
         areas: [],
         pttype: [],
-        plots:[],
+        plots: [],
         times: [{ id: 1, value: '上午' }, { id: 2, value: '下午' }, { id: 3, value: '无' }],
         // sgtypes: [{ id: '1', value: '墙地施工' }, { id: '2', value: '墙施工' }, { id: '3', value: '地施工' }, { id: '4', value: '同层底面施工' }],
         sgtypes: ['墙地施工', '墙施工', '地施工', '同层底面施工'],
@@ -464,6 +465,13 @@
 </script>
 
 <style lang="scss" scoped>
+  ::v-deep {
+    .el-autocomplete {
+      margin-right: 30px;
+      width: 210px;
+    }
+  }
+
   .content-box {
     &>div {
       display: flex;

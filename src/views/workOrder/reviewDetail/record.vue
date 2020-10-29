@@ -84,7 +84,6 @@ export default {
   computed: {
     ctime(data) {
       return function (data) {
-        console.log(data)
         if (data) return moment(data).add(5, 'years').calendar()
         else return ''
       }

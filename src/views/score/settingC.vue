@@ -49,7 +49,6 @@ export default {
       this.data2 = rs.data;
     },
     handleClick(tab, event) {
-      console.log(tab, event)
     }
   },
   beforeDestroy(){

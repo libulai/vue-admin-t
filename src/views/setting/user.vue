@@ -56,8 +56,8 @@
       </div>
     </div>
 
-    <el-dialog :title="title" :visible.sync="dialog" class="dialog dialog1" :close-on-click-modal="false" width="1000px" @closed="clearForm">
-      <el-form :model="form" :rules="rules" ref="form" label-width="100px" class="dialog-form">
+    <el-dialog :title="title" :visible.sync="dialog" class="dialog dialog1" :close-on-click-modal="false" width="1000px" @closed="clearForm" >
+      <el-form :model="form" :rules="rules" ref="form" label-width="100px" class="dialog-form" v-loading="listLoading3" element-loading-text="Loading">
         <el-form-item label="登陆账号" prop="usercode">
           <el-input v-model="form.usercode" placeholder="请输入用户登录账号"></el-input>
         </el-form-item>
@@ -65,10 +65,10 @@
           <el-input v-model="form.passwd" placeholder="请输入用户登录密码"></el-input>
         </el-form-item>
         <el-form-item label="用户姓名" prop="username">
-          <el-input v-model="form.username" placeholder="请输入真实姓名"></el-input>
+          <el-input v-model="form.username" placeholder="真实姓名" disabled></el-input>
         </el-form-item>
         <el-form-item label="绑定员工" prop="empid">
-          <el-input placeholder="选择员工" v-model="productInfo.productname" class="input-with-select select-btn" disabled>
+          <el-input placeholder="选择员工" v-model="form.empid" class="input-with-select select-btn" disabled>
             <el-button slot="append" @click="dialog2Open">请选择</el-button>
           </el-input>
         </el-form-item>
@@ -144,6 +144,7 @@
         list: null,
         listLoading: true,
         listLoading2: true,
+        listLoading3: true,
         dialog: false,
         dialog2: false,
         title: '',
@@ -254,13 +255,13 @@
         await this.initComp()
         await this.initRole()
         if (this.isModify) {
+          this.listLoading3 = true
           this.getDepInfos(data)
           this.form.userid = data.userid
           await this.getComp()
           this.getRole()
+          this.listLoading3 = false
         }
-
-
       },
       async getDepInfos(data) {
         let rs = await this.$http({
@@ -355,7 +356,8 @@
         if (!val) return
         this.dialog2 = false
         this.form.empid = val.empid
-        this.productInfo.productname = val.empname
+        this.form.username = val.empname
+        // this.productInfo.empid = val.empid
 
         this.searchempname = ''
       }

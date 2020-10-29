@@ -98,7 +98,7 @@
 
     <!-- 施工信息 -->
     <div class="">
-      <h4>工程信息</h4>
+      <h4>{{gcTitle(data.pttype)}}</h4>
       <div>
         <div class="list-items">
           <!-- <div>
@@ -148,15 +148,14 @@ export default {
     };
   },
   computed: {
-    // status(val) {
-    //   return function (val) {
-    //     const MAP = {
-    //       1: '已登记', 2: '已派单', 3: '正在服务',
-    //       4: '已完成', 5: '已复核', 6: '已关闭', 22: '时间已确认'
-    //     }
-    //     return MAP[val]
-    //   }
-    // },
+    gcTitle(val) {
+      return function (val) {
+        const MAP = {
+          '施工单': '施工信息', '外部验收单': '验收信息', '售后检查单': '售后检查信息', '售后处理单': '售后处理信息'
+        }
+        return MAP[val]
+      }
+    },
     times(type) {
       return function (type) {
         let times = {

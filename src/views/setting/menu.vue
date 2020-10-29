@@ -180,8 +180,6 @@
           if (valid) {
             this.dialog = false;
 
-            console.log(this.form)
-
             let rs = await this.$http({
               url: `/admin/${this.isModify ? 'domenumod' : 'domenunew'}`,
               method: "post",

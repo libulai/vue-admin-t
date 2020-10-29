@@ -76,7 +76,7 @@
       async fetchData() {
         this.listLoading = true;
         let rs = await this.$http({
-          url: `/admin/productkldictionarylist?forbidden=-1&page.pageIndex=${this.pageIndex}`,
+          url: `/admin/productkldictionarylist?forbidden=-1&attribute=主材&page.pageIndex=${this.pageIndex}`,
           method: 'get'
         });
 

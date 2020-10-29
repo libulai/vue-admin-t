@@ -310,7 +310,6 @@ export default {
       });
 
       this.pics = rs.data
-      console.log(this.pics)
     }
   },
 };

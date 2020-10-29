@@ -52,22 +52,22 @@
               {{ scope.row.ordercode }}
             </template>
           </el-table-column>
-          <el-table-column label="客户名称" align="center">
+          <!-- <el-table-column label="客户名称" align="center">
             <template slot-scope="scope">
               {{ scope.row.customer.customername }}
             </template>
-          </el-table-column>
-          <el-table-column label="联系方式" align="center" min-width="110">
+          </el-table-column> -->
+          <!-- <el-table-column label="联系方式" align="center" min-width="110">
             <template slot-scope="scope">
               <span>{{ scope.row.customer.contacterphone }}</span>
             </template>
-          </el-table-column>
+          </el-table-column> -->
           <el-table-column label="上门时间" align="center">
             <template slot-scope="scope">
-              {{ scope.row.reservedate && scope.row.reservedate.split(' ')[0]}}
+              {{ scope.row.reservedate && scope.row.reservedate.split(' ')[0] + ' ' + times(scope.row.reservetime)}}
             </template>
           </el-table-column>
-          <el-table-column class-name="status-col" label="客户地址" min-width="250" align="center">
+          <el-table-column class-name="status-col" label="客户地址" align="center">
             <template slot-scope="scope">
               {{ scope.row.communityname + scope.row.address}}
             </template>
@@ -87,16 +87,20 @@
               <span>{{ scope.row.trackuser ? scope.row.trackuser.username : '/'}}</span>
             </template>
           </el-table-column>
-          <el-table-column align="center" prop="created_at" label="操作">
+          <el-table-column align="center" prop="created_at" label="备注">
+            <template slot-scope="scope">
+              <span>{{ scope.row.orderdesc || '/'}}</span>
+            </template>
+          </el-table-column>
+          <!-- <el-table-column align="center" prop="created_at" label="操作">
             <template slot-scope="scope">
               <span class="detail handle" @click="go(scope.row.orderid)">详情</span>
             </template>
-          </el-table-column>
+          </el-table-column> -->
         </el-table>
 
         <div class="pagination">
-          <el-pagination background @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page.sync="pageIndex"
-            :page-size="pageSize" layout="prev, pager, next, jumper" :total="pageTotal"></el-pagination>
+          <el-pagination background @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page.sync="pageIndex" :page-size="pageSize" layout="prev, pager, next, jumper" :total="pageTotal"></el-pagination>
         </div>
       </div>
     </div>
@@ -138,230 +142,261 @@
 </template>
 
 <script>
-  import moment from 'moment'
-  export default {
-    name: "Dispatch",
-    data() {
-      let tom = moment().add(1, 'days').format('YYYY-MM-DD')
-      return {
-        pageSize: 10,
-        pageTotal: 0,
-        pageIndex: 1,
-        btnState: true,
-        btnState2: true,
-        btnState3: true,
-        dialog1: false,
-        dialog2: false,
-        dialog3: false,
-        selection: [],
-        statuss: [{ id: 1, value: '已登记' }, { id: 2, value: '已派单' }, { id: 3, value: '正在服务' }, { id: 4, value: '已完成' }, { id: 5, value: '已复核' }, { id: 6, value: '已关闭' }, { id: 7, value: '时间已确认' }],
-        pttype: [],
-        tracks: [],
-        search: {
-          startDate: tom,
-          endDate: tom,
-          address: '',
-          ordercode: '',
-          areaid: '',
-          pttype: '',
-          status: 1,
-          trackusername: '',
-        },
-        form: {
-          dispatchorderids: "",
-          trackuserid: ''
-        },
-        rules: {
-          trackuserid: [
-            { required: true, message: "请选择专员", trigger: "blur" },
-          ]
-        },
-        list: null,
-        listLoading: true,
-      };
-    },
-    computed: {
-      status(val) {
-        return function (val) {
-          const MAP = {
-            1: '已登记', 2: '已派单', 3: '正在服务',
-            4: '已完成', 5: '已复核', 6: '已关闭', 22: '时间已确认'
-          }
-          return MAP[val]
-        }
+import moment from 'moment'
+import { urlQueryChange, GetRequest } from '../../utils/searchQuery'
+
+export default {
+  name: "Dispatch",
+  data() {
+    let tom = moment().add(1, 'days').format('YYYY-MM-DD')
+    let tod = moment().add(0, 'days').format('YYYY-MM-DD')
+    return {
+      pageSize: 10,
+      pageTotal: 0,
+      pageIndex: 1,
+      btnState: true,
+      btnState2: true,
+      btnState3: true,
+      dialog1: false,
+      dialog2: false,
+      dialog3: false,
+      selection: [],
+      statuss: [{ id: 1, value: '已登记' }, { id: 2, value: '已派单' }, { id: 3, value: '正在服务' }, { id: 4, value: '已完成' }, { id: 5, value: '已复核' }, { id: 6, value: '已关闭' }, { id: 7, value: '时间已确认' }],
+      pttype: [],
+      tracks: [],
+      search: {
+        startDate: tod,
+        endDate: tom,
+        address: '',
+        ordercode: '',
+        areaid: '',
+        pttype: '',
+        status: 1,
+        trackusername: '',
       },
-      pttypee(val){
-        return function (val) {
-          const MAP = {
-            292: '施工单', 293: '外部验收单', 294: '售后检查单',
-            295: '售后处理单'
-          }
-          return MAP[val]
+      form: {
+        dispatchorderids: "",
+        trackuserid: ''
+      },
+      rules: {
+        trackuserid: [
+          { required: true, message: "请选择专员", trigger: "blur" },
+        ]
+      },
+      list: null,
+      listLoading: true,
+    };
+  },
+  computed: {
+    status(val) {
+      return function (val) {
+        const MAP = {
+          1: '已登记', 2: '已派单', 3: '正在服务',
+          4: '已完成', 5: '已复核', 6: '已关闭', 22: '时间已确认'
         }
+        return MAP[val]
       }
     },
-    watch: {
-      pageIndex(index) {
-        if (index) this.fetchData(index);
-      },
-    },
-    created() {
-      this.fetchData();
-      this.initDic()
-    },
-    methods: {
-      reset() {
-        let tom = moment().add(1, 'days').format('YYYY-MM-DD')
-        this.search = {
-          startDate: tom,
-          endDate: tom,
-          address: '',
-          ordercode: '',
-          areaid: '',
-          pttype: '',
-          status: 1,
-          trackusername: '',
+    pttypee(val) {
+      return function (val) {
+        const MAP = {
+          292: '施工单', 293: '外部验收单', 294: '售后检查单',
+          295: '售后处理单'
         }
-      },
-      go(id) {
-        this.$router.push({ name: `DispatchDetail`, query: { id, detailType: 1 } })
-      },
-      async initDic() {
-        let rs = await this.$http({
-          url: `/admin/dictionarylist?dictype=40`,
-          method: "get"
-        });
-
-        this.pttype = rs.data.map(i => {
-          return {
-            dicvalue: i.dicvalue,
-            dicid: i.dicid
-          }
-        })
-      },
-      handleSelectionChange(val) {
-        this.selection = val.map(i => i.orderid)
-        this.btnState = val.length == 0
-
-        let rs = val.every(item => item.status==1)
-
-        this.btnState2 = !(val.length!=0 && rs)
-
-        rs = val.every(item => item.status==2)
-
-        this.btnState3 = !(val.length!=0 && rs)
-      },
-      cancel() {
-        this.$refs.form.resetFields();
-        this.dialog1 = false
-      },
-      async fetchData() {
-        this.listLoading = true;
-        let rs = await this.$http({
-          url: `/kl/arrangeklorderlist?startDate=${this.search.startDate}&trackusername=${this.search.trackusername}&status=${this.search.status}&pttype=${this.search.pttype}&areaid=${this.search.areaid}&ordercode=${this.search.ordercode}&endDate=${this.search.endDate}&address=${this.search.address}&page.pageIndex=${this.pageIndex}`,
-          method: "get"
-        });
-
-        this.list = rs.data;
-        this.pageTotal = rs.total;
-        this.listLoading = false;
-      },
-      async dialog1Click() {
-        this.dialog1 = true
-        let rs = await this.$http({
-          url: `/admin/trackers`,
-          method: "get"
-        });
-
-        this.tracks = rs.data
-      },
-      async submit3() {
-        let rs = await this.$http({
-          url: `/kl/klorderdispatch`,
-          params: {
-            dispatchorderids: this.selection.join(',')
-          },
-          method: "get"
-        });
-
-        if (rs.success == 'true') this.$message({
-          message: '保存成功',
-          type: 'success'
-        })
-
-        this.dialog3 = false
-        this.fetchData()
-      },
-      async submit2() {
-        let rs = await this.$http({
-          url: `/kl/klorderdispatchcancel`,
-          params: {
-            dispatchorderids: this.selection.join(',')
-          },
-          method: "get"
-        });
-
-        if (rs.success == 'true') this.$message({
-          message: '保存成功',
-          type: 'success'
-        })
-
-        this.dialog2 = false
-        this.fetchData()
-      },
-      async submit1() {
-        this.$refs.form.validate(async (valid) => {
-          if (valid) {
-            let rs = await this.$http({
-              url: `/kl/klorderarrangesave`,
-              params: {
-                dispatchorderids: this.selection.join(','),
-                trackuserid: this.form.trackuserid
-              },
-              method: "get"
-            });
-
-            if (rs.success == 'true') this.$message({
-              message: '保存成功',
-              type: 'success'
-            })
-
-            this.dialog1 = false
-            this.$refs.form.resetFields();
-            this.fetchData()
-          }
-        })
-      },
-      handleSizeChange(val) {
-        console.log(`每页 ${val} 条`);
-      },
-      handleCurrentChange(val) {
-        this.pageIndex = val;
-      },
+        return MAP[val]
+      }
     },
-  };
+    times(val) {
+      return function (val) {
+        const MAP = {
+          1: '上午', 2: '下午', 3: '无'
+        }
+        return MAP[val]
+      }
+    }
+  },
+  watch: {
+    pageIndex(index) {
+      if (index) this.fetchData(index);
+    },
+    search: {
+      deep: true,
+      handler(val) {
+        urlQueryChange(val)
+      }
+    }
+  },
+  created() {
+    this.initDic();
+
+    if (!window.location.href.includes('?')) urlQueryChange(this.search)
+
+    this.queryTransforSearch()
+
+    this.fetchData();
+  },
+  methods: {
+    queryTransforSearch() {
+      let querys = GetRequest(window.location.href)
+
+      for (let i in this.search) {
+        if (querys[i] === 'undefined') querys[i] = undefined
+        if (i == 'status') querys[i] = Number(querys[i])
+        this.search[i] = querys[i]
+      }
+    },
+    reset() {
+      let tom = moment().add(1, 'days').format('YYYY-MM-DD')
+      this.search = {
+        startDate: tom,
+        endDate: tom,
+        address: '',
+        ordercode: '',
+        areaid: '',
+        pttype: '',
+        status: 1,
+        trackusername: '',
+      }
+    },
+    go(id) {
+      this.$router.push({ name: `DispatchDetail`, query: { id, detailType: 1 } })
+    },
+    async initDic() {
+      let rs = await this.$http({
+        url: `/admin/dictionarylist?dictype=40`,
+        method: "get"
+      });
+
+      this.pttype = rs.data.map(i => {
+        return {
+          dicvalue: i.dicvalue,
+          dicid: i.dicid
+        }
+      })
+    },
+    handleSelectionChange(val) {
+      this.selection = val.map(i => i.orderid)
+      this.btnState = val.length == 0
+
+      let rs = val.every(item => item.status == 1)
+
+      this.btnState2 = !(val.length != 0 && rs)
+
+      rs = val.every(item => item.status == 2)
+
+      this.btnState3 = !(val.length != 0 && rs)
+    },
+    cancel() {
+      this.$refs.form.resetFields();
+      this.dialog1 = false
+    },
+    async fetchData() {
+      this.listLoading = true;
+      let rs = await this.$http({
+        url: `/kl/arrangeklorderlist?startDate=${this.search.startDate}&trackusername=${this.search.trackusername}&status=${this.search.status}&pttype=${this.search.pttype}&areaid=${this.search.areaid}&ordercode=${this.search.ordercode}&endDate=${this.search.endDate}&address=${this.search.address}&page.pageIndex=${this.pageIndex}`,
+        method: "get"
+      });
+
+      this.list = rs.data;
+      this.pageTotal = rs.total;
+      this.listLoading = false;
+    },
+    async dialog1Click() {
+      this.dialog1 = true
+      let rs = await this.$http({
+        url: `/admin/trackers`,
+        method: "get"
+      });
+
+      this.tracks = rs.data
+    },
+    async submit3() {
+      let rs = await this.$http({
+        url: `/kl/klorderdispatch`,
+        params: {
+          dispatchorderids: this.selection.join(',')
+        },
+        method: "get"
+      });
+
+      if (rs.success == 'true') this.$message({
+        message: '保存成功',
+        type: 'success'
+      })
+
+      this.dialog3 = false
+      this.fetchData()
+    },
+    async submit2() {
+      let rs = await this.$http({
+        url: `/kl/klorderdispatchcancel`,
+        params: {
+          dispatchorderids: this.selection.join(',')
+        },
+        method: "get"
+      });
+
+      if (rs.success == 'true') this.$message({
+        message: '保存成功',
+        type: 'success'
+      })
+
+      this.dialog2 = false
+      this.fetchData()
+    },
+    async submit1() {
+      this.$refs.form.validate(async (valid) => {
+        if (valid) {
+          let rs = await this.$http({
+            url: `/kl/klorderarrangesave`,
+            params: {
+              dispatchorderids: this.selection.join(','),
+              trackuserid: this.form.trackuserid
+            },
+            method: "get"
+          });
+
+          if (rs.success == 'true') this.$message({
+            message: '保存成功',
+            type: 'success'
+          })
+
+          this.dialog1 = false
+          this.$refs.form.resetFields();
+          this.fetchData()
+        }
+      })
+    },
+    handleSizeChange(val) {
+      console.log(`每页 ${val} 条`);
+    },
+    handleCurrentChange(val) {
+      this.pageIndex = val;
+    },
+  },
+};
 </script>
 
 <style lang="scss" scoped>
-  .content-box {
-    &>div {
-      display: flex;
-      .el-input,
-      .el-select,
-      .el-date-editor {
-        /* width: 20%; */
-        margin-right: 30px;
-      }
+.content-box {
+  & > div {
+    display: flex;
+    .el-input,
+    .el-select,
+    .el-date-editor {
+      /* width: 20%; */
+      margin-right: 30px;
     }
   }
+}
 
-  ::v-deep .el-select {
-    width: 100%
-  }
+::v-deep .el-select {
+  width: 100%;
+}
 
-  ::v-deep .dialog {
-    .el-dialog {
-      width: 450px !important;
-    }
+::v-deep .dialog {
+  .el-dialog {
+    width: 450px !important;
   }
+}
 </style>

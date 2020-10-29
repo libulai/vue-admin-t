@@ -156,7 +156,7 @@ import moment from 'moment'
 
       },
       handleSizeChange(val) {
-        console.log(`每页 ${val} 条`);
+       
       },
       handleCurrentChange(val) {
         this.pageIndex = val;

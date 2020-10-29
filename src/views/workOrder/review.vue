@@ -61,7 +61,7 @@
             </el-table-column>
             <el-table-column class-name="status-col" label="客户地址" align="center">
               <template slot-scope="scope">
-               {{ scope.row.communityname + scope.row.address}}
+                {{ scope.row.communityname + scope.row.address}}
               </template>
             </el-table-column>
             <el-table-column align="center" prop="created_at" label="服务类型">
@@ -96,6 +96,8 @@
 
 <script>
 import moment from 'moment'
+import { urlQueryChange, GetRequest } from '../../utils/searchQuery'
+
 export default {
   name: 'Review',
   data() {
@@ -137,6 +139,12 @@ export default {
     pageIndex(index) {
       if (index) this.fetchData(index);
     },
+    search: {
+      deep: true,
+      handler(val) {
+        urlQueryChange(val)
+      }
+    }
   },
   computed: {
     status(val) {
@@ -149,22 +157,36 @@ export default {
     }
   },
   created() {
-    this.fetchData();
     this.initDic()
-    // this.reviewPage = this.$route.name === 'Review'
+
+    if (!window.location.href.includes('?')) urlQueryChange(this.search)
+
+    this.queryTransforSearch()
+
+    this.fetchData();
   },
   methods: {
+    queryTransforSearch() {
+      console.log(window.location.href)
+      let querys = GetRequest(window.location.href)
+
+      for (let i in this.search) {
+        if (querys[i] === 'undefined') querys[i] = undefined
+        if (i == 'status') querys[i] = Number(querys[i])
+        this.search[i] = querys[i]
+      }
+    },
     reset() {
-       let tom = moment().add(15, 'days').format('YYYY-MM-DD')
+      let tom = moment().add(15, 'days').format('YYYY-MM-DD')
       let yes = moment().add(-15, 'days').format('YYYY-MM-DD')
       this.search = {
-       startDate: yes,
+        startDate: yes,
         endDate: tom,
         address: '',
         ordercode: '',
         areaid: undefined,
         pttype: '',
-        status: undefined,
+        status: 4,
         trackusername: '',
       }
     },
@@ -190,7 +212,7 @@ export default {
       let rs = await this.$http({
         url: `/kl/klorderchecklist`,
         method: "post",
-        data: {...this.search, pageIndex:this.pageIndex}
+        data: { ...this.search, pageIndex: this.pageIndex }
       });
 
       this.list = rs.data;

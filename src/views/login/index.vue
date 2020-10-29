@@ -89,6 +89,7 @@ export default {
   created() {
     setTimeout(() => {
       removeToken()
+      window.localStorage.removeItem('query')
     }, 500)
   },
   methods: {

@@ -9,6 +9,9 @@
 
       <div>
         <el-table v-loading="listLoading" :data="list" element-loading-text="Loading" fit highlight-current-row>
+           <el-table-column align="center" label="序号">
+            <template slot-scope="scope">{{ scope.row.sort }}</template>
+          </el-table-column>
           <el-table-column align="center" label="编码">
             <template slot-scope="scope">{{ scope.row.materialcode }}</template>
           </el-table-column>
@@ -24,8 +27,11 @@
           <el-table-column label="规格" align="center">
             <template slot-scope="scope">{{ scope.row.specs }}</template>
           </el-table-column>
-          <el-table-column align="center" label="单位">
+          <el-table-column align="center" label="大单位">
             <template slot-scope="scope">{{ scope.row.unit }}</template>
+          </el-table-column>
+            <el-table-column align="center" label="小单位">
+            <template slot-scope="scope">{{ scope.row.unit2 }}</template>
           </el-table-column>
           <el-table-column align="center" label="操作">
             <template slot-scope="scope">
@@ -42,7 +48,10 @@
     </div>
 
     <el-dialog :title="title" :visible.sync="dialog" class="dialog" :close-on-click-modal="false" @closed="clearForm">
-      <el-form :model="form" :rules="rules" ref="form" label-width="100px" class="dialog-form">
+      <el-form :model="form" :rules="rules" ref="form" label-width="120px" class="dialog-form">
+         <el-form-item label="序号" prop="sort">
+          <el-input v-model="form.sort" placeholder="请输入序号"></el-input>
+        </el-form-item>
         <el-form-item label="物料编码" prop="materialcode">
           <el-input v-model="form.materialcode" placeholder="请输入物料编码"></el-input>
         </el-form-item>
@@ -64,8 +73,14 @@
         <el-form-item label="物料规格" prop="specs">
           <el-input v-model="form.specs" placeholder="请输入物料规格"></el-input>
         </el-form-item>
-        <el-form-item label="物料单位" prop="unit">
+        <el-form-item label="物料单位（大）" prop="unit">
           <el-select v-model="form.unit" placeholder="请选择">
+            <el-option v-for="item in units" :key="item" :label="item" :value="item">
+            </el-option>
+          </el-select>
+        </el-form-item>
+          <el-form-item label="物料单位（小）" prop="unit2">
+          <el-select v-model="form.unit2" placeholder="请选择">
             <el-option v-for="item in units" :key="item" :label="item" :value="item">
             </el-option>
           </el-select>
@@ -94,8 +109,10 @@
           specs: "",
           attribute: "",
           unit: "",
+          unit2:"",
           type: "",
-          materialcode: ""
+          materialcode: "",
+          sort: ""
         },
         types: ['防水普通-通用', '防水普通-柔韧', '防水多彩-通用', '防水多彩-柔韧', '堵漏宝', '防水辅料', '防水其他', '墙固、地固'],
         attributes: ['主材', '辅材'],

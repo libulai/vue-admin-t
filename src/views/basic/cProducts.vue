@@ -143,7 +143,12 @@ export default {
   watch: {
     pageIndex: {
       handler: function (index) {
-        if (index) this.fetchData(index);
+        if (index) this.fetchData();
+      }
+    },
+    pageIndex2: {
+      handler: function (index) {
+        if (index) this.dialog2Open();
       }
     }
   },

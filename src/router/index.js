@@ -150,6 +150,13 @@ export let constantRoutes = [
       //   meta: { title: '工单详情单', icon: '' }
       // },
       {
+        path: 'orderReceiptDetail',
+        name: 'OrderReceiptDetail',
+        hidden: true,
+        component: () => import('@/views/workOrder/reviewDetail/reviewDetail'),
+        meta: { title: '工单回执单详情', icon: '', activeMenu: '/order/detail' }
+      },
+      {
         path: 'orderEdit',
         name: 'OrderEdit',
         hidden: true,

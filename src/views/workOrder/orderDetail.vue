@@ -72,21 +72,21 @@
             </template>
           </el-table-column>
           <el-table-column align="center" prop="created_at" label="质保卡">
-              <template slot-scope="scope">
-                <span>{{ scope.row.pttype }}</span>
-              </template>
-            </el-table-column>
+            <template slot-scope="scope">
+              <span>{{ scope.row.pttype }}</span>
+            </template>
+          </el-table-column>
           <el-table-column align="center" prop="created_at" label="操作">
             <template slot-scope="scope">
               <!-- <span class="detail handle" style="margin-right: 10px" @click="detail(scope.row.orderid)">详情</span> -->
-              <span class="detail handle" @click="edit(scope.row.orderid)">编辑</span>
+              <span class="detail handle" style="margin-right: 10px" @click="detail(scope.row.orderid)">详情</span>
+              <!-- <span class="detail handle" @click="edit(scope.row.orderid)">编辑</span> -->
             </template>
           </el-table-column>
         </el-table>
 
         <div class="pagination">
-          <el-pagination background @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page.sync="pageIndex"
-            :page-size="pageSize" layout="prev, pager, next, jumper" :total="pageTotal"></el-pagination>
+          <el-pagination background @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page.sync="pageIndex" :page-size="pageSize" layout="prev, pager, next, jumper" :total="pageTotal"></el-pagination>
         </div>
       </div>
     </div>
@@ -95,166 +95,169 @@
 </template>
 
 <script>
-  import moment from 'moment'
-  import bus from '@/utils/bus'
-  import { urlQueryChange, GetRequest, setLocalStorage, getLocalStorage } from '../../utils/searchQuery'
+import moment from 'moment'
+import bus from '@/utils/bus'
+import { urlQueryChange, GetRequest, setLocalStorage, getLocalStorage } from '../../utils/searchQuery'
 
-  export default {
-    name: 'OrderDetail',
-    data() {
+export default {
+  name: 'OrderDetail',
+  data() {
+    let tom = moment().add(15, 'days').format('YYYY-MM-DD')
+    let yes = moment().add(-15, 'days').format('YYYY-MM-DD')
+    return {
+      pageSize: 10,
+      pageTotal: 0,
+      pageIndex: 1,
+      btnState: true,
+      selection: [],
+      dialog1: false,
+      statuss: [{ id: 1, value: '已登记' }, { id: 2, value: '已派单' }, { id: 3, value: '正在服务' }, { id: 4, value: '已完成' }, { id: 5, value: '已复核' }, { id: 6, value: '已关闭' }, { id: 7, value: '时间已确认' }],
+      pttype: [],
+      tracks: [],
+      search: {
+        startDate: yes,
+        endDate: tom,
+        address: '',
+        ordercode: '',
+        areaid: undefined,
+        pttype: '',
+        status: undefined,
+        trackusername: '',
+        rqbj: 'completetime',
+        completestatus: undefined
+      },
+      list: null,
+      listLoading: true,
+    };
+  },
+  watch: {
+    pageIndex(index) {
+      if (index) this.fetchData(index);
+    },
+    search: {
+      deep: true,
+      handler(val) {
+        setLocalStorage('detail', val)
+      }
+    }
+  },
+  computed: {
+    status(val) {
+      return function (val) {
+        const MAP = {
+          1: '已登记', 2: '已派单', 3: '正在服务',
+          4: '已完成', 5: '已复核', 6: '已关闭', 22: '时间已确认'
+        }
+        return MAP[val]
+      }
+    },
+    pttypee(val) {
+      return function (val) {
+        const MAP = {
+          292: '施工单', 293: '外部验收单', 294: '售后检查单',
+          295: '售后处理单'
+        }
+        return MAP[val]
+      }
+    }
+  },
+  created() {
+    this.querysTransforSearch()
+    this.fetchData();
+    this.initDic()
+  },
+  methods: {
+    detail(id, ttype) {
+      this.$router.push({ name: `OrderReceiptDetail`, query: { id, detailType: 5 } })
+    },
+    querysTransforSearch() {
+      let rs = getLocalStorage('detail')
+      if (rs) {
+        for (let i in this.search) {
+          this.search[i] = rs[i]
+        }
+      }
+    },
+    reset() {
       let tom = moment().add(15, 'days').format('YYYY-MM-DD')
       let yes = moment().add(-15, 'days').format('YYYY-MM-DD')
-      return {
-        pageSize: 10,
-        pageTotal: 0,
-        pageIndex: 1,
-        btnState: true,
-        selection: [],
-        dialog1: false,
-        statuss: [{ id: 1, value: '已登记' }, { id: 2, value: '已派单' }, { id: 3, value: '正在服务' }, { id: 4, value: '已完成' }, { id: 5, value: '已复核' }, { id: 6, value: '已关闭' }, { id: 7, value: '时间已确认' }],
-        pttype: [],
-        tracks: [],
-        search: {
-          startDate: yes,
-          endDate: tom,
-          address: '',
-          ordercode: '',
-          areaid: undefined,
-          pttype: '',
-          status: undefined,
-          trackusername: '',
-          rqbj: '',
-          completestatus: undefined
-        },
-        list: null,
-        listLoading: true,
-      };
-    },
-    watch: {
-      pageIndex(index) {
-        if (index) this.fetchData(index);
-      },
-      search: {
-        deep: true,
-        handler(val) {
-          setLocalStorage('detail', val)
-        }
+      this.search = {
+        startDate: yes,
+        endDate: tom,
+        address: '',
+        ordercode: '',
+        areaid: undefined,
+        pttype: '',
+        status: undefined,
+        trackusername: '',
+        rqbj: 'completetime',
+        completestatus: undefined
       }
     },
-    computed: {
-      status(val) {
-        return function (val) {
-          const MAP = {
-            1: '已登记', 2: '已派单', 3: '正在服务',
-            4: '已完成', 5: '已复核', 6: '已关闭', 22: '时间已确认'
-          }
-          return MAP[val]
-        }
-      },
-      pttypee(val) {
-        return function (val) {
-          const MAP = {
-            292: '施工单', 293: '外部验收单', 294: '售后检查单',
-            295: '售后处理单'
-          }
-          return MAP[val]
-        }
-      }
-    },
-    created() {
-      this.querysTransforSearch()
-      this.fetchData();
-      this.initDic()
-    },
-    methods: {
-      querysTransforSearch() {
-        let rs = getLocalStorage('detail')
-        if (rs) {
-          for (let i in this.search) {
-            this.search[i] = rs[i]
-          }
-        }
-      },
-      reset() {
-        let tom = moment().add(15, 'days').format('YYYY-MM-DD')
-        let yes = moment().add(-15, 'days').format('YYYY-MM-DD')
-        this.search = {
-          startDate: yes,
-          endDate: tom,
-          address: '',
-          ordercode: '',
-          areaid: undefined,
-          pttype: '',
-          status: undefined,
-          trackusername: '',
-          rqbj: '',
-          completestatus: undefined
-        }
-      },
-      async initDic() {
-        let rs = await this.$http({
-          url: `/admin/dictionarylist?dictype=40`,
-          method: "get"
-        });
+    async initDic() {
+      let rs = await this.$http({
+        url: `/admin/dictionarylist?dictype=40`,
+        method: "get"
+      });
 
-        this.pttype = rs.data.map(i => {
-          return {
-            dicvalue: i.dicvalue,
-            dicid: i.dicid
-          }
-        })
-      },
-      edit(id) {
-        this.$router.push({ name: `OrderEdit`, query: { id } })
-        // bus.$emit('editOrder', {id})
-      },
-      // detail(id, ttype) {
-      //   this.$router.push({ name: `OrderMangerDetail`, query: { id, detailType: 4} })
-      // },
-      handleSelectionChange(val) {
-        this.selection = val.map(i => i.orderid)
-        this.btnState = val.length == 0
-      },
-      async fetchData() {
-        this.listLoading = true;
-        let search = JSON.parse(JSON.stringify(this.search))
-        search.pttype = String(this.search.pttype)
-        let rs = await this.$http({
-          url: `/kl/klorderlist`,
-          method: "post",
-          data: { ...search, pageIndex: this.pageIndex }
-        });
-
-        this.list = rs.data;
-        this.pageTotal = rs.total;
-        this.listLoading = false;
-      },
-      handleSizeChange(val) {
-        console.log(`每页 ${val} 条`);
-      },
-      handleCurrentChange(val) {
-        this.pageIndex = val;
-      }
+      this.pttype = rs.data.map(i => {
+        return {
+          dicvalue: i.dicvalue,
+          dicid: i.dicid
+        }
+      })
     },
-  };
+    edit(id) {
+      this.$router.push({ name: `OrderEdit`, query: { id } })
+      // bus.$emit('editOrder', {id})
+    },
+    // detail(id, ttype) {
+    //   this.$router.push({ name: `OrderMangerDetail`, query: { id, detailType: 4} })
+    // },
+    handleSelectionChange(val) {
+      this.selection = val.map(i => i.orderid)
+      this.btnState = val.length == 0
+    },
+    async fetchData() {
+      this.listLoading = true;
+      let search = JSON.parse(JSON.stringify(this.search))
+      search.pttype = String(this.search.pttype)
+      let rs = await this.$http({
+        url: `/kl/klorderlist`,
+        method: "post",
+        data: { ...search, pageIndex: this.pageIndex }
+      });
+
+      this.list = rs.data;
+      this.pageTotal = rs.total;
+      this.listLoading = false;
+    },
+    handleSizeChange(val) {
+      console.log(`每页 ${val} 条`);
+    },
+    handleCurrentChange(val) {
+      this.pageIndex = val;
+    }
+  },
+};
 </script>
 
 <style lang="scss" scoped>
-  .content-box {
-    &>div {
-      display: flex;
-      .el-input,
-      .el-select,
-      .el-date-editor {
-        width: 20%;
-        margin-right: 30px;
-      }
+.content-box {
+  & > div {
+    display: flex;
+    .el-input,
+    .el-select,
+    .el-date-editor {
+      width: 20%;
+      margin-right: 30px;
     }
   }
+}
 
-  ::v-deep .dialog {
-    .el-dialog {
-      width: 450px !important;
-    }
+::v-deep .dialog {
+  .el-dialog {
+    width: 450px !important;
   }
+}
 </style>

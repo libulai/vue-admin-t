@@ -260,8 +260,8 @@
           this.form.userid = data.userid
           await this.getComp()
           this.getRole()
-          this.listLoading3 = false
         }
+        this.listLoading3 = false
       },
       async getDepInfos(data) {
         let rs = await this.$http({

@@ -349,6 +349,7 @@
         this.form.customername = data.chatordercustomername
         this.form.contacterphone = data.chatordercustomerphone
         this.form.customertype = data.chatordercustomertype
+        this.form.pttype = '外部验收单'
         // console.log(data)
       },
       async initDic() {

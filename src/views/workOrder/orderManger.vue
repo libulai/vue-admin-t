@@ -23,6 +23,7 @@
             <el-option v-for="item in pttype" :key="item.dicvalue" :label="item.dicvalue" :value="item.dicvalue">
             </el-option>
           </el-select>
+          <el-button type="primary" class="com-btn" @click="exportF">导出</el-button>
           <el-button type="warning" class="com-btn" @click="fetchData">查询</el-button>
           <el-button type="info" class="com-btn" @click="reset">重置</el-button>
         </div>
@@ -73,8 +74,9 @@
           </el-table-column>
           <el-table-column align="center" prop="created_at" label="操作">
             <template slot-scope="scope">
-              <span class="detail handle" style="margin-right: 10px" @click="detail(scope.row.orderid)" v-if="scope.row.status==1 || scope.row.status==4">详情</span>
-              <span class="detail handle" @click="edit(scope.row.orderid)">编辑</span>
+              <!-- <span class="detail handle" style="margin-right: 10px" @click="detail(scope.row.orderid)" v-if="scope.row.status==1 || scope.row.status==4">详情</span> -->
+              <span class="detail handle" style="margin-right: 10px" @click="detail(scope.row.orderid)">详情</span>
+              <!-- <span class="detail handle" @click="edit(scope.row.orderid)">编辑</span> -->
             </template>
           </el-table-column>
         </el-table>
@@ -117,7 +119,7 @@
           pttype: '',
           status: undefined,
           trackusername: '',
-          rqbj: '',
+          rqbj: 'completetime',
           completestatus: undefined
         },
         list: null,
@@ -161,6 +163,9 @@
       this.initDic()
     },
     methods: {
+      exportF() {
+
+      },
       querysTransforSearch() {
         let rs = getLocalStorage('manager')
         if (rs) {
@@ -181,7 +186,7 @@
           pttype: '',
           status: undefined,
           trackusername: '',
-          rqbj: '',
+          rqbj: 'completetime',
           completestatus: undefined
         }
       },

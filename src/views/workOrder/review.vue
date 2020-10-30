@@ -9,10 +9,11 @@
           <div>
             <el-input v-model="search.ordercode" placeholder="请输入订单号"></el-input>
             <el-input v-model="search.address" placeholder="请输入小区地址"></el-input>
-            <el-select v-model="search.status" placeholder="选择工单状态">
+            <!-- <el-select v-model="search.status" placeholder="选择工单状态">
               <el-option v-for="item in statuss" :key="item.id" :label="item.value" :value="item.id">
               </el-option>
-            </el-select>
+            </el-select> -->
+             <el-input v-model="search.ownerphone" placeholder="业主电话"></el-input>
             <el-input v-model="search.trackusername" placeholder="服务专员"></el-input>
           </div>
           <div style="margin-top:20px">
@@ -20,7 +21,7 @@
             </el-date-picker>
             <el-date-picker v-model="search.endDate" type="date" placeholder="结束时间" value-format="yyyy-MM-dd">
             </el-date-picker>
-            <el-input v-model="search.ownerphone" placeholder="业主电话"></el-input>
+           
             <el-button type="warning" class="com-btn" @click="fetchData">查询</el-button>
             <el-button type="info" class="com-btn" @click="reset">重置</el-button>
           </div>
@@ -110,7 +111,7 @@
         pageIndex: 1,
         btnState: true,
         selection: [],
-        statuss: [{ id: 4, value: '未复核' }, { id: 5, value: '已复核' }],
+        statuss: [{ id: 4, value: '已完成' }, { id: 5, value: '已复核' }],
         pttype: [],
         tracks: [],
         search: {
@@ -152,7 +153,7 @@
       status(val) {
         return function (val) {
           const MAP = {
-            4: '未复核', 5: '已复核'
+            4: '已完成', 5: '已复核'
           }
           return MAP[val]
         }

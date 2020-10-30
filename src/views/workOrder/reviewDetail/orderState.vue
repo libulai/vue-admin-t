@@ -3,22 +3,22 @@
     <el-table v-loading="listLoading" :data="list" element-loading-text="Loading" fit highlight-current-row border>
       <el-table-column align="center" label="工单状态">
         <template slot-scope="scope">
-          {{ scope.$index }}
+          {{ scope.statusname }}
         </template>
       </el-table-column>
       <el-table-column label="备注" align="center">
         <template slot-scope="scope">
-          {{ scope.row.pageviews }}
+          {{ scope.row.optiondesc }}
         </template>
       </el-table-column>
       <el-table-column label="操作人" align="center">
         <template slot-scope="scope">
-          {{ scope.row.author }}
+          {{ scope.row.optionuser }}
         </template>
       </el-table-column>
       <el-table-column label="时间" align="center">
         <template slot-scope="scope">
-          {{ scope.row.pageviews }}
+          {{ scope.row.time }}
         </template>
       </el-table-column>
 
@@ -35,8 +35,13 @@ export default {
     };
   },
   props: ['data', 'type'],
+  watch:{
+    data(val){
+      this.fetchData();
+    }
+  },
   created() {
-    this.fetchData();
+    
   },
   methods: {
     async fetchData() {
@@ -46,6 +51,7 @@ export default {
         method: "get"
       });
 
+      this.list = rs.data;
       this.listLoading = false
     }
   },

@@ -3,32 +3,34 @@
     <div class="content-wrap">
       <div style="position: relative;" v-loading="loading">
         <el-tabs v-model="activeName" @tab-click="handleClick">
-          <el-tab-pane label="预约信息" name="first">
+          <el-tab-pane label="预约信息" name="first" v-if="type!=5">
             <appointment :data="data" :type="type" />
           </el-tab-pane>
-          <el-tab-pane label="操作记录" name="second" v-if="type!=1 && type!=4">
-            <order-state :data="data" :type="type"/>
+          <el-tab-pane label="操作记录" name="second" v-if="type!=1 && type!=4 && type!=5">
+            <order-state :data="data" :type="type" />
           </el-tab-pane>
-          <el-tab-pane label="施工详情单" name="third" v-if="type!=1 && type!=4 && (ttype=='施工单' || ttype==292)">
-            <construction-detail :data="data" :type="type" :recepits="recepits"/>
+          <el-tab-pane label="施工详情单" name="施工单" v-if="type!=1 && type!=4 && (ttype=='施工单' || ttype==292)">
+            <construction-detail :data="data" :type="type" :recepits="recepits" />
           </el-tab-pane>
-          <el-tab-pane label="验收详情单" name="fourth" v-if="type!=1 && type!=4 && (ttype=='外部验收单' || ttype==293)">
-            <confirm :data="data" :type="type" :recepits="recepits"/>
+          <el-tab-pane label="验收详情单" name="外部验收单" v-if="type!=1 && type!=4 && (ttype=='外部验收单' || ttype==293)">
+            <confirm :data="data" :type="type" :recepits="recepits" />
           </el-tab-pane>
-           <el-tab-pane label="售后详情单" name="sixth" v-if="type!=1 && type!=4 && (ttype=='售后检查单' || ttype==294)">
-            <confirm :data="data" :type="type" :recepits="recepits"/>
+          <el-tab-pane label="售后详情单" name="售后检查单" v-if="type!=1 && type!=4 && (ttype=='售后检查单' || ttype==294)">
+            <confirm :data="data" :type="type" :recepits="recepits" />
           </el-tab-pane>
-          <el-tab-pane label="维修详情单" name="seventh" v-if="type!=1 && type!=4 && (ttype=='售后处理单' || ttype==295)">
-            <confirm :data="data" :type="type" :recepits="recepits"/>
+          <el-tab-pane label="维修详情单" name="售后处理单" v-if="type!=1 && type!=4 && (ttype=='售后处理单' || ttype==295)">
+            <confirm :data="data" :type="type" :recepits="recepits" />
           </el-tab-pane>
           <el-tab-pane label="核销记录" name="fifth" v-if="type==4 || type==2 || type==6">
-            <record :data="data" :type="type" :recepits="recepits"/>
+            <record :data="data" :type="type" :recepits="recepits" />
           </el-tab-pane>
         </el-tabs>
 
         <div class="back">
-          <el-button type="warning" size="medium" @click="produce('售后检查单')" v-if="data.pttype=='施工单' || data.pttype=='外部验收单'">生成售后单</el-button>
-          <el-button type="warning" size="medium" @click="produce('售后处理单')" v-if="data.pttype=='施工单' || data.pttype=='外部验收单'">生成维修单</el-button>
+          <el-button class="com-btn" type="primary" @click="cancel()" style="width:110px!important" v-if="type==4 && data.status==1">作废</el-button>
+          <el-button class="com-btn" type="primary" @click="edit()" style="width:110px!important" v-if="(type==4 || type==5) && (data.status==1 || data.status==4 || data.status==5 || data.status==6)">编辑</el-button>
+          <el-button type="warning" size="medium" @click="produce('售后检查单')" v-if="type==4 && (data.pttype=='施工单' || data.pttype=='外部验收单')">生成售后单</el-button>
+          <el-button type="warning" size="medium" @click="produce('售后处理单')" v-if="type==4 && (data.pttype=='施工单' || data.pttype=='外部验收单')">生成维修单</el-button>
           <el-button class="defalut-btn" size="medium" @click="back" icon="el-icon-back">返回</el-button>
         </div>
       </div>
@@ -57,10 +59,10 @@ export default {
       loading: false,
       firstLoad: true,
       activeName: 'first',
-      ttype:'', // 工单类型
-      type: 1, // 1分派  2复核  3网络预约单  4工单信息管理  6质保卡 
+      ttype: '', // 工单类型
+      type: 1, // 1分派  2复核  3网络预约单  4工单信息管理  5回执单 6质保卡 
       data: {},
-      recepits:{}
+      recepits: {}
     };
   },
   created() {
@@ -70,14 +72,29 @@ export default {
       this.initData(rs)
     })
   },
-   beforeDestroy(){
-      bus.$off('go');//组件销毁时关闭监听
+  beforeDestroy() {
+    bus.$off('go');//组件销毁时关闭监听
   },
   methods: {
+    async cancel() {
+      let rs = await this.$http({
+        url: `/kl/doklordercansel?orderid=${this.data.orderid}`,
+        method: "get"
+      });
+
+      if (rs.success == 'true') this.$message({
+        message: '保存成功',
+        type: 'success'
+      })
+    },
+    edit() {
+      let id = this.data.orderid
+      if (this.type == 4) this.$router.push({ name: `OrderMangerEdit`, query: { id, detailType: 4 } })
+      if (this.type == 5) this.$router.push({ name: `OrderEdit`, query: { id } })
+    },
     async initData(data) {
-      // if (!this.firstLoad) return
-      // this.firstLoad = false
       this.type = data.detailType
+
       this.loading = true
 
       let rs = await this.$http({
@@ -87,6 +104,10 @@ export default {
 
       this.ttype = rs.data[0].pttype
       this.data = rs.data[0]
+
+      console.log(this.data)
+
+      if (this.type == 5) this.activeName = this.ttype
 
       rs = await this.$http({
         url: `/kl/klorderreceipt?orderid=${data.id}`,

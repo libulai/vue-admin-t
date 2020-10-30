@@ -117,7 +117,7 @@
         btnState: true,
         selection: [],
         dialog1: false,
-        statuss: [{ id: 1, value: '已登记' }, { id: 2, value: '已派单' }, { id: 3, value: '正在服务' }, { id: 4, value: '已完成' }, { id: 5, value: '已复核' }, { id: 6, value: '已关闭' }, { id: 7, value: '时间已确认' }],
+        statuss: [{ id: 4, value: '已完成' }, { id: 5, value: '已复核' }, { id: 6, value: '已关闭' }],
         pttype: [],
         tracks: [],
         search: {
@@ -127,9 +127,9 @@
           pttype: '',
           ownerphone: '',
           contacterphone: '',
-          areaid: '',
+          areaid: undefined,
           address: '',
-          status: '',
+          status: 4,
           trackusername: ''
         },
         list: null,
@@ -151,8 +151,7 @@
       status(val) {
         return function (val) {
           const MAP = {
-            1: '已登记', 2: '已派单', 3: '正在服务',
-            4: '已完成', 5: '已复核', 6: '已关闭', 22: '时间已确认'
+            4: '已完成', 5: '已复核', 6: '已关闭',
           }
           return MAP[val]
         }
@@ -180,9 +179,9 @@
           endDate: tom,
           address: '',
           ordercode: '',
-          areaid: '',
+          areaid: undefined,
           pttype: '',
-          status: '',
+          status: 4,
           trackusername: '',
         }
       },
@@ -205,9 +204,11 @@
       },
       async fetchData() {
         this.listLoading = true;
+        let search = JSON.parse(JSON.stringify(this.search))
         let rs = await this.$http({
-          url: `/kl/arrangeklorderlist?startDate=${this.search.startDate}&trackusername=${this.search.trackusername}&status=${this.search.status}&pttype=${this.search.pttype}&areaid=${this.search.areaid}&ordercode=${this.search.ordercode}&endDate=${this.search.endDate}&address=${this.search.address}&page.pageIndex=${this.pageIndex}`,
-          method: "get"
+          url: `/kl/klorderzbklist`,
+          method: "post",
+          data: { ...search, pageIndex: this.pageIndex }
         });
 
         this.list = rs.data;

@@ -18,6 +18,7 @@
       cachedViews() {
         // console.log(this.$store.state.tagsView)
         return this.$store.state.tagsView.cachedViews
+        // return this.$store.state.tagsView.cachedViews
       },
     }
   }

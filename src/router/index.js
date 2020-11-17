@@ -8,9 +8,6 @@ import Layout from '@/layout'
 
 import asyncRouter from './asyncRouter'
 
-// let rs = await asyncRouter()
-// console.log(rs)
-// console.log(asyncRouter(),'123')  
 /**
  * Note: sub-menu only appear when route children.length >= 1
  * Detail see: https://panjiachen.github.io/vue-element-admin-site/guide/essentials/router-and-nav.html
@@ -38,12 +35,8 @@ import asyncRouter from './asyncRouter'
 
 // let constantRoutes = []
 
-// asyncRouter().then(rs=>{
-//   console.log(rs,'90')
-// })
 
-export let constantRoutes = [
-  {
+export let constantRoutes = [{
     path: '/login',
     component: () => import('@/views/login/index'),
     hidden: true
@@ -61,260 +54,81 @@ export let constantRoutes = [
       path: 'home',
       name: 'Home',
       component: () => import('@/views/home/index'),
-      meta: { title: '首页', icon: 'el-icon-s-home' }
+      meta: {
+        title: '首页',
+        icon: 'el-icon-s-home'
+      }
     }]
   },
   {
-    path: '/workOrder',
+    path: '/page1',
     component: Layout,
-    redirect: '/workOrder/appointment',
-    name: 'WorkOrder',
-    meta: { title: '工单管理', icon: 'el-icon-s-help' },
-    children: [
-      // {
-      //   path: 'addOrder',
-      //   name: 'AddOrder',
-      //   component: () => import('@/views/workOrder/addOrder'),
-      //   meta: { title: '预约登记', icon: '' }
-      // },
-      // {
-      //   path: 'dispatch',
-      //   name: 'Dispatch',
-      //   component: () => import('@/views/workOrder/dispatch'),
-      //   meta: { title: '分派工单', icon: '' },
-      // },
-      {
-        path: 'dispatchDetail',
-        name: 'DispatchDetail',
-        component: () => import('@/views/workOrder/reviewDetail/reviewDetail'),
-        hidden: true,
-        meta: { title: '工单信息', icon: '', activeMenu: '/order/dispatch' }
-      },
-      // {
-      //   path: 'review',
-      //   name: 'Review',
-      //   component: () => import('@/views/workOrder/review'),
-      //   meta: { title: '复核工单', icon: '' },
-      //   // children: [{
-      //   //   path: 'reviewDetail',
-      //   //   name: 'ReviewDetail',
-      //   //   hidden: true,
-      //   //   component: () => import('@/views/workOrder/reviewDetail/reviewDetail'),
-      //   //   meta: { title: '工单信息', icon: '', activeMenu: '/workOrder/review' }
-      //   // },]
-      // },
-      {
-        path: 'reviewDetail',
-        name: 'ReviewDetail',
-        component: () => import('@/views/workOrder/reviewDetail/reviewDetail'),
-        hidden: true,
-        meta: { title: '工单信息', icon: '', activeMenu: '/order/review' }
-      },
-      // {
-      //   path: 'networkOrder',
-      //   name: 'NetworkOrder',
-      //   component: () => import('@/views/workOrder/networkOrder'),
-      //   meta: { title: '网络预约单审核', icon: '' }
-      // },
-      // {
-      //   path: 'orderManger',
-      //   name: 'OrderManger',
-      //   component: () => import('@/views/workOrder/orderManger'),
-      //   meta: { title: '工单信息管理', icon: '' }
-      // },
-      {
-        path: 'orderMangerDetail',
-        name: 'OrderMangerDetail',
-        hidden: true,
-        component: () => import('@/views/workOrder/reviewDetail/reviewDetail'),
-        meta: { title: '工单信息详情', icon: '', activeMenu: '/order/manage' }
-      },
-      {
-        path: 'orderMangerEdit',
-        name: 'OrderMangerEdit',
-        hidden: true,
-        component: () => import('@/views/workOrder/addOrder'),
-        meta: { title: '工单信息编辑', icon: '', activeMenu: '/order/manage' }
-      },
-      {
-        path: 'networkEdit',
-        name: 'NetworkEdit',
-        hidden: true,
-        component: () => import('@/views/workOrder/addOrder'),
-        meta: { title: '网络预约单生成', icon: '', activeMenu: '/order/network' }
-      },
-      // {
-      //   path: 'orderDetail',
-      //   name: 'OrderDetail',
-      //   component: () => import('@/views/workOrder/orderDetail'),
-      //   meta: { title: '工单详情单', icon: '' }
-      // },
-      {
-        path: 'orderReceiptDetail',
-        name: 'OrderReceiptDetail',
-        hidden: true,
-        component: () => import('@/views/workOrder/reviewDetail/reviewDetail'),
-        meta: { title: '工单回执单详情', icon: '', activeMenu: '/order/detail' }
-      },
-      {
-        path: 'orderEdit',
-        name: 'OrderEdit',
-        hidden: true,
-        component: () => import('@/views/workOrder/editOrder'),
-        meta: { title: '工单回执单编辑', icon: '', activeMenu: '/order/detail' }
-      },
-      // {
-      //   path: 'qualityOrder',
-      //   name: 'QualityOrder',
-      //   component: () => import('@/views/workOrder/qualityOrder'),
-      //   meta: { title: '发放质保单', icon: '' }
-      // },
-      {
-        path: 'qualityOrderDetail',
-        name: 'QualityOrderDetail',
-        hidden: true,
-        component: () => import('@/views/workOrder/reviewDetail/reviewDetail'),
-        meta: { title: '工单详情', icon: '' , activeMenu: '/order/zbk'}
-      },
-    ]
+    redirect: '/page1/skills',
+    name: 'Page1',
+    meta: {
+      title: 'menu1',
+      icon: 'el-icon-s-help'
+    },
+    children: [{
+      path: 'skills',
+      name: 'Skills',
+      component: () => import('@/views/skills'),
+      meta: {
+        title: 'skills',
+        icon: ''
+      }
+    }, {
+      path: 'skills',
+      name: 'Skills',
+      component: () => import('@/views/skills'),
+      meta: {
+        title: 'skills',
+        icon: ''
+      }
+    }]
   },
-  // {
-  //   path: '/score',
-  //   component: Layout,
-  //   redirect: '/score/settingA',
-  //   name: 'Score',
-  //   meta: { title: '积分管理', icon: 'el-icon-s-help' },
-  //   children: [
-  //     {
-  //       path: 'settingA',
-  //       name: 'SettingA',
-  //       component: () => import('@/views/score/settingA'),
-  //       meta: { title: 'A分设置', icon: '' }
-  //     },
-  //     {
-  //       path: 'settingC',
-  //       name: 'SettingC',
-  //       component: () => import('@/views/score/settingC'),
-  //       meta: { title: 'C分设置', icon: '' }
-  //     },
-  //     {
-  //       path: 'dispatchA',
-  //       name: 'DispatchA',
-  //       component: () => import('@/views/score/dispatchA'),
-  //       meta: { title: 'A分发放', icon: '' }
-  //     },
-  //     {
-  //       path: 'dispatchC',
-  //       name: 'DispatchC',
-  //       component: () => import('@/views/score/dispatchA'),
-  //       meta: { title: 'C分发放', icon: '' }
-  //     }
-  //   ]
-  // },
-  // {
-  //   path: '/basic',
-  //   component: Layout,
-  //   redirect: '/basic/area',
-  //   name: 'Basic',
-  //   meta: { title: '基础数据', icon: 'el-icon-s-help' },
-  //   children: [
-  //     {
-  //       path: 'area',
-  //       name: 'Area',
-  //       component: () => import('@/views/basic/area'),
-  //       meta: { title: '区域管理', icon: '' }
-  //     },
-  //     {
-  //       path: 'dep',
-  //       name: 'Dep',
-  //       component: () => import('@/views/basic/dep'),
-  //       meta: { title: '部门管理', icon: '' }
-  //     },
-  //     {
-  //       path: 'employees',
-  //       name: 'Employees',
-  //       component: () => import('@/views/basic/employees'),
-  //       meta: { title: '员工管理', icon: '' }
-  //     },
-  //     {
-  //       path: 'customer',
-  //       name: 'Customer',
-  //       component: () => import('@/views/basic/customer'),
-  //       meta: { title: '客户管理', icon: '' }
-  //     },
-  //     {
-  //       path: 'plot',
-  //       name: 'Plot',
-  //       component: () => import('@/views/basic/plot'),
-  //       meta: { title: '小区管理', icon: '' }
-  //     },
-  //     {
-  //       path: 'iProducts',
-  //       name: 'IProducts',
-  //       component: () => import('@/views/basic/iProducts'),
-  //       meta: { title: '产业物料管理', icon: '' }
-  //     },
-  //     {
-  //       path: 'cProducts',
-  //       name: 'CProducts',
-  //       component: () => import('@/views/basic/cProducts'),
-  //       meta: { title: '公司物料管理', icon: '' }
-  //     },
-  //     {
-  //       path: 'attribute',
-  //       name: 'Attribute',
-  //       component: () => import('@/views/basic/attribute'),
-  //       meta: { title: '公司属性设置', icon: '' }
-  //     }
-  //   ]
-  // },
-  // {
-  //   path: '/setting',
-  //   component: Layout,
-  //   redirect: '/setting/user',
-  //   name: 'Setting',
-  //   meta: { title: '系统设置', icon: 'el-icon-s-help' },
-  //   children: [
-  //     {
-  //       path: 'menu',
-  //       name: 'Menu',
-  //       component: () => import('@/views/setting/menu'),
-  //       meta: { title: '菜单管理', icon: '' }
-  //     },
-  //     {
-  //       path: 'user',
-  //       name: 'User',
-  //       component: () => import('@/views/setting/user'),
-  //       meta: { title: '用户管理', icon: '' }
-  //     },
-  //     {
-  //       path: 'role',
-  //       name: 'Role',
-  //       component: () => import('@/views/setting/role'),
-  //       meta: { title: '角色管理', icon: '' }
-  //     }
-  //   ]
-  // },
-
+  {
+    path: '/flow',
+    component: Layout,
+    redirect: '/flow',
+    children: [{
+      path: 'flow',
+      name: 'Flow',
+      component: () => import('@/views/flow'),
+      meta: {
+        title: '流程图',
+        icon: 'el-icon-news'
+      }
+    }]
+  },
   // 404 page must be placed at the end !!!
-  // { path: '*', redirect: '/404', hidden: true }
+  {
+    path: '*',
+    redirect: '/404',
+    hidden: true
+  }
 ]
 
-export const asyncRoutes = [
-  {
+export const asyncRoutes = [{
     path: '/login',
     component: () => import('@/views/login/index'),
     hidden: true
   },
 
   // 404 page must be placed at the end !!!
-  { path: '*', redirect: '/404', hidden: true }
+  {
+    path: '*',
+    redirect: '/404',
+    hidden: true
+  }
 ]
 
 
 const createRouter = () => new Router({
   // mode: 'history', // require service support
-  scrollBehavior: () => ({ y: 0 }),
+  scrollBehavior: () => ({
+    y: 0
+  }),
   routes: constantRoutes
 })
 

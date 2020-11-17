@@ -76,19 +76,20 @@ module.exports = {
     ])
 
     // when there are many pages, it will cause too many meaningless requests
+    // 预加载
     config.plugins.delete('prefetch')
 
     // set svg-sprite-loader
     config.module
       .rule('svg')
-      .exclude.add(resolve('src/icons'))
+      .exclude.add(resolve('src/icons')) // 默认处理svg的方法要排除调icons目录
       .end()
     config.module
-      .rule('icons')
+      .rule('icons') // 加一个规则icons
       .test(/\.svg$/)
       .include.add(resolve('src/icons'))
       .end()
-      .use('svg-sprite-loader')
+      .use('svg-sprite-loader') // svg制作成雪碧图,提高性能
       .loader('svg-sprite-loader')
       .options({
         symbolId: 'icon-[name]'

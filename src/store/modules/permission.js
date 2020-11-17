@@ -88,85 +88,71 @@ const mutations = {
         // console.log(data)
         // console.log(process.env.NODE_ENV)
 
-        const ROUTERMAP = {
-          8: import('@/views/setting/role'),
-          9: import('@/views/setting/menu'),
-          10: import('@/views/setting/user'),
+        // const ROUTERMAP = {
+        //   8: import('@/views/setting/role'),
+        //   9: import('@/views/setting/menu'),
+        //   10: import('@/views/setting/user'),
 
-          11: import('@/views/basic/dep'),
-          12: import('@/views/basic/employees'),
-          13: import('@/views/basic/area'),
-          14: import('@/views/basic/plot'),
-          17: import('@/views/basic/customer'),
-          425: import('@/views/basic/attribute'),
-          428: import('@/views/basic/iProducts'),
+        //   11: import('@/views/basic/dep'),
+        //   12: import('@/views/basic/employees'),
+        //   13: import('@/views/basic/area'),
+        //   14: import('@/views/basic/plot'),
+        //   17: import('@/views/basic/customer'),
+        //   425: import('@/views/basic/attribute'),
+        //   428: import('@/views/basic/iProducts'),
 
-          421: import('@/views/score/settingA'),
-          422: import('@/views/score/settingC'),
-          423: import('@/views/score/dispatchA'),
-          424: import('@/views/score/dispatchC'),
+        //   421: import('@/views/score/settingA'),
+        //   422: import('@/views/score/settingC'),
+        //   423: import('@/views/score/dispatchA'),
+        //   424: import('@/views/score/dispatchC'),
 
-          413: import('@/views/workOrder/addOrder'),
-          414: import('@/views/workOrder/dispatch'),
-          415: import('@/views/workOrder/review'),
-          416: import('@/views/workOrder/networkOrder'),
-          417: import('@/views/workOrder/orderManger'),
-          418: import('@/views/workOrder/orderDetail'),
-          419: import('@/views/workOrder/qualityOrder'),
-        }
+        //   413: import('@/views/workOrder/addOrder'),
+        //   414: import('@/views/workOrder/dispatch'),
+        //   415: import('@/views/workOrder/review'),
+        //   416: import('@/views/workOrder/networkOrder'),
+        //   417: import('@/views/workOrder/orderManger'),
+        //   418: import('@/views/workOrder/orderDetail'),
+        //   419: import('@/views/workOrder/qualityOrder'),
+        // }
         
-        // 429: import('@/views/basic/cProducts'), // 开发环境
-        // 430: import('@/views/basic/cProducts'), // 生产环境
-        ROUTERMAP[process.env.NODE_ENV==="development"?430:430] = import('@/views/basic/cProducts')
+        // // 429: import('@/views/basic/cProducts'), // 开发环境
+        // // 430: import('@/views/basic/cProducts'), // 生产环境
+        // ROUTERMAP[process.env.NODE_ENV==="development"?430:430] = import('@/views/basic/cProducts')
 
-        data.forEach(item => {
-          let children = item.subMenus
-          let childrenArr = []
-          let ppath = ''
+        // data.forEach(item => {
+        //   let children = item.subMenus
+        //   let childrenArr = []
+        //   let ppath = ''
 
-          children.forEach(i => {
-            if(!i.menuurl) i.menuurl = '/errorPath'
-            if (settingMenu.includes(i.menuid)) ppath = '/setting'
-            else ppath = '/' + i.menuurl.split('/')[1]
+        //   children.forEach(i => {
+        //     if(!i.menuurl) i.menuurl = '/errorPath'
+        //     if (settingMenu.includes(i.menuid)) ppath = '/setting'
+        //     else ppath = '/' + i.menuurl.split('/')[1]
 
-            childrenArr.push({
-              path: i.menuurl,
-              name: i.menuurl,
-              // name: '33',
-              component: () => ROUTERMAP[i.menuid],
-              meta: {
-                title: i.menuname,
-                icon: ''
-              }
-            })
+        //     childrenArr.push({
+        //       path: i.menuurl,
+        //       name: i.menuurl,
+        //       // name: '33',
+        //       component: () => ROUTERMAP[i.menuid],
+        //       meta: {
+        //         title: i.menuname,
+        //         icon: ''
+        //       }
+        //     })
+        //   })
 
-            // 添加工单详情单编辑
-            // if (i.menuid == 418) {
-            //   childrenArr.push({
-            //     path: 'orderEdit',
-            //     name: 'OrderEdit',
-            //     hidden: true,
-            //     component: () => import('@/views/workOrder/editOrder'),
-            //     meta: {
-            //       title: '工单详情单编辑',
-            //       icon: ''
-            //     }
-            //   })
-            // }
-          })
-
-          routes.push({
-            path: ppath,
-            component: Layout,
-            redirect: children[0].menuurl,
-            name: item.menuid,
-            meta: {
-              title: item.menuname,
-              icon: item.menuicon
-            },
-            children: childrenArr
-          })
-        })
+        //   routes.push({
+        //     path: ppath,
+        //     component: Layout,
+        //     redirect: children[0].menuurl,
+        //     name: item.menuid,
+        //     meta: {
+        //       title: item.menuname,
+        //       icon: item.menuicon
+        //     },
+        //     children: childrenArr
+        //   })
+        // })
 
         console.log(routes)
 

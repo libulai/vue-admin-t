@@ -36,10 +36,7 @@ router.beforeEach(async (to, from, next) => {
       })
       NProgress.done()
     } else {
-      if (to.query.detailType) {
-        bus.$emit('go', to.query)
-        bus.$emit('detail', to.query)
-      }
+     
       // if (store.state.permission.routes.length == 0) {
       //   await store.commit('permission/RESET_ROUTERS', router)
       //   // next({ path: to.path })
@@ -50,7 +47,7 @@ router.beforeEach(async (to, from, next) => {
       // if (!router.options.routes || router.options.routes[0].path=='/login') {
       //   await store.commit('permission/RESET_ROUTERS', router)
       // }
-      await store.dispatch('permission/asyncRouter', router)
+      // await store.dispatch('permission/asyncRouter', router)
 
       next()
       // const hasGetUserInfo = store.getters.name

@@ -106,10 +106,10 @@
   }
 
   .bg-top {
-    background: #0b3190;
+    background: #30838c;
     height: 260px;
     width: 100%;
     position: absolute;
-    top: 85px;
+    top: 65px;
   }
 </style>

@@ -1,6 +1,6 @@
 module.exports = {
 
-  title: 'kale',
+  title: 'vue',
 
   /**
    * @type {boolean} true | false

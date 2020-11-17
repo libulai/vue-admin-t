@@ -1,18 +1,7 @@
 <template>
   <div class="top-bar">
     <div class="left">
-      <el-dropdown placement="bottom-start">
-        <el-button>
-          APP下载
-          <i class="el-icon-arrow-down el-icon--right"></i>
-        </el-button>
-        <el-dropdown-menu slot="dropdown" class="dropdown">
-          <div class="qr">
-            <img :src="qr" alt="">
-          </div>
-        </el-dropdown-menu>
-      </el-dropdown>
-
+  
       <div class="search">
         <el-autocomplete placeholder="请输入菜单关键字..." v-model="search" clearable :fetch-suggestions="querySearch" @select="handleSelect">
           <el-button slot="append" icon="el-icon-right" @click="goto"></el-button>
@@ -22,20 +11,8 @@
 
     <div class="right">
       <div>
-        <div class="drop1">
-          <img :src="logo1" alt style="width: 16px;margin-right: 6px" />
-          <el-dropdown>
-            <span class="el-dropdown-link">
-              {{user.comname}}
-              <i class="el-icon-arrow-down el-icon--right"></i>
-            </span>
-            <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item v-for="item in compcony" :key="item.comid" @click.native="shifitComp(item)">{{item.comname}}</el-dropdown-item>
-            </el-dropdown-menu>
-          </el-dropdown>
-        </div>
-
-        <div class="drop2">
+      
+        <!-- <div class="drop2">
           <img :src="logo2" alt style="width: 16px;margin-right: 6px" />
           <el-dropdown>
             <span class="el-dropdown-link">
@@ -46,7 +23,7 @@
               <el-dropdown-item v-for="item in role" :key="item.roleid" @click.native="shifitRole(item)">{{item.rolename}}</el-dropdown-item>
             </el-dropdown-menu>
           </el-dropdown>
-        </div>
+        </div> -->
 
         <div class="drop3" style="    display: flex;align-items: center;">
           <div class="head-pic">
@@ -54,7 +31,7 @@
           </div>
           <el-dropdown @command="personInfo">
             <span class="el-dropdown-link">
-              {{user.username}}
+              admin
               <i class="el-icon-arrow-down el-icon--right"></i>
             </span>
             <el-dropdown-menu slot="dropdown">
@@ -66,12 +43,12 @@
         </div>
       </div>
 
-      <div class="login-info">
+      <!-- <div class="login-info">
         <span>上次登录时间为</span>
         <span>{{logintime && logintime.split('.')[0]}}</span>
         <span>，如有异常，请 </span>&nbsp;
         <span style="font-size:13px;text-decoration: underline;cursor: pointer;color: #fff" @click="dialog2=true">修改密码</span>
-      </div>
+      </div> -->
 
     </div>
 
@@ -104,32 +81,6 @@
         <el-button @click="dialog2 = false">取 消</el-button>
         <el-button type="primary" @click="modifyPassword">确 定</el-button>
       </div>
-    </el-dialog>
-
-    <!-- 个人信息 -->
-    <el-dialog title="个人信息" :visible.sync="dialog1" class="dialog3">
-      <el-form ref="ruleForm1" label-width="100px" class="dialog3-ruleForm">
-        <el-form-item label="用户名">
-          <span>{{user.username}}</span>
-        </el-form-item>
-        <el-form-item label="手机号">
-          <span>{{userinfo.mobilephone}}</span>
-        </el-form-item>
-        <el-form-item label="姓名">
-          <span>{{userinfo.empname}}</span>
-        </el-form-item>
-        <el-form-item label="公司">
-          <span>{{userinfo.company.comname}}</span>
-        </el-form-item>
-        <el-form-item label="角色">
-          <span>{{user.rolename}}</span>
-        </el-form-item>
-      </el-form>
-
-      <!-- <div slot="footer" class="dialog-footer">
-        <el-button @click="reset">取消</el-button>
-        <el-button type="primary" @click="modifyInfo">保存</el-button>
-      </div> -->
     </el-dialog>
   </div>
 </template>
@@ -330,18 +281,6 @@
         location.reload()
         this.$router.push('/home')
       },
-      async initCompany() {
-        let rs = await this.$http({
-          url: `/admin/companyuserlist`,
-          method: "post",
-          data: {
-            userid: "",
-          },
-        });
-
-        this.compcony = rs.data;
-        this.$store.dispatch("user/changeCompany", rs.data[0]);
-      },
       async initAdmin() {
         let rs = await this.$http({
           url: `/admin/roleuserlist`,
@@ -389,16 +328,9 @@
         this.initUserInfo();
       }, 500);
 
-      // 公司列表
-      this.initCompany();
 
       // 角色列表
       this.initAdmin()
-
-      // 初始化切换角色
-      // bus.$on("login",()=>{
-      //   this.initRole()
-      // })
     },
   };
 </script>
@@ -409,21 +341,20 @@
   }
 
   .top-bar {
-    height: 85px;
+    height: 65px;
     display: flex;
     align-items: center;
-    background: #0b3190;
-    border-bottom: 1px solid #3e4ea0;
+    background: #30838c;
+    border-bottom: 1px solid #6caeb5;
     justify-content: space-between;
     padding: 0 20px;
   }
 
   .search {
-    margin-left: 25px;
     width: 300px;
     .el-input-group__append {
       border: none;
-      background: #546eb1 !important;
+      background:#54b1b1 !important;
       color: #fff;
     }
   }
@@ -436,7 +367,7 @@
   .left {
     display: flex;
     .el-dropdown .el-button {
-      background: #0b3190;
+      background: #30838c;
       color: #fff;
       width: 120px;
     }

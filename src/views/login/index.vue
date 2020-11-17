@@ -3,8 +3,9 @@
     <div class="bg-wrap" :style="{background:`url(${img}), no-repeat 100%`}">
       <el-form ref="loginForm" :model="loginForm" :rules="loginRules" class="login-form" auto-complete="on" label-position="left">
 
-        <div class="title-container">
-          <img :src="title" alt="">
+        <div class="title-container" style="font-size:36px">
+          <!-- <img :src="title" alt=""> -->
+          vue template
         </div>
 
         <el-form-item prop="username">
@@ -32,10 +33,6 @@
       </el-form>
     </div>
 
-    <div class="footer">
-      <div style="margin-bottom: 10px;">Copyright © KALE</div>
-      <div>KALE Brand Management System Guideline</div>
-    </div>
   </div>
 </template>
 
@@ -186,7 +183,7 @@ $cursor: #666;
 </style>
 
 <style lang="scss" scoped>
-$bg: #0a308f;
+$bg: #30838c;
 $dark_gray: #889aa4;
 $light_gray: #eee;
 
@@ -253,14 +250,4 @@ $light_gray: #eee;
   }
 }
 
-.footer {
-  position: absolute;
-  bottom: 20px;
-  color: #fff;
-  font-size: 12px;
-  div {
-    display: flex;
-    justify-content: center;
-  }
-}
 </style>
